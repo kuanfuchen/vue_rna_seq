@@ -1,0 +1,12 @@
+Sample name	condition	Total reads	Fully within an exon	Partly within an exon	Fully within an intron	Fully intergenic	Incompatible paired-end	Compatible junctions	Total junctions
+A1	ARDS_patient	19711009	79.83%	3.17%	4.06%	3.60%	9.34%	6320816	8432536
+A2	ARDS_patient	22849034	73.84%	3.58%	9.96%	3.80%	8.81%	6734082	8912681
+A3	ARDS_patient	38129097	81.98%	2.91%	3.62%	2.13%	9.37%	12884124	16574817
+A4	ARDS_patient	19413726	81.50%	3.41%	2.93%	5.08%	7.09%	4435218	6054195
+A5	ARDS_patient	28694763	83.79%	2.60%	2.87%	3.78%	6.96%	6946227	9164684
+H1	Healthy_control	21578129	77.62%	3.50%	7.03%	3.58%	8.26%	5899207	7841858
+H2	Healthy_control	18142383	81.25%	2.90%	3.29%	3.57%	8.99%	5716987	7560867
+H5	Healthy_control	44169185	78.77%	3.07%	5.98%	3.36%	8.82%	13655308	17848857
+H6	Healthy_control	37288632	79.51%	3.13%	5.73%	3.00%	8.63%	11182795	14633598
+HD4	Healthy_control	41392169	79.98%	2.89%	5.45%	2.74%	8.94%	13106554	16949310
+Average	N/A	29136812.699999999	79.89%	3.07%	5.15%	3.30%	8.59%	8688131.8000000007	11397340.300000001
