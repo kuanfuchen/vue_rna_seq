@@ -60,28 +60,19 @@
               <v-btn  color="indigo-darken-3" class="text-none" style="width:100%" @click="changed_RNAseq_DataInfo">Enter</v-btn>
             </v-col>
           </v-row>
-          
-          
         </v-card-text>
         <v-card-text class="py-0">
-          <div class="d-flex justify-end mr-3">
-            <div class="toggle_cols" @click="changedContentSize(6, 220, 450)">
-              <v-icon icon="fa:fas fa-table-columns mr-5"></v-icon>
-            </div>
-            <div class="toggle_cols" @click="changedContentSize(12, 0, 350)" >
-              <v-icon icon="fa:far fa-square mr-5"></v-icon>
-            </div>
-          </div>
           <v-row>
-            <v-col :cols="contentCols">
+            <v-col :cols="12">
               <div class="py-1 mb-2">
-                <p class="text-h6 ml-3 text-teal" style="font-weight: 700;">Volcano Plot</p>
+                <!-- <p class="text-h6 ml-3 text-teal" style="font-weight: 700;">Volcano Plot</p> -->
                 <Volcano :change_volcano_plot="compare_de_Obj" ></Volcano>
                 <!-- @xaxisMaxValue="listenXxais_Max" -->
               </div>
             </v-col>
-            <v-col :cols="contentCols">
-              <div v-if="handleDataIF">
+            <v-col :cols="12">
+              <div >
+                <!-- v-if="handleDataIF" -->
                 <div class="d-flex align-self-center py-1">
                   <p class="text-h6 my-2 text-teal" style="font-weight: 700;">Difference Expression RNA-seq Table</p>   
                 </div>
@@ -90,7 +81,7 @@
                     {{ compare_de_title }}
                   </p>
                 </div>
-                <DisplayTable :table="tableComponentInfo" :useSearch="true"  @select_miRNA_name="tableSelected_RNAseq_name"></DisplayTable>
+                <DisplayTable :table="tableComponentInfo" :useSearch="true"  @select_RNAseq_name="tableSelected_RNAseq_name"></DisplayTable>
               </div>
             </v-col>
           </v-row>
@@ -99,27 +90,30 @@
   </div>
 </template>
 <script setup>
-  import { ref } from 'vue';
+  import { ref, reactive } from 'vue';
   import { Subject, takeUntil, debounceTime } from 'rxjs';
   import DisplayTable from '../components/DisplayTable.vue';
   import Volcano from '../components/poltly/Volcano_plot.vue';
   const compare_de_title = ref('');
   const p_value_number = ref(1);
-  const log2_LowerBound = ref(0);
-  const log2_UpperBound = ref(0);
-  const contentCols = ref(12);
-  const handleDataIF = ref(false);
+  const log2_LowerBound = ref(-1);
+  const log2_UpperBound = ref(1);
+  // const handleDataIF = ref(false);
   const compare_de_title_group = ref([]);
   import { dataFolder_RNAseq } from '../service/rna_seq_dataservice';
   let compare_de_tables_info = [];
   // const log2V_model_val = ref(0);
   const fdrVal = ref(1);
   const display_plotText = [];
-  const plot_height = ref(350);
-  const tableComponentInfo = ref({
+  const plot_height = ref(650);
+  // const tableComponentInfo = ref({
+  //   headers:[],
+  //   body:[],
+  // });
+  const tableComponentInfo = reactive({
     headers:[],
-    body:[],
-  });
+    body:[]
+  })
   const comSubject$ = new Subject();
   const compare_de_Obj = ref({
     title:'',
@@ -144,6 +138,7 @@
     await handle_table_Info();
   };
   const tableSelected_RNAseq_name = (plot_text)=>{
+    return
     compare_de_Obj.value.title = '';
     display_plotText.length = 0;
     plot_text.forEach((item) => display_plotText.push(item));
@@ -163,17 +158,13 @@
     compare_de_Obj.value.height = plot_height.value;
     compare_de_Obj.value.displayText = display_plotText;
   };
-  // const listenXxais_Max = (emitValue)=>{
-  //   console.log(emitValue, 'emitValue')
-  //   log2V_model_val.value = emitValue;
-  // };
-  const changed_RNAseq_DataInfo = () => {
+  const changed_RNAseq_DataInfo = async() => {
     if(p_value_number.value === '') return;
     if(log2_UpperBound.value === '' || log2_LowerBound.value === '') return;
     for(let i = 0 ; compare_de_tables_info.length > i ; i++){
       if( compare_de_title.value === compare_de_tables_info[i].title ){
         display_plotText.length = 0;
-        handle_table_Info();
+        await handle_table_Info();
         changed_compare_de_Obj(compare_de_tables_info[i].title);
       }
     }
@@ -183,11 +174,16 @@
     if(fdrVal_Number <= 0) return;
     const p_value_number_val = Number(p_value_number.value);
     if(p_value_number_val <=0 )return;
-    return new Promise((resolve, reject)=>{
-      handleDataIF.value = false;
+    tableComponentInfo.headers.length = 0;
+    tableComponentInfo.body.length = 0;
+    return new Promise(async( resolve, reject )=>{
+      // handleDataIF.value = false;
       let checkedUpDownIndex = -1; 
       const display_Table = [];
       let fdrIndex = -1;
+      const title = compare_de_title.value;
+      const log2Up = log2_UpperBound.value; 
+      const log2Low = log2_LowerBound.value;
       for(let i = 0 ; compare_de_tables_info.length > i ; i++){
         // if(compare_de_tables_info[i].title === compare_de_title.value){
         const headers = [];
@@ -235,11 +231,11 @@
               }
             })
           }
-          if(headers_p_value > -1 && compare_de_tables_info[i].title === compare_de_title.value) {
+          if(headers_p_value > -1 && compare_de_tables_info[i].title === title) {
             const compare_de_tables_p_value_Number = Number(compare_de_tables_info[i].body[j][headers_p_value]);
             const compare_de_tables_log2_Number = Number(compare_de_tables_info[i].body[j][headers_log2_Ratio]);
-            if( compare_de_tables_info[i].body[j][headers_p_value] === '?' && Number(p_value_number_val) === 1 && Number(log2_UpperBound.value) === 0 
-              && Number(log2_LowerBound.value) === 0 ){
+            if( compare_de_tables_info[i].body[j][headers_p_value] === '?' && Number(p_value_number_val) === 1 && Number(log2Up) === 0 
+              && Number(log2Low) === 0 ){
               const specialSymbol_Compare_de_tables_infoRemoveGeneid = [];
               for(let k = 0 ; compare_de_tables_info[i].body[j].length > k; k++){
                 if(k !== headers_Geneid ){
@@ -250,7 +246,7 @@
             };
             // 
             if(compare_de_tables_p_value_Number > p_value_number_val) continue;
-            if(headers_log2_Ratio >=0 && compare_de_tables_log2_Number >=log2_UpperBound.value ||
+            if(headers_log2_Ratio >=0 && compare_de_tables_log2_Number >=log2Up ||
               headers_log2_Ratio >=0 && compare_de_tables_log2_Number <= log2_LowerBound.value){
                 compare_de_tables_info[i].body[j][headers_log2_Ratio] = Number(compare_de_tables_info[i].body[j][headers_log2_Ratio]);
                 compare_de_tables_info[i].body[j][headers_ratio] = Number(compare_de_tables_info[i].body[j][headers_ratio]);
@@ -273,7 +269,7 @@
         if(headers_Geneid > -1){
           headers.splice(headers_Geneid, 1);
         };
-        if(compare_de_tables_info[i].title === compare_de_title.value){
+        if(compare_de_tables_info[i].title === title){
           resolve({
             body: display_Table,
             headers,
@@ -281,9 +277,19 @@
           })
         }
       }
-    }).then((response)=>{
-      tableComponentInfo.value = response;
-      handleDataIF.value = true;
+      reject("dont't read")
+    }).then(async(response) => {
+      tableComponentInfo.headers = response.headers;
+      tableComponentInfo.body = response.body;
+      // tableComponentInfo.value = await response;
+      // for(let i = 0;response.headers.length > i ;i++){
+      //   tableComponentInfo.headers.push(response.headers[i])
+      // }
+      // for(let i = 0;response.body.length> i;i++){
+      //   tableComponentInfo.body.push(response.body[i])
+      // }
+      // handleDataIF.value = true;
     });
   };
+  
 </script>

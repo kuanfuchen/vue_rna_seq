@@ -5,15 +5,31 @@ module.exports = defineConfig({
   // publicPath:"./",
   // runtimeCompiler: true,
   // devServer: {
-  //   watchOptions: {
-  //     ignored: ['node_modules', 'public'],
+  //   proxy:{
+  //     '/api':{
+  //       target:'http://localhost:8080',
+  //       ws:true,
+  //       changeOrigin:true,
+  //       pathRewrite:{
+  //         '^/api':'data'
+  //       }
+  //     }
   //   }
+  // //   watchOptions: {
+  // //     ignored: ['node_modules', 'public'],
+  // //   }
   // },
   chainWebpack: config => {
     // 配置 raw-loader
     config.module
+    // .rule('worker')
+    // .test(/\.worker\.js$/)
+    // .use('worker-loader')
+    // .loader('worker-loader')
+    // .end();
       .rule('txt')
-      .test(/\.txt$/)
+      // .test(/\.txt$/)
+      .test(/\.(txt|tsv)$/)
       .use('raw-loader')
       .loader('raw-loader')
       .end();

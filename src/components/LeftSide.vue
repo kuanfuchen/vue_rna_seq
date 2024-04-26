@@ -88,6 +88,11 @@
   {
     value:'differenceExpression',
     title:'Difference Expression',
-    to:'differenceExpression'
+    to:'/differenceExpression'
+  },{
+    value:'functionalEnrichment',
+    title:'Functional Enrichment',
+    to:'/functionEnrichment'
+
   }];
 </script>

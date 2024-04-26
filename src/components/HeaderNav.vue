@@ -12,7 +12,7 @@
       <!-- <router-link to="/" style="color: white;text-decoration: none;"> -->
         <v-icon icon="fa:fas fa-dna" class="mx-2 rotateIcon">
       </v-icon>
-      <span class="mr-3">CGMMRC</span><span>RNA</span><span class="ml-3">seq</span>
+      <span class="mr-3">CGMMRC</span><span>RNA-seq</span>
       <!-- </router-link> -->
     </v-app-bar-title>
     <v-spacer></v-spacer>

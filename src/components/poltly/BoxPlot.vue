@@ -54,11 +54,11 @@
   }
   const layout = {
     height:definedProps.plot_size.height,
-    xaxis: { title: {text:'Sample', font:{ size:16, weight:'bold' }}, automargin:'height' },
-    yaxis:{title:{ text:`log<span style="font-size:12px">10</span>`, font:{ size:16, weight:'bold' }} },
+    xaxis: { title: {text:'Sample', font:{ size:16, weight:'bold' }}, automargin:'height',tickformat:'none' },
+    yaxis:{title:{ text:`log<span style="font-size:12px">10</span>(Normalized Count)`, font:{ size:16, weight:'bold' }},tickformat:'none' },
     font:{ size:12}, 
     margin:{ t:70,},
-    title:'Normalized & Read Counts distribution of sample'
+    title:'Normalized Read Counts distribution of sample'
   };
   const plotConfig = {
     responsive: true, 
@@ -102,8 +102,10 @@
     transfer_FullScreen_data.value = {
       data:dataOrder,
       layout:{
-        xaxis: { title: {text:'Sample', font:{ size: 20, weight: 'bold' }}, automargin:'height' },
-        yaxis:{title:{ text:'miRNA CPM(log<span style="font-size:12px;">10</span>)', font:{ size:20, weight:'bold' }} },
+        xaxis: { title: {text:'Sample', font:{ size: 20, weight: 'bold' }}, automargin:'height',
+        tickformat:'none'},
+        yaxis:{tickformat:'none',title:{ text:'miRNA CPM(log<span style="font-size:12px;">10</span>)', font:{ size:20, weight:'bold',
+        }} },
         font:{ size:12}, margin:{ t:50,}
       },
       plotConfig
@@ -120,7 +122,6 @@
   // });
   dataFolder_RNAseq.RNAseq_visual_boxPlot$.pipe(takeUntil(comSubject$),debounceTime(300)).subscribe(async(visualization_info)=>{
     if(visualization_info.info.length === 0) return;
-    console.log(visualization_info , 'visualization_info')
     boxPlot_Info = visualization_info;
     await handleBoxPlotInfo();
   });
@@ -128,6 +129,6 @@
     layout.height = newVal.height;
     toggleWaitCircular.value = true;
     handleBoxPlotInfo()
-  })
+  });
   const close_dialog = (val) => toogle_Plot_Screen.value = val;
 </script>

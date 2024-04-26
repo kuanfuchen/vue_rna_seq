@@ -1,6 +1,7 @@
 import { BehaviorSubject, Subject } from 'rxjs';
 import { read, utils, writeFileXLSX } from 'xlsx';
 import { handleSplitTxt } from '../utils/handleTxt';
+import Papa from 'papaparse';
 const _RNAseq_ReadAlignmentSubject$ = new BehaviorSubject({});
 const _RNAseq_handleRawReadsFolder$ = new BehaviorSubject({});
 const _RNAseq_scatter_Plot$ = new BehaviorSubject({});
@@ -9,6 +10,7 @@ const _RNAseq_visual_boxPlot$ = new  BehaviorSubject({});
 const _RNAseq_CPM_PCA_Data$ = new BehaviorSubject({});
 const _RNAseq_DE_Folder_Info$ = new BehaviorSubject({});
 import { rawFastqQC, trimemd_fastqQC, filterOutrRNAfastqQC, star_alignmentQC, quantify_to_annotation_gene_counts, normalized_counts, RNAseq_CPM_PCA } from './getData.js';
+// import down_Bio_Process from '../../public/06_01. Functional analysis - STRINGdb/input/down_regulated/Biological Process (Gene Ontology).tsv';
 const conditionSort = [];
 const compare_RNAseq_name = [];
 const DE_folder_Data = [];
@@ -135,12 +137,17 @@ const handled_RNAseq_DE = async() =>{
   }
   _RNAseq_DE_Folder_Info$.next({'title_Group': compare_RNAseq_name, 'info': de_txtTableInfo})
 };
+const papaLoadFile = ()=>{
+  // console.log(down_Bio_Process, 'down_Bio_Process')
+  
+}
 export const dataFolder_RNAseq = {
   handleRNAseqQCReadAlignmentfolder,
   rnaSeq_handleRawReads_normalizedCounts,
   handleRNAseq_CPM_PCA,
   exportXlsx,
   handled_RNAseq_DE,
+  papaLoadFile,
   rnaseq_ReadAlignmentSubject$: _RNAseq_ReadAlignmentSubject$.asObservable(),
   RNAseq_handleRawReadsFolder$:_RNAseq_handleRawReadsFolder$.asObservable(),
   RNAseq_scatter_Plot$:_RNAseq_scatter_Plot$.asObservable(),

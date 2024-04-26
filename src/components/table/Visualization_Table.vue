@@ -19,10 +19,7 @@
           density="compact" >
         </v-text-field>
       </div>
-      
     </div>
-  <!-- </div> -->
-  <!-- </div> -->
     <v-data-table fixed-header v-model:items-per-page="itemsPerPage" :headers="tableComponentInfo.headers"
       :items="tableComponentInfo.body" item-value="Sample name" class="elevation-1" :height="dataTable_height"
       :search="search_RNAseq" :items-per-page-options="pageItemsOptions" :loading="dataTableLoading">
@@ -64,7 +61,7 @@ const pageItemsOptions = ref([
   {value: 25, title: '25'},
   {value: 50, title: '50'},
   {value: 100, title: '100'},
-  {value: 1000, title: '1000'}
+  // {value: 1000, title: '1000'}
 ]);
 const tableHeader_RNA_seq = [
   // {title: 'Gene Symbol', align: 'center', sortable: true, key: 'title'},
@@ -86,7 +83,6 @@ dataFolder_RNAseq.RNAseq_handleRawReadsFolder$.pipe(takeUntil(comSubject$),debou
 });
 const createdRNAseqTable = (rowReads_normalizedData)=>{
   if( !rowReads_normalizedData.globalData || rowReads_normalizedData.globalData.length === 0) return;
-  // RNAseq_tabs.value = rowReads_normalizedData.sampleNameTitle;
   conditionHeaders.value = rowReads_normalizedData.sampleNameTitle.sort();
   const sampleNameIndex = rowReads_normalizedData.globalTitle.indexOf('Gene Symbol');
   const tabsRNA_Data = {};
@@ -131,6 +127,7 @@ const displayRNAseqTable = ()=>{
   }
   tableComponentInfo.value.headers = tableHeader_RNA_seq;
   tableComponentInfo.value.body = displayTableArr;
+  console.log(displayTableArr, 'displayTableArr');
   setTimeout(()=>{ dataTableLoading.value = false; },2000)
 }
 const exportXlsxFile = ()=>{

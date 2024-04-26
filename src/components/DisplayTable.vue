@@ -2,31 +2,33 @@
   <div>
     <div class="d-flex justify-space-between mb-2">
       <div class="mt-1 d-flex align-center">
-        <div class="mr-2" v-if="toggleShowSelect">
-          <v-btn color="teal" density="comfortable" @click="selected_display_plot_text" >
+        <!-- <div class="mr-2" v-if="toggleShowSelect">
+          <v-btn color="teal" density="comfortable" @click.prevent="selected_display_plot_text" >
             <v-icon icon="fa:fas fa-image" style="font-size: 16px;"></v-icon>
           </v-btn>
         </div>
-        <!-- reseted_display_plot_text -->
         <div class="" v-if="toggleShowSelect">
           <v-btn color="primary" class="text-none" density="comfortable" @click="reseted_display_plot_text" :disabled="selectedShow_miRNA.length === 0">
             Reset
           </v-btn>
-        </div>
+        </div> -->
       </div>
       <div class="d-flex align-center" v-if="definedprops.useSearch">
-        <v-icon icon="fa:fas fa-magnifying-glass mr-3"></v-icon>
-        <!-- <v-text-field v-if="definedprops.closeSearch !==true"
-          v-model="search_RNAname" variant="solo-filled"
-          label="MicroRNA ID search" hide-details style="width:300px"
+        <v-text-field v-if="definedprops.closeSearch !== true"
+          v-model="search_RNAname_field" variant="solo-filled"
+          label="RNA ID search" hide-details style="width:250px"
           single-line density="compact">
-        </v-text-field> -->
+        </v-text-field>
+        <v-btn class="ml-2" color="primary" @click="search_RNAname = search_RNAname_field">
+          <v-icon icon="fa:fas fa-magnifying-glass"></v-icon>
+        </v-btn>
       </div>
     </div>
     <v-data-table
       v-model:items-per-page="itemsPerPage" fixed-header :items="tableBody"
       :headers="headers" v-model:search="search_RNAname" item-value="Sample name"
       :height="dataTable_height" :show-select="toggleShowSelect"
+      :loading="dataLengthLoading"
       return-object class="elevation-1"
       :custom-filter="filterMiRNA"
       v-model="selectedShow_miRNA">
@@ -85,6 +87,41 @@
           {{  item.lsmean1.toLocaleString('en-US')  }}
         </div>
       </template>
+      <template v-slot:item.Start="{ item }">
+        <div>
+          {{  item.Start.toLocaleString('en-US')  }}
+        </div>
+      </template>
+      <template v-slot:item.Stop="{ item }">
+        <div>
+          {{  item.Stop.toLocaleString('en-US')  }}
+        </div>
+      </template>
+      <template v-slot:item.Length="{ item }">
+        <div>
+          {{  item.Length.toLocaleString('en-US')  }}
+        </div>
+      </template>
+      <template v-slot:item.Totalcounts="{ item }">
+        <div>
+          {{  item.Totalcounts.toLocaleString('en-US')  }}
+        </div>
+      </template>
+      <template v-slot:item.Maximumcounts="{ item }">
+        <div>
+          {{  item.Maximumcounts.toLocaleString('en-US')  }}
+        </div>
+      </template>
+      <template v-slot:item.Geometricmean="{ item }">
+        <div>
+          {{  item.Geometricmean.toLocaleString('en-US')  }}
+        </div>
+      </template>
+      <template v-slot:item.Arithmeticmean="{ item }">
+        <div>
+          {{  item.Arithmeticmean.toLocaleString('en-US')  }}
+        </div>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -100,10 +137,14 @@
   const headers = ref([]);
   const tableBody = ref([]);
   const dataTable_height = ref('');
+  const search_RNAname_field = ref('');
   const search_RNAname = ref('');
-  const listenTable = async() => {
+  const dataLengthLoading = ref(false);
+  const listenTable = () => {
     const tableInfo = definedprops.table;
     if(tableInfo.headers.length === 0) return;
+    if(tableInfo.body.length > 3000)dataLengthLoading.value = true;
+    return new Promise((resolve, reject)=>{
     selectedShow_miRNA.value.length = 0;
     let bodyInfo = [];
     if(tableInfo.showCheckBox) toggleShowSelect.value = true;
@@ -123,7 +164,7 @@
       }
       if(j === 0){
         const uppercaseFirst = tableInfo.headers[k].split('');
-        const getFirst = uppercaseFirst.splice(0,1);
+        const getFirst = uppercaseFirst.splice(0, 1);
         const firstcase=getFirst[0].toUpperCase();
         const combinedTitle = firstcase+ uppercaseFirst.join('');
         headers.value.push({
@@ -153,11 +194,10 @@
     for(let i = 0 ; bodyInfo.length > i ; i++){
       const bodyInfoKeys = Object.keys(bodyInfo[i]);
       for( let j = 0 ; bodyInfoKeys.length > j ; j++ ){
-        if(bodyInfoKeys[j] !== 'GeneID' && bodyInfoKeys[j] !== 'Chromosome' && bodyInfoKeys[j] !== 'Genename' && bodyInfoKeys[j]!== 'Strand' && bodyInfoKeys[j] !== 'Genetype'
+        if( bodyInfoKeys[j] !== 'GeneID' && bodyInfoKeys[j] !== 'Chromosome' && bodyInfoKeys[j] !== 'Genename' && bodyInfoKeys[j]!== 'Strand' && bodyInfoKeys[j] !== 'Genetype'
           && bodyInfoKeys[j] !== 'Log2Ratio' && bodyInfoKeys[j] !== "Ratio" && bodyInfoKeys[j] !== 'Level' && bodyInfoKeys[j] !== 'Havanagene' && bodyInfoKeys[j]  !=='Hgncid'
           && bodyInfoKeys[j] !== 'Ont' && bodyInfoKeys[j] !== 'Geneid' && bodyInfoKeys[j] !== 'Up_Down' && bodyInfoKeys[j] !== 'Samplename' && bodyInfoKeys[j] !== 'condition'){
-            if(bodyInfo[i][bodyInfoKeys[j]] !== '?'){
-              // 
+            if(bodyInfo[i][bodyInfoKeys[j]] !== '?' ){
               const [ base, exponent ] = bodyInfo[i][bodyInfoKeys[j]].split('E').map(Number);
               if(exponent !== undefined && exponent !== 0){
                 bodyInfo[i][bodyInfoKeys[j]] = Number(bodyInfo[i][bodyInfoKeys[j]]).toExponential(2);
@@ -174,7 +214,6 @@
                   }
                 }
               };
-              // 
             }
           
         }
@@ -185,7 +224,16 @@
       const redundant_remove_table_height = typeof definedprops.expresstablestyle === 'number' ? definedprops.expresstablestyle : 0;
       dataTable_height.value =  Math.ceil((windowInnerheight - 330 - redundant_remove_table_height)/ windowInnerheight * 100) + 'vh';
     }
-    tableBody.value = bodyInfo;
+      resolve(bodyInfo)
+    }).then((bodyInfo)=>{
+      tableBody.value = bodyInfo;
+      if(dataLengthLoading.value){
+        setTimeout(()=>{
+          dataLengthLoading.value = false;
+        },1000)
+      }
+    })
+    
   };
   const selected_display_plot_text = ()=>{
     const miRNANames = [];
@@ -199,8 +247,8 @@
     emits('select_RNAseq_name', []);;
   }
   const filterMiRNA = (val, query, item)=>{
-    return val != null && query != null && typeof val === 'string'&& item.columns.microRNAID.indexOf(query) !==-1&& val.toString().toLocaleUpperCase().indexOf(query) !== -1
-  }
+    return val != null && query != null && typeof val === 'string'&& item.columns.GeneID.indexOf(query) !==-1&& val.toString().toLocaleUpperCase().indexOf(query) !== -1
+  };
   watch(definedprops.table,(/*newTble*/)=>{
     headers.value.length = 0;
     tableBody.value.length = 0;

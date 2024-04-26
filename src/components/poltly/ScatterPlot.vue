@@ -139,21 +139,12 @@
   };
   dataFolder_RNAseq.RNAseq_scatter_Plot$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(visualization_info)=>{
     if(visualization_info.info.length === 0) return;
-    console.log(visualization_info, 'visualization_info');
     toggleWaitCircular.value = true;
     scatter_Info = visualization_info;
     await handleScatterPlotInfo();
   })
-  // dataService.visualization_Plot$.pipe(takeUntil(comSubject$),debounceTime(300)).subscribe(async(visualization_info)=>{
-  //   if(visualization_info.info.length === 0) return;
-  //   console.log(visualization_info, 'visualization_info')
-  //   scatter_Info = visualization_info;
-  //   await handleScatterPlotInfo();
-  // });
   watch(defineScatterGraphInfo.scatterGraphInfo,() => { handleScatterPlotInfo() });
   watch(defineScatterGraphInfo.plot_size, async(newVal)=>{
-    // layout.height = newVal.height;
-    // toggleWaitCircular.value = true;
     layout.height = newVal.height - 100;
     await handleScatterPlotInfo();
   })

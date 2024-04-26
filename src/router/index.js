@@ -27,7 +27,12 @@ const routes = [
       {
         path: 'differenceExpression',
         name:'DifferenceExpression',
-        component: () => import('../views/RNAseq_DE_page.vue')
+        component: () => import('@/views/RNAseq_DE_page.vue')
+      },
+      {
+        path:'functionEnrichment',
+        name:'FunctionEnrichment',
+        component: () => import('@/views/FunctionalEnrichment.vue')
       },
       {
         path:'/:catchAll(.*)',

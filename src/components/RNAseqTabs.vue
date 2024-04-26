@@ -78,6 +78,12 @@
       case "Non-unique":
         headers.push('%Non-unique')
         break;
+      case 'Unique paired':
+        headers.push('%Unique paired')
+        break;
+      case 'Non-unique paired':
+        headers.push('%Non-unique paired');
+        break;
       default:
         headers.push(header)
     }});

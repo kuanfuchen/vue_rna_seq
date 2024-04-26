@@ -17,7 +17,8 @@
   //
   import { onMounted } from 'vue';
   import {dataFolder_RNAseq} from './service/rna_seq_dataservice.js';
-  import { dataService } from '@/service/data_service.js';
+  import { papaDate } from './service/papaResolve_getData.js';
+  // import { dataService } from '@/service/data_service.js';
 // import data from './service/data_service';
 // export default defineComponent({
 //   name: 'App'
@@ -28,11 +29,14 @@ onMounted(async() => {
   await dataFolder_RNAseq.rnaSeq_handleRawReads_normalizedCounts();
   await dataFolder_RNAseq.handleRNAseq_CPM_PCA();
   await dataFolder_RNAseq.handled_RNAseq_DE();
+  await dataFolder_RNAseq.papaLoadFile();
+  await papaDate.handleFunctionalAnalysis()
   // 
-  await dataService.handleProject();
-  await dataService.handleQCReadAlignmentfolder();
-  await dataService.handleRawReadsFolder();
-  await dataService.handle_CPM_PCA();
+  // await dataService.handleProject();
+  // await dataService.handleQCReadAlignmentfolder();
+  // await dataService.handleRawReadsFolder();
+  // await dataService.handle_CPM_PCA();
+  
 
   // await dataService.handleDE_Folder();
 
