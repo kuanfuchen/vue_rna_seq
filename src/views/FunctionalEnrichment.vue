@@ -10,7 +10,7 @@
             v-model="selectRegular" variant="outlined"></v-select>
         </div>
         <div class="d-flex">
-          <v-checkbox v-model="checkAll" label="All" class="mx-1"></v-checkbox>
+          <v-checkbox v-model="checkAll" label="All" class="mx-1" @change="changeSelect(checkAll)"></v-checkbox>
           <v-checkbox v-model="MF" label="Molecullar Function" class="mx-1"></v-checkbox>
           <v-checkbox v-model="BP" label="Biological Process" class="mx-1"></v-checkbox>
           <v-checkbox v-model="CC" label="Cellular Component" class="mx-1"></v-checkbox>
@@ -74,6 +74,13 @@
         sortable: true
       })
     };
+  }
+  const changeSelect = (ev)=>{
+    MF.value = ev;
+    BP.value =ev;
+    CC.value = ev;
+    KEGG.value = ev;
+    pubMed.value = ev;
   }
   const pushTableInfo = (data, arr)=>{
     for(let i = 0 ; data.length > i ; i++){

@@ -18,10 +18,11 @@
               </v-sheet>
             </v-col>
           </v-row>
-          <v-row no-gutters>
+          <v-row no-gutters class="pb-2">
             <v-col cols="3">
-              <v-sheet class="pa-2 ma-2"> 
-                <p class="text-right font-weight-bold">P-value</p>
+              <v-sheet class="mx-5">
+                <!-- <p class="text-right font-weight-bold">P-value</p> -->
+                <v-select label="Select" v-model="selectP_or_Qval" :items="['P-Value', 'Q-Value']" variant="outlined" density="compact"></v-select> 
               </v-sheet>
             </v-col>
             <v-col cols="2">
@@ -52,7 +53,6 @@
               ></v-text-field>
               <!-- @update:modelValue="changed_RNAseq_DataInfo" -->
             </v-col>
-            
           </v-row>
           <v-row no-gutters>
             <v-col cols="3"></v-col>
@@ -66,7 +66,7 @@
             <v-col :cols="12">
               <div class="py-1 mb-2">
                 <!-- <p class="text-h6 ml-3 text-teal" style="font-weight: 700;">Volcano Plot</p> -->
-                <Volcano :change_volcano_plot="compare_de_Obj" ></Volcano>
+                <Volcano :change_volcano_plot="compare_de_Obj"></Volcano>
                 <!-- @xaxisMaxValue="listenXxais_Max" -->
               </div>
             </v-col>
@@ -106,6 +106,7 @@
   const fdrVal = ref(1);
   const display_plotText = [];
   const plot_height = ref(650);
+  const selectP_or_Qval = ref('P-Value');
   // const tableComponentInfo = ref({
   //   headers:[],
   //   body:[],
@@ -184,6 +185,7 @@
       const title = compare_de_title.value;
       const log2Up = log2_UpperBound.value; 
       const log2Low = log2_LowerBound.value;
+      let questionMark = 0;
       for(let i = 0 ; compare_de_tables_info.length > i ; i++){
         // if(compare_de_tables_info[i].title === compare_de_title.value){
         const headers = [];
@@ -212,7 +214,19 @@
         for(let i = 0 ; headers.length > i ; i++){
           headersUpper.push(headers[i].toUpperCase());
         };
-        const headers_p_value = headersUpper.indexOf('P-VALUE');
+        // console.log(selectP_or_Qval.value);
+        const uppper_selectP_or_Qval = selectP_or_Qval.value.toUpperCase();
+        let headers_P_or_Q_val = -1;
+        if(uppper_selectP_or_Qval === 'P-VALUE'){
+          headers_P_or_Q_val = headersUpper.indexOf('P-VALUE');
+        }else if(uppper_selectP_or_Qval === 'Q-VALUE'){
+          headers_P_or_Q_val = headersUpper.indexOf("FDR STEP UP")
+        }
+        if(headers_P_or_Q_val === -1){
+          console.log('error headers_P_or_Q_val')
+        };
+        console.log(headers_P_or_Q_val, 'headers_P_or_Q_val')
+        // const headers_P_or_Q_val = headersUpper.indexOf('P-VALUE');
         const headers_log2_Ratio = headersUpper.indexOf('LOG2RATIO');
         const headers_ratio = headersUpper.indexOf('RATIO');
         const headers_Geneid = headers.indexOf("Gene id");
@@ -231,10 +245,17 @@
               }
             })
           }
-          if(headers_p_value > -1 && compare_de_tables_info[i].title === title) {
-            const compare_de_tables_p_value_Number = Number(compare_de_tables_info[i].body[j][headers_p_value]);
+          if(headers_P_or_Q_val > -1 && compare_de_tables_info[i].title === title) {
+            if(compare_de_tables_info[i].body[j][headers_P_or_Q_val] === '?' ){
+              questionMark ++;
+            }
+            
+            if(i===1 && j === 1){
+              console.log(compare_de_tables_info[i].body[j],'compare_de_tables_info[i].body[j]')
+            }
+            const compare_de_tables_p_value_Number = Number(compare_de_tables_info[i].body[j][headers_P_or_Q_val]);
             const compare_de_tables_log2_Number = Number(compare_de_tables_info[i].body[j][headers_log2_Ratio]);
-            if( compare_de_tables_info[i].body[j][headers_p_value] === '?' && Number(p_value_number_val) === 1 && Number(log2Up) === 0 
+            if( compare_de_tables_info[i].body[j][headers_P_or_Q_val] === '?' && Number(p_value_number_val) === 1 && Number(log2Up) === 0 
               && Number(log2Low) === 0 ){
               const specialSymbol_Compare_de_tables_infoRemoveGeneid = [];
               for(let k = 0 ; compare_de_tables_info[i].body[j].length > k; k++){
@@ -277,8 +298,12 @@
           })
         }
       }
+      // console.log(questionMark, 'questionMark')
       reject("dont't read")
     }).then(async(response) => {
+      
+      // console.log(response.body, 'response.body');
+      // console.log(response.headers, 'response.headers')
       tableComponentInfo.headers = response.headers;
       tableComponentInfo.body = response.body;
       // tableComponentInfo.value = await response;

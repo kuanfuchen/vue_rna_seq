@@ -6,14 +6,14 @@
         {{ valcanoTitle }}
       <!-- <p class="ml-3" style="font-weight: 700;font-size: 18px;" >{{ valcanoTitle }}</p> -->
       </div>
-      <div class="d-flex">
+      <!-- <div class="d-flex">
         <div class="toggle_cols" @click="changedContentSize(6, 220, 650)">
           <v-icon icon="fa:fas fa-table-columns mr-5"></v-icon>
         </div>
         <div class="toggle_cols" @click="changedContentSize(12, 0, 650)" >
           <v-icon icon="fa:far fa-square mr-5"></v-icon>
         </div>
-      </div>
+      </div> -->
       
     </div>
     <v-row no-gutters class="d-flex justify-space-between mt-1">
