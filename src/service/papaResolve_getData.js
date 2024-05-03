@@ -25,7 +25,7 @@ let up_KEGG = {name:'up_KEGG', arr:[]};
 let up_Mole_Fun = {name:'up_Mole_Fun', arr:[]};
 let up_Reference_Pub = {name:'up_Reference_Pub', arr:[]};
 
-const handlePapaParse =async (arr, data)=>{
+const handlePapaParse = async (arr, data)=>{
   data.arr = await Papa.parse(arr,{
     delimiter:"\t",
     worker:false,

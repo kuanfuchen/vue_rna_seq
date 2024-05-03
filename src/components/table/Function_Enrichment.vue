@@ -3,6 +3,7 @@
     <div class="">
       <v-data-table fixed-header :headers="feHeaders" v-model:items-per-page="itemsPerPage"
       :items="feTableBody" height="800" item-value="#term ID" :items-per-page-options="pageItemsOptions"
+      
       ></v-data-table>
     </div>
   </div>

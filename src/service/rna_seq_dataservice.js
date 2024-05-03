@@ -32,8 +32,7 @@ const handleRNAseqQCReadAlignmentfolder = async()=>{
   }
   await _RNAseq_ReadAlignmentSubject$.next(miRNATabs);
 }
-const rnaSeq_handleRawReads_normalizedCounts = async()=>{
-  // const RNAseq_countTitle = ['Raw_Reads', 'Normalized_Reads'];
+const rnaSeq_handleRawReads_normalizedCounts = async() => {
   const RNAseq_raw_reads_count = handleSplitTxt(quantify_to_annotation_gene_counts);
   const RNAseq_normalizedCounts = handleSplitTxt(normalized_counts);
   handleRawReads_normalizedCount( RNAseq_raw_reads_count, RNAseq_normalizedCounts);

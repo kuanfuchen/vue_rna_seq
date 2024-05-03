@@ -1,12 +1,16 @@
 <template>
-  <div>
-    <div id="de_bar_plot"></div>
+  <div >
+    <div>
+      <div id="de_bar_plot" :style="{'height':plot_height + 'vh'}"></div>
+    </div>
+    
   </div>
 </template>
 <script setup>
   import Plotly from 'plotly.js-dist-min';
   import { imageCapture} from '../../utils/image_download';
-  import { onMounted } from 'vue';
+  import { watch, ref } from 'vue';
+  const plot_height = ref(30)
   const props = defineProps(['de_bar_plot_data']);
   const layout = {
     // height:definedProps.plot_size.height,
@@ -34,14 +38,14 @@
       marker:{
         color:['red','blue']
       }
-    }]
+    }];
+    plot_height.value= de_bar_plot_data.height;
     setTimeout(()=>{
       Plotly.newPlot(de_bar_plot, de_bar_data, layout, plotConfig );
     })
   }
-  onMounted(()=>{
-    setTimeout(async()=>{
-      await handle_DE_Bar();
-    },500)
-  })
+  watch(props.de_bar_plot_data,(newVal) => {
+    if(!newVal.positive && !newVal.positive)return;
+    handle_DE_Bar();
+  });
 </script>

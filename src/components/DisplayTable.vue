@@ -87,7 +87,13 @@
           {{  item.lsmean1.toLocaleString('en-US')  }}
         </div>
       </template>
-      <template v-slot:item.Start="{ item }">
+      <template v-slot:item.GeneIDGeneName="{ item }">
+        <div>
+          <p>{{ item.GeneIDGeneName.split('-')[0] }}</p>
+          <p class="text-primary">{{ item.GeneIDGeneName.split('-')[1] }}</p>
+        </div>
+      </template>
+      <!-- <template v-slot:item.Start="{ item }">
         <div>
           {{  item.Start.toLocaleString('en-US')  }}
         </div>
@@ -121,7 +127,7 @@
         <div>
           {{  item.Arithmeticmean.toLocaleString('en-US')  }}
         </div>
-      </template>
+      </template> -->
     </v-data-table>
   </div>
 </template>
@@ -148,38 +154,72 @@
     selectedShow_miRNA.value.length = 0;
     let bodyInfo = [];
     if(tableInfo.showCheckBox) toggleShowSelect.value = true;
-    for(let j = 0 ; tableInfo.body.length > j ; j++){
+    const geneIDindex = tableInfo.headers.indexOf('Gene ID');
+    const geneNameIndex = tableInfo.headers.indexOf('Gene name');
+    for(let i = 0 ; tableInfo.body.length > i ; i++){
       let setLSMeanKeyNumber = -1;
-      bodyInfo[j] = [];
-      for(let k = 0 ; tableInfo.headers.length > k ; k++){
+      
+      bodyInfo[i] = [];
+      for(let j = 0 ; tableInfo.headers.length > j ; j++){
       // header
-      let checkLSMean = -1;
-      checkLSMean = tableInfo.headers[k].indexOf('LSMean');
-      let headerSplitWord;
-      if(checkLSMean > -1) {
-        setLSMeanKeyNumber ++;
-        headerSplitWord = 'lsmean' + setLSMeanKeyNumber;
-      }else{
-        headerSplitWord = tableInfo.headers[k].split(/\s/).join('').trim();
+        let checkLSMean = -1;
+        checkLSMean = tableInfo.headers[j].indexOf('LSMean');
+        
+        let headerSplitWord;
+        if(checkLSMean > -1) {
+          setLSMeanKeyNumber ++;
+          headerSplitWord = 'lsmean' + setLSMeanKeyNumber;
+        }else{
+          headerSplitWord = tableInfo.headers[j].split(/\s/).join('').trim();
+        }
+        if(i === 0){
+          if(headerSplitWord !=='Chromosome' && headerSplitWord !== 'Start' && headerSplitWord !== 'Stop' && headerSplitWord !== 'Length' && headerSplitWord !== 'Strand' &&
+          headerSplitWord !== 'headerSplitWord' && headerSplitWord !== 'Maximumcounts' && headerSplitWord !== 'Geometricmean' && headerSplitWord !== 'Arithmeticmean' &&
+          headerSplitWord !== 'Havanagene' && headerSplitWord !== 'Hgncid' && headerSplitWord !== 'Level' && headerSplitWord !== 'Ont' && headerSplitWord !=='GeneID' 
+          && headerSplitWord !=='Genename'){
+            const uppercaseFirst = tableInfo.headers[j].split('');
+            const getFirst = uppercaseFirst.splice(0, 1);
+            const firstcase=getFirst[0].toUpperCase();
+            const combinedTitle = firstcase+ uppercaseFirst.join('');
+            headers.value.push({
+              title:combinedTitle,
+              align: 'center',
+              sortable: true,
+              key: checkLSMean === -1 ? headerSplitWord : 'lsmean' + setLSMeanKeyNumber, 
+              // fixed: headerSplitWord === 'GeneID' ? true : false,
+            })
+          }
+          
+          // console.log(headers.value)
+          // const uppercaseFirst = tableInfo.headers[k].split('');
+          // const getFirst = uppercaseFirst.splice(0, 1);
+          // const firstcase=getFirst[0].toUpperCase();
+          // const combinedTitle = firstcase+ uppercaseFirst.join('');
+          // headers.value.push({
+          //   title:combinedTitle,
+          //   align: 'center',
+          //   sortable: true,
+          //   key: checkLSMean === -1 ? headerSplitWord : 'lsmean' + setLSMeanKeyNumber, 
+          //   fixed: headerSplitWord === 'GeneID' ? true : false,
+          // })
+        }
+        if(!bodyInfo[i][headerSplitWord]){
+          bodyInfo[i][headerSplitWord] = tableInfo.body[i][j];
+        }
+        if(geneIDindex > -1 && geneNameIndex > -1 && !bodyInfo[i]['GeneIDGeneName']){
+          bodyInfo[i]['GeneIDGeneName'] = `${tableInfo.body[i][0]} -  ${tableInfo.body[i][1]}`;
+        }
       }
-      if(j === 0){
-        const uppercaseFirst = tableInfo.headers[k].split('');
-        const getFirst = uppercaseFirst.splice(0, 1);
-        const firstcase=getFirst[0].toUpperCase();
-        const combinedTitle = firstcase+ uppercaseFirst.join('');
-        headers.value.push({
-          // title: tableInfo.headers[k],
-          title:combinedTitle,
-          align: 'center',
-          sortable: true,
-          key: checkLSMean === -1 ? headerSplitWord : 'lsmean' + setLSMeanKeyNumber, 
-          fixed: headerSplitWord === 'GeneID' ? true : false,
-          // width: headerSplitWord === 'GeneID'? '250px': false,
-        })
-      }
-      if(!bodyInfo[j][headerSplitWord]){
-        bodyInfo[j][headerSplitWord] = tableInfo.body[j][k];
-      }
+      if(i === 0){
+        if( geneIDindex > -1 && geneNameIndex > -1 ){
+            headers.value.unshift({
+              title:'Gene ID - Gene Name',
+              align: 'center',
+              sortable: true,
+              key: 'GeneIDGeneName',
+              fixed:true
+            })
+          }
       }
     }
     for(let i = 0; headers.value.length > i ; i++){
@@ -196,13 +236,14 @@
       for( let j = 0 ; bodyInfoKeys.length > j ; j++ ){
         if( bodyInfoKeys[j] !== 'GeneID' && bodyInfoKeys[j] !== 'Chromosome' && bodyInfoKeys[j] !== 'Genename' && bodyInfoKeys[j]!== 'Strand' && bodyInfoKeys[j] !== 'Genetype'
           && bodyInfoKeys[j] !== 'Log2Ratio' && bodyInfoKeys[j] !== "Ratio" && bodyInfoKeys[j] !== 'Level' && bodyInfoKeys[j] !== 'Havanagene' && bodyInfoKeys[j]  !=='Hgncid'
-          && bodyInfoKeys[j] !== 'Ont' && bodyInfoKeys[j] !== 'Geneid' && bodyInfoKeys[j] !== 'Up_Down' && bodyInfoKeys[j] !== 'Samplename' && bodyInfoKeys[j] !== 'condition'){
+          && bodyInfoKeys[j] !== 'Ont' && bodyInfoKeys[j] !== 'Geneid' && bodyInfoKeys[j] !== 'Up_Down' && bodyInfoKeys[j] !== 'Samplename' && bodyInfoKeys[j] !== 'condition'
+          && bodyInfoKeys[j] !== 'GeneIDGeneName' ){
             if(bodyInfo[i][bodyInfoKeys[j]] !== '?' ){
               const [ base, exponent ] = bodyInfo[i][bodyInfoKeys[j]].split('E').map(Number);
-              if(exponent !== undefined && exponent !== 0){
+              if( exponent !== undefined && exponent !== 0 ){
                 bodyInfo[i][bodyInfoKeys[j]] = Number(bodyInfo[i][bodyInfoKeys[j]]).toExponential(2);
               }else{
-                const val = Math.round(Number(base)*100)/100;
+                const val = Math.round(Number(base)*100) / 100;
                 if(val > 0){
                   bodyInfo[i][bodyInfoKeys[j]] = val;
                 }else{
@@ -215,7 +256,6 @@
                 }
               };
             }
-          
         }
       }
     }
@@ -225,7 +265,7 @@
       dataTable_height.value =  Math.ceil((windowInnerheight - 330 - redundant_remove_table_height)/ windowInnerheight * 100) + 'vh';
     }
       resolve(bodyInfo)
-    }).then((bodyInfo)=>{
+    }).then((bodyInfo) => {
       tableBody.value = bodyInfo;
       if(dataLengthLoading.value){
         setTimeout(()=>{

@@ -70,6 +70,7 @@
   const toogle_Plot_Screen = ref(false);
   let log2Upper = 1;
   let log2Lower = -1;
+  let P_or_Q_value ='P-VALUE';
   let selecte_miRNAs_Name = [];
   let log_SelectStyleNum = 0;
   const negative_position_number = ref(0);
@@ -82,7 +83,7 @@
     headers:[]
   };
   const removePlotHeight = ref(650);
-  const contentCols = ref(12);
+  const contentCols = ref(6);
   const plot_height = ref(30);
   const plotConfig = {
     responsive:true, 
@@ -94,7 +95,8 @@
   const valcanoTitle = ref('');
   const deBarPlotData = reactive({
     positive:0,
-    neightive:0
+    neightive:0,
+    height:0
   });
   const volcano_plot_plotlyjs_data = {
     x: [],
@@ -199,6 +201,7 @@
   dataFolder_RNAseq.RNAseq_DE_Folder_Info$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(deFolderData)=>{
     storagedDE_folder.info = deFolderData.info;
     storagedDE_folder.headers = deFolderData.title_Group;
+    // console.log(storagedDE_folder.info, 'storagedDE_folder.info')
     await handleDE_data();
   });
   const reMark_DE_Plot = async(num)=>{
@@ -235,14 +238,21 @@
       const splitHeaders = storagedDE_folder.info[selectedDataNum].headers[i].split(/\(/)[0];
       headersUppers.push(splitHeaders.toUpperCase().trim());
     };
-    const p_value_Index =  headersUppers.indexOf('P-VALUE');
-    // 
+    let p_or_q_value_index = -1;
+    // console.log(headersUppers, 'headersUppers')
+    if(P_or_Q_value ==='P-VALUE'){
+      p_or_q_value_index =  headersUppers.indexOf('P-VALUE');
+    }else if( P_or_Q_value === 'Q-VALUE'){
+      p_or_q_value_index =  headersUppers.indexOf('FDR STEP UP')
+    }
+    // const p_or_q_value_index =  headersUppers.indexOf('P-VALUE');
+    if(p_or_q_value_index === -1)return;
     const lo2_index = headersUppers.indexOf('LOG2');
     // 
     let index = 0
     for(let i = 0 ; storagedDE_folder.info[selectedDataNum].body.length > i ; i++){
-      if(storagedDE_folder.info[selectedDataNum].body[i][p_value_Index] !== '?'){
-        const floatNum = parseFloat(storagedDE_folder.info[selectedDataNum].body[i][p_value_Index]);
+      if(storagedDE_folder.info[selectedDataNum].body[i][p_or_q_value_index] !== '?'){
+        const floatNum = parseFloat(storagedDE_folder.info[selectedDataNum].body[i][p_or_q_value_index]);
         const logCalu = - Math.log10(floatNum);
         selected_RNA_name.push(storagedDE_folder.info[selectedDataNum].body[i][0]);
         selected_DE_pValue.push(logCalu);
@@ -315,7 +325,7 @@
         layout.yaxis = {
           range:[ minValYaxis, maxValYaxis ],
           // range:[0, 20]
-          title: { text:`log<span style="font-size:12px;">10</span>(P-value)`, font:{size:20}}
+          title: { text:`log<span style="font-size:12px;">10</span>(${P_or_Q_value==='P-VALUE'?'P-value':'Q-value'})`, font:{size:20}}
         };
         // layout.height = 
         const postitiveYMax = Math.ceil(maxValYaxis);
@@ -325,8 +335,10 @@
         const windowInnerheight = window.innerHeight;
         plot_height.value =  Math.ceil(( windowInnerheight - removePlotHeight.value )/ windowInnerheight * 100);
         // drawBarPlot(positive_position_number.value, negative_position_number.value);
+        deBarPlotData.value = plot_height.value;
         deBarPlotData.positive = positive_position_number.value;
         deBarPlotData.neightive = negative_position_number.value;
+        // console.log(deBarPlotData.positive, deBarPlotData.neightive)
         setTimeout(()=>{
           if(!document.getElementById('displatVolcanoPlot')) return;
           transfer_FullScreen_data.value = {
@@ -359,9 +371,11 @@
       console.log('dont index')
       return
     }
+    console.log(change_Val, 'change_Val')
     valcanoTitle.value = change_Val.title;
     log2Upper = change_Val.log2_UpperBound;
     log2Lower = change_Val.log2_LowerBound;
+    P_or_Q_value = change_Val.selectType.toUpperCase();
     if(change_Val.displayText && change_Val.displayText.length > 0){
       selecte_miRNAs_Name = JSON.parse(JSON.stringify((change_Val.displayText)));
     }else if(change_Val.displayText.length === 0){

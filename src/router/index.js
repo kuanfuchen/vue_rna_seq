@@ -32,7 +32,7 @@ const routes = [
       {
         path:'functionEnrichment',
         name:'FunctionEnrichment',
-        component: () => import('@/views/FunctionalEnrichment.vue')
+        component: () => import('@/views/funEnrich/FunctionalEnrichment.vue')
       },
       {
         path:'/:catchAll(.*)',

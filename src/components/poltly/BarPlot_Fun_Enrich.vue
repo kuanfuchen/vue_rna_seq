@@ -4,7 +4,7 @@
   </div>
 </template>
 <script setup>
-import {ref,watch} from 'vue';
+import { ref, watch } from 'vue';
 import Plotly from 'plotly.js-dist-min';
 const props = defineProps(['fe_obsergene_data']);
 const layout = {
@@ -34,7 +34,13 @@ const handlePlotInfo = (info)=>{
   Plotly.purge(observeGenePlot);
   const infoKeys = Object.keys(info.data);
   const infoValues = Object.values(info.data);
+  // const infoVal = Object.entries(info.data);
+  const infoFDR =  Object.values(info.FDR);
+  const caluFDR = [];
+  infoFDR.forEach((item)=>caluFDR.push(Number(item)*1000000));
+  console.log(caluFDR, 'caluFDR');
   plotData.y = infoKeys;
+  // plotData.y = caluFDR;
   plotData.x = infoValues;
   plotData.text = infoValues.map(String);
   setTimeout(()=>{
@@ -42,8 +48,7 @@ const handlePlotInfo = (info)=>{
   })
 }
 watch(props.fe_obsergene_data,(newVal)=>{
-  if(!newVal.data || newVal.data.length === 0)return;
+  if( !newVal.data || Object.keys(newVal.data).length === 0) return;
   handlePlotInfo(newVal);
-  // console.log(newVal, 'newVal')
 })
 </script>

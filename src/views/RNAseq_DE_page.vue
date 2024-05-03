@@ -117,6 +117,7 @@
   })
   const comSubject$ = new Subject();
   const compare_de_Obj = ref({
+    selectType:'P-Value',
     title:'',
     selectStyle:'',
     log2_LowerBound:'',
@@ -158,6 +159,7 @@
     compare_de_Obj.value.log2_UpperBound = log2_UpperBound.value;
     compare_de_Obj.value.height = plot_height.value;
     compare_de_Obj.value.displayText = display_plotText;
+    compare_de_Obj.value.selectType = selectP_or_Qval.value;
   };
   const changed_RNAseq_DataInfo = async() => {
     if(p_value_number.value === '') return;
@@ -186,17 +188,19 @@
       const log2Up = log2_UpperBound.value; 
       const log2Low = log2_LowerBound.value;
       let questionMark = 0;
+      console.log(compare_de_tables_info, 'compare_de_tables_info')
       for(let i = 0 ; compare_de_tables_info.length > i ; i++){
         // if(compare_de_tables_info[i].title === compare_de_title.value){
         const headers = [];
         for(let j = 0 ; compare_de_tables_info[i].headers.length > j; j++){
-          let header = '';
-          const headerIndex = compare_de_tables_info[i].headers[j].indexOf('LSMean');
-          if(headerIndex > -1){
-            header = compare_de_tables_info[i].headers[j];
-          }else{
-            header = compare_de_tables_info[i].headers[j].split(/\(/)[0];
-          };
+          let header = compare_de_tables_info[i].headers[j].split(/\(/)[0];
+          // let header = '';
+          // const headerIndex = compare_de_tables_info[i].headers[j].indexOf('LSMean');
+          // if(headerIndex > -1){
+            // header = compare_de_tables_info[i].headers[j];
+          // }else{
+            // header = compare_de_tables_info[i].headers[j].split(/\(/)[0];
+          // };
           const headerUpper = header.toUpperCase().trim();
           if(headerUpper === 'LOG2'){
             checkedUpDownIndex = j;
@@ -214,7 +218,6 @@
         for(let i = 0 ; headers.length > i ; i++){
           headersUpper.push(headers[i].toUpperCase());
         };
-        // console.log(selectP_or_Qval.value);
         const uppper_selectP_or_Qval = selectP_or_Qval.value.toUpperCase();
         let headers_P_or_Q_val = -1;
         if(uppper_selectP_or_Qval === 'P-VALUE'){
@@ -222,11 +225,6 @@
         }else if(uppper_selectP_or_Qval === 'Q-VALUE'){
           headers_P_or_Q_val = headersUpper.indexOf("FDR STEP UP")
         }
-        if(headers_P_or_Q_val === -1){
-          console.log('error headers_P_or_Q_val')
-        };
-        console.log(headers_P_or_Q_val, 'headers_P_or_Q_val')
-        // const headers_P_or_Q_val = headersUpper.indexOf('P-VALUE');
         const headers_log2_Ratio = headersUpper.indexOf('LOG2RATIO');
         const headers_ratio = headersUpper.indexOf('RATIO');
         const headers_Geneid = headers.indexOf("Gene id");
@@ -298,12 +296,8 @@
           })
         }
       }
-      // console.log(questionMark, 'questionMark')
       reject("dont't read")
     }).then(async(response) => {
-      
-      // console.log(response.body, 'response.body');
-      // console.log(response.headers, 'response.headers')
       tableComponentInfo.headers = response.headers;
       tableComponentInfo.body = response.body;
       // tableComponentInfo.value = await response;
