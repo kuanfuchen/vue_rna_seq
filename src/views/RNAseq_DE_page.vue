@@ -36,9 +36,10 @@
           </v-row>
           <v-row no-gutters>
             <v-col cols="3">
-              <v-sheet class="pa-2 ma-2">
+              <v-sheet class="mr-3">
                 <p class="font-weight-bold text-right">
-                  Log2 Fold Change Lower bound / Upper bound
+                  Log2 Fold Change <br />
+                  Lower bound / Upper bound
                   <!-- log2FC Lower bound (-{{ log2V_model_val }}~0) / Upper bound (0~{{ log2V_model_val }}) -->
                 </p>
               </v-sheet>
@@ -54,7 +55,7 @@
               <!-- @update:modelValue="changed_RNAseq_DataInfo" -->
             </v-col>
           </v-row>
-          <v-row no-gutters>
+          <v-row no-gutters class="mt-3">
             <v-col cols="3"></v-col>
             <v-col cols="2">
               <v-btn  color="indigo-darken-3" class="text-none" style="width:100%" @click="changed_RNAseq_DataInfo">Enter</v-btn>
@@ -71,18 +72,19 @@
               </div>
             </v-col>
             <v-col :cols="12">
-              <div >
-                <!-- v-if="handleDataIF" -->
-                <div class="d-flex align-self-center py-1">
+              <v-card>
+                <template v-slot:title>
                   <p class="text-h6 my-2 text-teal" style="font-weight: 700;">Difference Expression RNA-seq Table</p>   
-                </div>
-                <div class="d-flex justify-space-between">
-                  <p class="mb-2" style="font-weight: 700;font-size: 18px;">
-                    {{ compare_de_title }}
-                  </p>
-                </div>
-                <DisplayTable :table="tableComponentInfo" :useSearch="true"  @select_RNAseq_name="tableSelected_RNAseq_name"></DisplayTable>
-              </div>
+                </template>
+                <v-card-text>
+                  <div class="d-flex justify-space-between">
+                    <p class="mb-2 ml-2" style="font-weight: 700;font-size: 18px;">
+                      {{ compare_de_title }}
+                    </p>
+                  </div>
+                  <DisplayTable :table="tableComponentInfo" :useSearch="true"  @select_RNAseq_name="tableSelected_RNAseq_name"></DisplayTable>
+                </v-card-text>
+              </v-card>
             </v-col>
           </v-row>
         </v-card-text>
@@ -188,7 +190,6 @@
       const log2Up = log2_UpperBound.value; 
       const log2Low = log2_LowerBound.value;
       let questionMark = 0;
-      console.log(compare_de_tables_info, 'compare_de_tables_info')
       for(let i = 0 ; compare_de_tables_info.length > i ; i++){
         // if(compare_de_tables_info[i].title === compare_de_title.value){
         const headers = [];
@@ -300,6 +301,7 @@
     }).then(async(response) => {
       tableComponentInfo.headers = response.headers;
       tableComponentInfo.body = response.body;
+      console.log(tableComponentInfo, 'tableComponentInfo')
       // tableComponentInfo.value = await response;
       // for(let i = 0;response.headers.length > i ;i++){
       //   tableComponentInfo.headers.push(response.headers[i])

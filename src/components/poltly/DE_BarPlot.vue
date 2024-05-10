@@ -1,6 +1,13 @@
 <template>
   <div >
     <div>
+      <div class="ml-5" style="font-weight: 700;font-size: 14px;">
+        <p class="text-h6 text-teal" style="font-weight: 700;">Bar Plot</p>
+        <!-- <div class="" style="height:50px"></div> -->
+        <p>Total filtered RNA-seq: {{ total_position_number }}</p>
+        <p style="color:#EF5350;margin-left:90px">UP: {{ positive_position_number }}</p>
+        <p style="color:#1976D2;margin-left:90px">Down: {{ negative_position_number }}</p>
+      </div>
       <div id="de_bar_plot" :style="{'height':plot_height + 'vh'}"></div>
     </div>
     
@@ -10,7 +17,10 @@
   import Plotly from 'plotly.js-dist-min';
   import { imageCapture} from '../../utils/image_download';
   import { watch, ref } from 'vue';
-  const plot_height = ref(30)
+  const plot_height = ref(30);
+  const positive_position_number = ref(0);
+  const negative_position_number = ref(0);
+  const total_position_number = ref(0);
   const props = defineProps(['de_bar_plot_data']);
   const layout = {
     // height:definedProps.plot_size.height,
@@ -39,7 +49,11 @@
         color:['red','blue']
       }
     }];
-    plot_height.value= de_bar_plot_data.height;
+    const _barHeight = de_bar_plot_data.height / 100;
+    plot_height.value= Math.ceil((window.innerHeight * _barHeight - 95 ) / window.innerHeight * 100);
+    positive_position_number.value = de_bar_plot_data.positive;
+    negative_position_number.value = de_bar_plot_data.neightive;
+    total_position_number.value = de_bar_plot_data.positive + de_bar_plot_data.neightive;
     setTimeout(()=>{
       Plotly.newPlot(de_bar_plot, de_bar_data, layout, plotConfig );
     })

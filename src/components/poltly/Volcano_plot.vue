@@ -14,34 +14,34 @@
           <v-icon icon="fa:far fa-square mr-5"></v-icon>
         </div>
       </div> -->
-      
     </div>
-    <v-row no-gutters class="d-flex justify-space-between mt-1">
+    <v-row class="d-flex justify-space-between mt-1">
       <v-col :cols="contentCols">
-        <div class="ml-5" style="font-weight: 700;font-size: 14px;">
-          <p class="text-h6 text-teal" style="font-weight: 700;">Bar Plot</p>
-          <p>Total filtered miRNA: {{ total_position_number }}</p>
-          <p style="color:#EF5350;margin-left:90px">UP: {{ positive_position_number }}</p>
-          <p style="color:#1976D2;margin-left:90px">Down: {{ negative_position_number }}</p>
-        </div>
-        <DE_Bar_Plot :de_bar_plot_data="deBarPlotData"></DE_Bar_Plot>
+        <v-card >
+          <v-card-text>
+            <DE_Bar_Plot :style="{'height':plot_bar_height + 'vh'}" :de_bar_plot_data="deBarPlotData"></DE_Bar_Plot>
+          </v-card-text>
+        </v-card>
       </v-col>
       <v-col :cols="contentCols">
-        <div class="d-flex justify-space-between mt-1">
-          <!-- <div class="ml-5" style="font-weight: 700;font-size: 14px;">
-            <p>Total filtered miRNA: {{ total_position_number }}</p>
-            <p style="color:#EF5350;margin-left:90px">UP: {{ positive_position_number }}</p>
-            <p style="color:#1976D2;margin-left:90px">Down: {{ negative_position_number }}</p>
-          </div> -->
-          <p class="text-h6 ml-3 text-teal" style="font-weight: 700;">Volcano Plot</p>
-          <div class="download_xlsx" @click="toogle_Plot_Screen = true">
-            <v-icon icon="fa:fas fa-expand mr-5"></v-icon>
-          </div>
-        </div>
-          <div class="mt-3" :style="{'height':plot_height + 'vh'}" id="displatVolcanoPlot"></div>
+        <v-card>
+          <v-card-text>
+            <div class="d-flex justify-space-between mt-1">
+            <!-- <div class="ml-5" style="font-weight: 700;font-size: 14px;">
+              <p>Total filtered miRNA: {{ total_position_number }}</p>
+              <p style="color:#EF5350;margin-left:90px">UP: {{ positive_position_number }}</p>
+              <p style="color:#1976D2;margin-left:90px">Down: {{ negative_position_number }}</p>
+            </div> -->
+              <p class="text-h6 ml-3 text-teal" style="font-weight: 700;">Volcano Plot</p>
+              <div class="download_xlsx" @click="toogle_Plot_Screen = true">
+                <v-icon icon="fa:fas fa-expand mr-5"></v-icon>
+              </div>
+            </div>
+            <div class="mt-3" :style="{'height':plot_height + 'vh'}" id="displatVolcanoPlot"></div>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
-    
     <v-dialog v-model="toogle_Plot_Screen"  width="90vw" >
       <v-card class="bg-white" style="overflow-y: hidden;">
         <v-card-text >
@@ -85,6 +85,7 @@
   const removePlotHeight = ref(650);
   const contentCols = ref(6);
   const plot_height = ref(30);
+  const plot_bar_height = ref(30);
   const plotConfig = {
     responsive:true, 
     displaylogo: false,
@@ -201,7 +202,6 @@
   dataFolder_RNAseq.RNAseq_DE_Folder_Info$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(deFolderData)=>{
     storagedDE_folder.info = deFolderData.info;
     storagedDE_folder.headers = deFolderData.title_Group;
-    // console.log(storagedDE_folder.info, 'storagedDE_folder.info')
     await handleDE_data();
   });
   const reMark_DE_Plot = async(num)=>{
@@ -239,7 +239,6 @@
       headersUppers.push(splitHeaders.toUpperCase().trim());
     };
     let p_or_q_value_index = -1;
-    // console.log(headersUppers, 'headersUppers')
     if(P_or_Q_value ==='P-VALUE'){
       p_or_q_value_index =  headersUppers.indexOf('P-VALUE');
     }else if( P_or_Q_value === 'Q-VALUE'){
@@ -334,11 +333,12 @@
         image_config.filename = `Volcano_plot`;
         const windowInnerheight = window.innerHeight;
         plot_height.value =  Math.ceil(( windowInnerheight - removePlotHeight.value )/ windowInnerheight * 100);
+        plot_bar_height.value = Math.ceil(( windowInnerheight - removePlotHeight.value + 46 )/ windowInnerheight * 100);
         // drawBarPlot(positive_position_number.value, negative_position_number.value);
-        deBarPlotData.value = plot_height.value;
+        deBarPlotData.height = plot_height.value;
+        console.log(deBarPlotData, 'deBarPlotData')
         deBarPlotData.positive = positive_position_number.value;
         deBarPlotData.neightive = negative_position_number.value;
-        // console.log(deBarPlotData.positive, deBarPlotData.neightive)
         setTimeout(()=>{
           if(!document.getElementById('displatVolcanoPlot')) return;
           transfer_FullScreen_data.value = {
@@ -371,7 +371,6 @@
       console.log('dont index')
       return
     }
-    console.log(change_Val, 'change_Val')
     valcanoTitle.value = change_Val.title;
     log2Upper = change_Val.log2_UpperBound;
     log2Lower = change_Val.log2_LowerBound;

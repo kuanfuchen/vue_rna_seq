@@ -62,7 +62,7 @@
           <v-col :cols="plot_cols">
             <v-card class="px-3" width="100%">
               <template v-slot:title>
-                <span class="font-weight-bold pr-3">Heatmap Plot</span>
+                <span class="font-weight-bold pr-3">Heatmap Plot (top 100 variance)</span>
               </template>
               <Dendrograms  :heatmapHeight="plot_height"></Dendrograms>
             </v-card>

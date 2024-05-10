@@ -91,8 +91,11 @@
     to:'/differenceExpression'
   },{
     value:'functionalEnrichment',
-    title:'Functional Enrichment',
+    title:'Functional Enrichment_GO',
     to:'/functionEnrichment'
-
+  },{
+    vlaue:'functionEnrichmentKEGG',
+    title:'Function Enrichment_KEGG',
+    to:'/fe_kegg'
   }];
 </script>

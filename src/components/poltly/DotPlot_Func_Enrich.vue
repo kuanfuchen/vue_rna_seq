@@ -7,18 +7,8 @@
   import {ref, watch} from 'vue';
   import Plotly from 'plotly.js-dist-min';
   const props = defineProps(['fe_Dot_Plot']);
-  // var trace1 = {
-  //   x: [1, 2, 3, 4, 5],
-  //   y: [1, 6, 3, 6, 1],
-  //   mode: 'markers',
-  //   type: 'scatter',
-  //   name: 'Team A',
-  //   text: ['A-1', 'A-2', 'A-3', 'A-4', 'A-5'],
-  //   marker: { size: 12 }
-  // };
   const layout ={
     title:'Dot Plot',
-    // barmode: 'stack'
   }
   const plotData = {
     x:[],
@@ -27,16 +17,17 @@
     mode: 'markers',
     orientation:'h',
     textposition: 'auto',
+    marker:{size:16}
   }
   const handleDotPlotInfo = (info)=>{
     const dotPlot_observeGene = document.getElementById('dotPlot_observeGene');
-    Plotly.purge(dotPlot_observeGene)
-    console.log(info, 'info')
+    Plotly.purge(dotPlot_observeGene);
     const dataKeys = Object.keys(info.data);
     const dataValues = Object.values(info.data);
+    const infoDesc = Object.values(info.desc)
     plotData.x = dataValues;
     plotData.y = dataKeys;
-    plotData.text = dataValues.map(String);
+    plotData.text = infoDesc.map(String);
     setTimeout(()=>{
       Plotly.newPlot(dotPlot_observeGene, [plotData], layout)
     })

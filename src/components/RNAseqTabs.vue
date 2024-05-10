@@ -42,8 +42,7 @@
   //   RNAseqTables.value = miRNAInfo.tabsTable;
   //   handleTableComponent(miRNAInfo.tabsTable[0]);
   // });
-  dataFolder_RNAseq.rnaseq_ReadAlignmentSubject$.pipe(takeUntil(comSubject$),debounceTime(100)).subscribe((rnaSeqReadAlignment)=>{
-    console.log(rnaSeqReadAlignment,'rnaSeqReadAlignment')
+  dataFolder_RNAseq.rnaseq_ReadAlignmentSubject$.pipe(takeUntil(comSubject$),debounceTime(100)).subscribe((rnaSeqReadAlignment) => {
     rnaseqTabs.value = rnaSeqReadAlignment.tabs;
     rnaTab.value = rnaSeqReadAlignment.tabs[0];
     RNAseqTables.value = rnaSeqReadAlignment.tabsTable;

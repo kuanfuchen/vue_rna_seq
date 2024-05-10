@@ -16,7 +16,7 @@
       <div class="d-flex align-center" v-if="definedprops.useSearch">
         <v-text-field v-if="definedprops.closeSearch !== true"
           v-model="search_RNAname_field" variant="solo-filled"
-          label="RNA ID search" hide-details style="width:250px"
+          label="RNA Name search" hide-details style="width:250px"
           single-line density="compact">
         </v-text-field>
         <v-btn class="ml-2" color="primary" @click="search_RNAname = search_RNAname_field">
@@ -189,8 +189,6 @@
               // fixed: headerSplitWord === 'GeneID' ? true : false,
             })
           }
-          
-          // console.log(headers.value)
           // const uppercaseFirst = tableInfo.headers[k].split('');
           // const getFirst = uppercaseFirst.splice(0, 1);
           // const firstcase=getFirst[0].toUpperCase();
@@ -287,7 +285,7 @@
     emits('select_RNAseq_name', []);;
   }
   const filterMiRNA = (val, query, item)=>{
-    return val != null && query != null && typeof val === 'string'&& item.columns.GeneID.indexOf(query) !==-1&& val.toString().toLocaleUpperCase().indexOf(query) !== -1
+    return val != null && query != null && typeof val === 'string'&& item.columns.GeneIDGeneName.indexOf(query) !==-1&& val.toString().toLocaleUpperCase().indexOf(query) !== -1
   };
   watch(definedprops.table,(/*newTble*/)=>{
     headers.value.length = 0;

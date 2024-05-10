@@ -127,7 +127,6 @@ const displayRNAseqTable = ()=>{
   }
   tableComponentInfo.value.headers = tableHeader_RNA_seq;
   tableComponentInfo.value.body = displayTableArr;
-  console.log(displayTableArr, 'displayTableArr');
   setTimeout(()=>{ dataTableLoading.value = false; },2000)
 }
 const exportXlsxFile = ()=>{

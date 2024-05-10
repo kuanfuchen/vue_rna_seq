@@ -4,7 +4,10 @@
       <template v-slot:title>
         <p class="text-h4 text-teal">Function Enrichment Analysis</p>
       </template>
-      <v-card-text>
+      <v-card-text class="mt-3">
+        <p>
+          {{ dispalyCondition }}
+        </p>
         <div class="d-flex">
           <div class="px-3" style="width:30vw">
             <v-select label="Select Regular" :items="['UP','DOWN']" 
@@ -25,7 +28,7 @@
           <!-- <v-checkbox v-model="KEGG" label="KEGG" class="mx-1"></v-checkbox>
           <v-checkbox v-model="pubMed" label="PubMed" class="mx-1"></v-checkbox> -->
         </div>
-        <div class="">
+        <div>
           <v-btn color="indigo-darken-3" class="text-none" @click="handleFunctionEnrichment" >Enter</v-btn>
         </div>
       </v-card-text>
@@ -51,13 +54,14 @@
   import { Subject, takeUntil, debounceTime } from 'rxjs';
   import { papaDate } from '../../service/papaResolve_getData';
   import { ref, reactive } from 'vue';
-  import FeTable from '../../components/table/Function_Enrichment.vue';
+  import FeTable from '../../components/table/Function_EnrichmentTable.vue';
   import BarPlot_FE from '../../components/poltly/BarPlot_Fun_Enrich.vue';
   import DotPlot_FE from '../../components/poltly/DotPlot_Func_Enrich.vue';
   const checkAll = ref(false);
   const MF = ref(true);
   const BP = ref(false);
   const CC = ref(false);
+  const dispalyCondition = ref('q-value <= 0.05, -1 <= log2 fold change < =1')
   // const KEGG = ref(false);
   // const pubMed = ref(false);
   const selectRegular = ref('UP');
@@ -67,12 +71,14 @@
   const data_obseredGeneCollect = reactive({
     data:{},
     items:[],
-    FDR:{}
+    FDR:{},
+    desc:{},
   });
   const data_StrengthCollect = reactive({
     data:{},
     items:[],
-    FDR:{}
+    FDR:{},
+    desc:{},
   });
   const feTableBody = reactive({items:[], data:[]});
   let functionEnrichData = [];
@@ -98,8 +104,9 @@
     // KEGG.value = ev;
     // pubMed.value = ev;
   }
-  const pushTableInfo = (data, arr)=>{
+  const pushTableInfo = (data, arr, category) => {
     for(let i = 0 ; data.length > i ; i++){
+      if(Object.keys(data[i]).length > 1) data[i].category = category;
       arr.push(data[i]);
     }
   }
@@ -116,23 +123,25 @@
     const obseredGeneCollect = {};
     const strengthCollect = {};
     const geneFDR = {};
+    const desc_RNA_seq = {};
     data_obseredGeneCollect.data = {};
+    data_obseredGeneCollect.FDR = {};
+    data_obseredGeneCollect.desc = {};
+    data_StrengthCollect.desc = {};
+    data_StrengthCollect.data = {};
+    data_StrengthCollect.FDR = {};
     if(MF.value){
-      await pushTableInfo(selectRegularData.MF.data, exportTableInfo)
+      await pushTableInfo(selectRegularData.MF.data, exportTableInfo,'MF')
       selectItem.push('MF');
     }
     if(BP.value){
-      await pushTableInfo(selectRegularData.BP.data, exportTableInfo)
+      await pushTableInfo(selectRegularData.BP.data, exportTableInfo,'BP')
       selectItem.push('BP');
     }
     if(CC.value){
-      await pushTableInfo(selectRegularData.CC.data, exportTableInfo);
+      await pushTableInfo(selectRegularData.CC.data, exportTableInfo,'CC');
       selectItem.push('CC');
     }
-    // if(KEGG.value){
-    //   await pushTableInfo(selectRegularData.KEGG.data, exportTableInfo)
-    //   selectItem.push('KEGG');
-    // }
     // if(pubMed.value){
     //   await pushTableInfo(selectRegularData.pubMed.data, exportTableInfo);
     //   selectItem.push('pubMed');
@@ -143,36 +152,36 @@
     })
     feTableBody.items = selectItem;
     feTableBody.data = exportTableInfo;
-    console.log(exportTableInfo, 'exportTableInfo')
+    feTableBody.regulation = selectRegular.value;
     for(let i = 0 ; exportTableInfo.length > i ;i++){
       if(!obseredGeneCollect[exportTableInfo[i]['#term ID']]) obseredGeneCollect[exportTableInfo[i]['#term ID']] = exportTableInfo[i]['observed gene count'];
       if(!strengthCollect[exportTableInfo[i]['#term ID']])strengthCollect[exportTableInfo[i]['#term ID']] = exportTableInfo[i].strength;
-      if(!geneFDR[exportTableInfo[i]['#term ID']])geneFDR[exportTableInfo[i]['#term ID']] = exportTableInfo[i]['false discovery rate'];
+      if(!desc_RNA_seq[exportTableInfo[i]['#term ID']])desc_RNA_seq[exportTableInfo[i]['#term ID']] = exportTableInfo[i]['term description'];
+      if(!geneFDR[exportTableInfo[i]['#term ID']]){
+        const log10_FDR = Math.log10(Number(exportTableInfo[i]['false discovery rate'])) * -1;
+        geneFDR[exportTableInfo[i]['#term ID']] = log10_FDR;
+        // geneFDR[exportTableInfo[i]['#term ID']] = exportTableInfo[i]['false discovery rate']
+      };
     }
     const obseredGeneCollect_keys = Object.keys(obseredGeneCollect);
-
     for(let i = 0 ; obseredGeneCollect_keys.length > i ; i++){
       if(i < displayBarNum.value){
         if(!data_obseredGeneCollect.data[obseredGeneCollect_keys[i]]){
           data_obseredGeneCollect.data[obseredGeneCollect_keys[i]] = obseredGeneCollect[obseredGeneCollect_keys[i]];
           data_obseredGeneCollect.FDR[obseredGeneCollect_keys[i]] = geneFDR[obseredGeneCollect_keys[i]];
+          data_obseredGeneCollect.desc[obseredGeneCollect_keys[i]] = desc_RNA_seq[obseredGeneCollect_keys[i]]
         }
         if(!data_StrengthCollect.data[obseredGeneCollect_keys[i]]){
           data_StrengthCollect.data[obseredGeneCollect_keys[i]] = strengthCollect[obseredGeneCollect_keys[i]];
           data_StrengthCollect.FDR[obseredGeneCollect_keys[i]] = geneFDR[obseredGeneCollect_keys[i]];
+          data_StrengthCollect.desc[obseredGeneCollect_keys[i]] = desc_RNA_seq[obseredGeneCollect_keys[i]]
         }
         // if(!data_obseredGeneCollect.FDR[obseredGeneCollect_keys[i]]{
           // data_obseredGeneCollect.FDR[obseredGeneCollect_keys[i] =
         // })
       }
     }
-    console.log(data_obseredGeneCollect, 'data_obseredGeneCollect')
-    console.log(data_StrengthCollect, 'data_StrengthCollect')
-    // data_obseredGeneCollect.data = obseredGeneCollect;
     data_obseredGeneCollect.items = selectItem;
-    // // data_obseredGeneCollect.FDR = geneFDR;
     data_StrengthCollect.items = selectItem;
-    // data_StrengthCollect.data = strengthCollect;
-    // data_StrengthCollect.FDR = geneFDR;
   }
 </script>

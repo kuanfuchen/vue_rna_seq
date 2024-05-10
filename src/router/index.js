@@ -10,29 +10,34 @@ const routes = [
         component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
       },
       {
-        path:'workflowInfo',
+        path:'/workflowInfo',
         name:'workflowInfo',
         component: () => import('@/views/WorkflowInfo.vue')
       },
       {
-        path: 'readAlignment',
+        path: '/readAlignment',
         name:'ReadAlignment',
         component: () => import('@/views/ReadPage.vue')
       },
       {
-        path: 'visualization',
+        path: '/visualization',
         name:'Visualization',
         component: () => import('@/views/VisualizationPage.vue')
       },
       {
-        path: 'differenceExpression',
+        path: '/differenceExpression',
         name:'DifferenceExpression',
         component: () => import('@/views/RNAseq_DE_page.vue')
       },
       {
-        path:'functionEnrichment',
+        path:'/functionEnrichment',
         name:'FunctionEnrichment',
         component: () => import('@/views/funEnrich/FunctionalEnrichment.vue')
+      },
+      {
+        path:'/fe_kegg',
+        name:'FunctionEnrichmentKEGG',
+        component: () => import('@/views/funEnrich/Fun_Enrich_KEGG.vue')
       },
       {
         path:'/:catchAll(.*)',
@@ -46,6 +51,7 @@ const routes = [
       // }
     ],
   },
+  
 ]
 const router = createRouter({
   // history: createWebHistory(process.env.BASE_URL),
