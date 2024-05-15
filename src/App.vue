@@ -23,23 +23,12 @@
 // export default defineComponent({
 //   name: 'App'
 // })
-// import Textraw from './assets/miRNA-seq/Bowtie2/00. QC (Trim adaptor & Trim base)/01. Raw reads/pre_alignment_qaqc.txt?raw';
 onMounted(async() => {
   await dataFolder_RNAseq.handleRNAseqQCReadAlignmentfolder();
   await dataFolder_RNAseq.rnaSeq_handleRawReads_normalizedCounts();
   await dataFolder_RNAseq.handleRNAseq_CPM_PCA();
   await dataFolder_RNAseq.handled_RNAseq_DE();
-  await dataFolder_RNAseq.papaLoadFile();
-  await papaDate.handleFunctionalAnalysis()
-  // 
-  // await dataService.handleProject();
-  // await dataService.handleQCReadAlignmentfolder();
-  // await dataService.handleRawReadsFolder();
-  // await dataService.handle_CPM_PCA();
-  
-
-  // await dataService.handleDE_Folder();
-
+  await papaDate.handleFunctionalAnalysis();
 });
 </script>
 <style lang="scss">

@@ -5,16 +5,24 @@
       :items="feTableBody" height="800" item-value="#term ID" :items-per-page-options="pageItemsOptions"
       >
       <template v-slot:header.matching_proteins_in_your_network_labels="{ column }">
-        {{ column.title }} ({{ regulate }})
+        {{ column.title }} 
+        <span :style="{color:regulate==='UP'?'red':'blue'}">
+          ({{ regulate.toLowerCase() }})
+        </span> 
       </template>
       <template  v-slot:item.term_ID="{item}">
         <div class="d-flex">
-          <p class="align-self-start">{{ item.term_ID }}</p>
+          <p class="align-self-start" >{{ item.term_ID }}</p>
+        </div>
+      </template>
+      <template v-slot:item.observed_gene_count="{item}">
+        <div :style="{color:regulate === 'UP' ? 'red' : 'blue' }">
+          {{ item.observed_gene_count }}
         </div>
       </template>
       <template v-slot:item.matching_proteins_in_your_network_labels="{ item }"  >
 
-        <div class="my-1">
+        <div class="my-1" :style="{color:regulate === 'UP' ? 'red' : 'blue' }">
           <span class="" v-for="(ii, key) in item.matching_proteins_in_your_network_labels" :key="key">
             <span v-if="toogleLabels[item['#term ID']]? key > 0 : key < 10">{{ ii }}
               <span class="mr-1" v-if="toogleLabels[item['#term ID']] ? key>0 && key < item.matching_proteins_in_your_network_labels.length - 1: key < 9">,</span> </span>
@@ -41,7 +49,7 @@
   {key:'category', title:'Category',align:'center',sortable:true},
   {key: 'term_ID', title: '#Term ID', align: 'start', sortable: true},
   {key: 'term description', title: 'Term description', align: 'center', sortable: true},
-  {key: 'observed gene count', title: 'Observed gene count', align: 'center', sortable: true},
+  {key: 'observed_gene_count', title: 'Observed gene count', align: 'center', sortable: true},
   {key: 'background gene count', title: 'Background gene count', align: 'center', sortable: true},
   {key: 'strength', title: 'Strength', align: 'center', sortable: true},
   {key: 'false discovery rate', title: 'False discovery rate', align: 'center', sortable: true},
@@ -71,6 +79,9 @@ const regulate = ref('UP');
       if(!changeStyle[i]['matching_proteins_in_your_network_labels']){
         changeStyle[i]['matching_proteins_in_your_network_labels'] = changeStyleArr;
         // changeStyle[i]['matching_proteins_in_your_network_labels'] = changeStyle[i]['matching proteins in your network (labels)'];
+      }
+      if(!changeStyle[i]['observed_gene_count']){
+        changeStyle[i]['observed_gene_count'] = changeStyle[i]['observed gene count'];
       }
     }
     feTableBody.value = changeStyle;

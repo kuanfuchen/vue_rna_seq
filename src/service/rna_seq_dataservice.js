@@ -136,17 +136,12 @@ const handled_RNAseq_DE = async() =>{
   }
   _RNAseq_DE_Folder_Info$.next({'title_Group': compare_RNAseq_name, 'info': de_txtTableInfo})
 };
-const papaLoadFile = ()=>{
-  // console.log(down_Bio_Process, 'down_Bio_Process')
-  
-}
 export const dataFolder_RNAseq = {
   handleRNAseqQCReadAlignmentfolder,
   rnaSeq_handleRawReads_normalizedCounts,
   handleRNAseq_CPM_PCA,
   exportXlsx,
   handled_RNAseq_DE,
-  papaLoadFile,
   rnaseq_ReadAlignmentSubject$: _RNAseq_ReadAlignmentSubject$.asObservable(),
   RNAseq_handleRawReadsFolder$:_RNAseq_handleRawReadsFolder$.asObservable(),
   RNAseq_scatter_Plot$:_RNAseq_scatter_Plot$.asObservable(),

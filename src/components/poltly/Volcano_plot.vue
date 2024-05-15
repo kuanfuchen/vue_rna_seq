@@ -95,9 +95,9 @@
   }
   const valcanoTitle = ref('');
   const deBarPlotData = reactive({
-    positive:0,
-    neightive:0,
-    height:0
+    positive: 0,
+    neightive: 0,
+    height: 0
   });
   const volcano_plot_plotlyjs_data = {
     x: [],
@@ -106,6 +106,10 @@
     type: 'scatter',
     name: '',
     text: [],
+    textfont :{
+      size:14,
+      weight:"bold"
+    },
     marker: { 
       size: 6,
       color:'#EF5350',//1976D2
@@ -118,6 +122,10 @@
     type: 'scatter',
     name: '',
     text: [],
+    textfont :{
+      size:14,
+      weight:"bold"
+    },
     marker: { 
       size: 6,
       color:'#1976D2',//26A69A
@@ -131,7 +139,10 @@
     type: 'scatter',
     name: '',
     text: [],
-    
+    textfont :{
+      size:14,
+      weight:"bold"
+    },
     marker: { 
       size: 6,
       color:'#B0BEC5'
@@ -144,8 +155,12 @@
     type: 'scatter',
     name: '',
     text: [],
+    textfont :{
+      size:14,
+      weight:"bold"
+    },
     textposition:'bottom',
-    marker: { 
+    marker: {
       size: 6,
       color:[]
       // color:'#EF5350',//1976D2
@@ -336,7 +351,6 @@
         plot_bar_height.value = Math.ceil(( windowInnerheight - removePlotHeight.value + 46 )/ windowInnerheight * 100);
         // drawBarPlot(positive_position_number.value, negative_position_number.value);
         deBarPlotData.height = plot_height.value;
-        console.log(deBarPlotData, 'deBarPlotData')
         deBarPlotData.positive = positive_position_number.value;
         deBarPlotData.neightive = negative_position_number.value;
         setTimeout(()=>{
@@ -359,12 +373,6 @@
     // deTableSize.value = changedTableHeight;
     plot_height.value = changePlotHeight;
   }
-  // const drawBarPlot = (positive_position_number, negative_position_number) => {
-  //   const de_bar_plot = document.getElementById('de_bar_plot')
-  //   setTimeout(()=>{
-  //     const data = 
-  //   })
-  // };
   watch(props.change_volcano_plot, (change_Val)=>{
     const titleIndex = storagedDE_folder.headers.indexOf(change_Val.title);
     if(titleIndex === -1){

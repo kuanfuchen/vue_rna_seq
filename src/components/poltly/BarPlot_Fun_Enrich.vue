@@ -6,23 +6,34 @@
 <script setup>
 import { ref, watch } from 'vue';
 import Plotly from 'plotly.js-dist-min';
+import {image_config, imageCapture} from '../../utils/image_download';
 const props = defineProps(['fe_obsergene_data']);
 const layout = {
   title: 'Bar Plot',
+  xaxis:{title:{ text:'Observed gene count',font:{size:14,weight:'bold'}}},
   // 
   showlegend: false,
+  hovermode:'closest',
+  yaxis:{
+    tickformat:'none',
+    tickmode: 'array',
+  }
   // barmode: 'stack',
   // annotations:[],
 };
 const plotData = {
   x: [],
   y: [],
+  z:[],
   type: 'bar',
   orientation:'h',
-  // textposition: 'auto',
-  hoverinfo: 'x+y',
+  textposition: 'none',
+  hoverinfo: 'x+y+text',
   text: [],
+  mode: 'markers',
   marker: {
+    colorscale:'RdBu',
+    colorbar:{},
     color: 'rgb(158,202,225)',
     opacity: 0.6,
     line: {
@@ -30,31 +41,44 @@ const plotData = {
       width: 1.5
     }
   },
-  line:{
-    showscale:true
-  }
+  // line:{
+  //   showscale:true
+  // }
 };
-
+const plotConfig = {
+  responsive:true, 
+  displaylogo: false,
+  modeBarButtonsToRemove: ['pan2d','select2d','lasso2d','zoom','toImage'],
+  modeBarButtonsToAdd:[imageCapture],
+  displayModeBar: true
+};
 const handlePlotInfo = (info)=>{
   const observeGenePlot = document.getElementById('observeGenePlot');
-  console.log(info,'info')
   Plotly.purge(observeGenePlot);
-  const infoKeys = Object.keys(info.data);
-  const infoValues = Object.values(info.data);
-  // const infoDesc = Object.values(info.desc)
-  // const infoVal = Object.entries(info.data);
-  const infoFDR =  Object.values(info.FDR);
-  const caluFDR = [];
-  infoFDR.forEach((item) => caluFDR.push(Number(item)*1000000));
-  plotData.y = infoKeys;
-  plotData.x = infoValues;
-  // plotData.text = infoDesc.map(String);
+  const infoArr = info;
+  const color = [];
+  const plotX = [];
+  const plotY = [];
+  const plotDesc = []
+  const sortInfoArr = infoArr.sort((a,b)=>{if( b.data > a.data)return -1});
+  for(let i = 0 ; sortInfoArr.length > i ; i++){
+    plotY.push(sortInfoArr[i].name);
+    plotX.push(sortInfoArr[i].data);
+    color.push(sortInfoArr[i].FDR);
+    plotDesc.push(sortInfoArr[i].desc);
+  }
+
+  plotData.y = plotY;
+  plotData.x = plotX;
+  plotData.marker.color = color;
+  plotData.text = plotDesc;
+  layout.yaxis.tickvals = plotY;
   setTimeout(()=>{
-    Plotly.newPlot(observeGenePlot, [plotData], layout);
+    Plotly.newPlot(observeGenePlot, [plotData], layout, plotConfig);
   })
 }
 watch(props.fe_obsergene_data,(newVal)=>{
-  if( !newVal.data || Object.keys(newVal.data).length === 0) return;
+  if( newVal.length === 0) return;
   handlePlotInfo(newVal);
 })
 </script>

@@ -4,8 +4,8 @@
       <template v-slot:title>
         <p class="text-h4 text-teal">Function Enrichment Analysis</p>
       </template>
-      <v-card-text class="mt-3">
-        <p>
+      <v-card-text>
+        <p class="mb-2 pl-4 py-2" style="background: #90CAF9;border-radius: 5px;">
           {{ dispalyCondition }}
         </p>
         <div class="d-flex">
@@ -29,7 +29,7 @@
           <v-checkbox v-model="pubMed" label="PubMed" class="mx-1"></v-checkbox> -->
         </div>
         <div>
-          <v-btn color="indigo-darken-3" class="text-none" @click="handleFunctionEnrichment" >Enter</v-btn>
+          <v-btn color="indigo-darken-3" class="text-none ml-3" @click="handleFunctionEnrichment" >Enter</v-btn>
         </div>
       </v-card-text>
       <v-card-text>
@@ -68,18 +68,8 @@
   const displayBarNum = ref(10);
   const comSubject$ = new Subject();
   const headers = reactive([]);
-  const data_obseredGeneCollect = reactive({
-    data:{},
-    items:[],
-    FDR:{},
-    desc:{},
-  });
-  const data_StrengthCollect = reactive({
-    data:{},
-    items:[],
-    FDR:{},
-    desc:{},
-  });
+  const data_obseredGeneCollect = reactive([]);
+  const data_StrengthCollect = reactive([]);
   const feTableBody = reactive({items:[], data:[]});
   let functionEnrichData = [];
   papaDate.papaFun_enrichment$.pipe(takeUntil(comSubject$),debounceTime(300)).subscribe(async(papaData) => {
@@ -124,12 +114,8 @@
     const strengthCollect = {};
     const geneFDR = {};
     const desc_RNA_seq = {};
-    data_obseredGeneCollect.data = {};
-    data_obseredGeneCollect.FDR = {};
-    data_obseredGeneCollect.desc = {};
-    data_StrengthCollect.desc = {};
-    data_StrengthCollect.data = {};
-    data_StrengthCollect.FDR = {};
+    data_obseredGeneCollect.length = 0;
+    data_StrengthCollect.length = 0;
     if(MF.value){
       await pushTableInfo(selectRegularData.MF.data, exportTableInfo,'MF')
       selectItem.push('MF');
@@ -153,6 +139,7 @@
     feTableBody.items = selectItem;
     feTableBody.data = exportTableInfo;
     feTableBody.regulation = selectRegular.value;
+
     for(let i = 0 ; exportTableInfo.length > i ;i++){
       if(!obseredGeneCollect[exportTableInfo[i]['#term ID']]) obseredGeneCollect[exportTableInfo[i]['#term ID']] = exportTableInfo[i]['observed gene count'];
       if(!strengthCollect[exportTableInfo[i]['#term ID']])strengthCollect[exportTableInfo[i]['#term ID']] = exportTableInfo[i].strength;
@@ -166,22 +153,19 @@
     const obseredGeneCollect_keys = Object.keys(obseredGeneCollect);
     for(let i = 0 ; obseredGeneCollect_keys.length > i ; i++){
       if(i < displayBarNum.value){
-        if(!data_obseredGeneCollect.data[obseredGeneCollect_keys[i]]){
-          data_obseredGeneCollect.data[obseredGeneCollect_keys[i]] = obseredGeneCollect[obseredGeneCollect_keys[i]];
-          data_obseredGeneCollect.FDR[obseredGeneCollect_keys[i]] = geneFDR[obseredGeneCollect_keys[i]];
-          data_obseredGeneCollect.desc[obseredGeneCollect_keys[i]] = desc_RNA_seq[obseredGeneCollect_keys[i]]
-        }
-        if(!data_StrengthCollect.data[obseredGeneCollect_keys[i]]){
-          data_StrengthCollect.data[obseredGeneCollect_keys[i]] = strengthCollect[obseredGeneCollect_keys[i]];
-          data_StrengthCollect.FDR[obseredGeneCollect_keys[i]] = geneFDR[obseredGeneCollect_keys[i]];
-          data_StrengthCollect.desc[obseredGeneCollect_keys[i]] = desc_RNA_seq[obseredGeneCollect_keys[i]]
-        }
-        // if(!data_obseredGeneCollect.FDR[obseredGeneCollect_keys[i]]{
-          // data_obseredGeneCollect.FDR[obseredGeneCollect_keys[i] =
-        // })
+        data_obseredGeneCollect.push({
+          name:obseredGeneCollect_keys[i],
+          data:Number(obseredGeneCollect[obseredGeneCollect_keys[i]]),
+          FDR:geneFDR[obseredGeneCollect_keys[i]],
+          desc:desc_RNA_seq[obseredGeneCollect_keys[i]]
+        });
+        data_StrengthCollect.push({
+          name:obseredGeneCollect_keys[i],
+          data:Number(strengthCollect[obseredGeneCollect_keys[i]]),
+          FDR:geneFDR[obseredGeneCollect_keys[i]],
+          desc:desc_RNA_seq[obseredGeneCollect_keys[i]]
+        })
       }
     }
-    data_obseredGeneCollect.items = selectItem;
-    data_StrengthCollect.items = selectItem;
   }
 </script>

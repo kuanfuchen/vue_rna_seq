@@ -5,7 +5,7 @@
         <p class="text-h4 text-teal">Function Enrichment KEGG Analysis</p>
       </template>
       <v-card-text>
-        <p>
+        <p class="mb-2 pl-4 py-2" style="background: #90CAF9;border-radius: 5px;">
           {{ dispalyCondition }}
         </p>
         <div class="d-flex mt-3">
@@ -56,18 +56,8 @@
   // const KEGG = ref(false);
   const select_kegg_Regular = ref('UP');
   const display_KEGG_BarNum = ref(10);
-  const data_KEGG_obseredGeneCollect = reactive({
-    data:[],
-    items:['KEGG'],
-    FDR:{},
-    desc:{}
-  });
-  const data_KEGG_strengthCollect = reactive({
-    data:{},
-    items:['KEGG'],
-    FDR:{},
-    desc:{}
-  })
+  const data_KEGG_obseredGeneCollect = reactive([]);
+  const data_KEGG_strengthCollect = reactive([])
   const kegg_headers = reactive([]);
   const fe_KEGG_TableBody = reactive({items:[], data:[]});
   let fe_KEGG_Table = [];
@@ -90,13 +80,10 @@
   const handleFe_KEGG = async()=>{
     fe_KEGG_TableBody.items.length = 0;
     fe_KEGG_TableBody.data.length = 0;
-    data_KEGG_obseredGeneCollect.data = {};
-    data_KEGG_obseredGeneCollect.FDR = {};
-    data_KEGG_obseredGeneCollect.desc = {};
-    data_KEGG_strengthCollect.data = {};
-    data_KEGG_strengthCollect.FDR = {};
-    data_KEGG_strengthCollect.desc = {};
+    data_KEGG_obseredGeneCollect.length = 0;
+    data_KEGG_strengthCollect.length = 0;
     const tableInfo = [];
+    fe_KEGG_TableBody.regulation = select_kegg_Regular.value;
     // fe_KEGG_Table.data = data
     const selectArrow = select_kegg_Regular.value.toLowerCase();
     const selectedTableData = fe_KEGG_Table.data[selectArrow]['KEGG'].data;
@@ -117,22 +104,27 @@
     for(let i = 0; tableInfo.length > i ; i++){
       if(!obseredGeneCollect_KEGG[tableInfo[i]['#term ID']]) obseredGeneCollect_KEGG[tableInfo[i]['#term ID']] = tableInfo[i]['observed gene count'];
       if(!strengthCollect_KEGG[tableInfo[i]['#term ID']])strengthCollect_KEGG[tableInfo[i]['#term ID']] = tableInfo[i].strength;
-      if(!gene_KEGG_FDR[tableInfo[i]['#term ID']])gene_KEGG_FDR[tableInfo[i]['#term ID']] = tableInfo[i]['false discovery rate'];
-      if(!desc_RNA_seq_KEGG[tableInfo[i]['#term ID']]) desc_RNA_seq_KEGG[tableInfo[i]['#term ID']] = tableInfo[i].desc;
+      if(!gene_KEGG_FDR[tableInfo[i]['#term ID']]){
+        const log10_FDR = Math.log10(Number(tableInfo[i]['false discovery rate']))* -1;
+        gene_KEGG_FDR[tableInfo[i]['#term ID']] = log10_FDR;
+      };
+      if(!desc_RNA_seq_KEGG[tableInfo[i]['#term ID']]) desc_RNA_seq_KEGG[tableInfo[i]['#term ID']] = tableInfo[i]['term description'];
     }
     const obseredGeneCollect_KEGG_keys = Object.keys(obseredGeneCollect_KEGG);
     for(let i = 0 ; obseredGeneCollect_KEGG_keys.length > i ; i++){
       if(i < display_KEGG_BarNum.value){
-        if(!data_KEGG_obseredGeneCollect.data[obseredGeneCollect_KEGG_keys[i]]){
-          data_KEGG_obseredGeneCollect.data[obseredGeneCollect_KEGG_keys[i]] = obseredGeneCollect_KEGG[obseredGeneCollect_KEGG_keys[i]];
-          data_KEGG_obseredGeneCollect.FDR[obseredGeneCollect_KEGG_keys[i]] = gene_KEGG_FDR[obseredGeneCollect_KEGG_keys[i]];
-          data_KEGG_obseredGeneCollect.desc[obseredGeneCollect_KEGG_keys[i]] = desc_RNA_seq_KEGG[obseredGeneCollect_KEGG_keys[i]];
-        }
-        if(!data_KEGG_strengthCollect.data[obseredGeneCollect_KEGG_keys[i]]){
-          data_KEGG_strengthCollect.data[obseredGeneCollect_KEGG_keys[i]] = strengthCollect_KEGG[obseredGeneCollect_KEGG_keys[i]];
-          data_KEGG_strengthCollect.FDR[obseredGeneCollect_KEGG_keys[i]] = gene_KEGG_FDR[obseredGeneCollect_KEGG_keys[i]];
-          data_KEGG_strengthCollect.desc[obseredGeneCollect_KEGG_keys[i]] = desc_RNA_seq_KEGG[obseredGeneCollect_KEGG_keys[i]];
-        }
+        data_KEGG_obseredGeneCollect.push({
+          name:obseredGeneCollect_KEGG_keys[i],
+          data:Number(obseredGeneCollect_KEGG[obseredGeneCollect_KEGG_keys[i]]),
+          FDR:gene_KEGG_FDR[obseredGeneCollect_KEGG_keys[i]],
+          desc:desc_RNA_seq_KEGG[obseredGeneCollect_KEGG_keys[i]],
+        });
+        data_KEGG_strengthCollect.push({
+          name:obseredGeneCollect_KEGG_keys[i],
+          data:Number(strengthCollect_KEGG[obseredGeneCollect_KEGG_keys[i]]),
+          FDR:gene_KEGG_FDR[obseredGeneCollect_KEGG_keys[i]],
+          desc:desc_RNA_seq_KEGG[obseredGeneCollect_KEGG_keys[i]]
+        });
       }
     }
   }

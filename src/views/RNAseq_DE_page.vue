@@ -141,8 +141,7 @@
     de_data.info.forEach((item) => compare_de_tables_info.push(item));
     await handle_table_Info();
   };
-  const tableSelected_RNAseq_name = (plot_text)=>{
-    return
+  const tableSelected_RNAseq_name = (plot_text) => {
     compare_de_Obj.value.title = '';
     display_plotText.length = 0;
     plot_text.forEach((item) => display_plotText.push(item));
@@ -248,10 +247,6 @@
             if(compare_de_tables_info[i].body[j][headers_P_or_Q_val] === '?' ){
               questionMark ++;
             }
-            
-            if(i===1 && j === 1){
-              console.log(compare_de_tables_info[i].body[j],'compare_de_tables_info[i].body[j]')
-            }
             const compare_de_tables_p_value_Number = Number(compare_de_tables_info[i].body[j][headers_P_or_Q_val]);
             const compare_de_tables_log2_Number = Number(compare_de_tables_info[i].body[j][headers_log2_Ratio]);
             if( compare_de_tables_info[i].body[j][headers_P_or_Q_val] === '?' && Number(p_value_number_val) === 1 && Number(log2Up) === 0 
@@ -301,7 +296,7 @@
     }).then(async(response) => {
       tableComponentInfo.headers = response.headers;
       tableComponentInfo.body = response.body;
-      console.log(tableComponentInfo, 'tableComponentInfo')
+      tableComponentInfo.showCheckBox = true;
       // tableComponentInfo.value = await response;
       // for(let i = 0;response.headers.length > i ;i++){
       //   tableComponentInfo.headers.push(response.headers[i])

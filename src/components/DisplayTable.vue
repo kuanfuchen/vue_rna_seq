@@ -2,16 +2,16 @@
   <div>
     <div class="d-flex justify-space-between mb-2">
       <div class="mt-1 d-flex align-center">
-        <!-- <div class="mr-2" v-if="toggleShowSelect">
+        <div class="mr-2" v-if="toggleShowSelect">
           <v-btn color="teal" density="comfortable" @click.prevent="selected_display_plot_text" >
             <v-icon icon="fa:fas fa-image" style="font-size: 16px;"></v-icon>
           </v-btn>
         </div>
         <div class="" v-if="toggleShowSelect">
-          <v-btn color="primary" class="text-none" density="comfortable" @click="reseted_display_plot_text" :disabled="selectedShow_miRNA.length === 0">
+          <v-btn color="primary" class="text-none" density="comfortable" @click="reseted_display_plot_text" :disabled="selected_RNA_seq.length === 0">
             Reset
           </v-btn>
-        </div> -->
+        </div>
       </div>
       <div class="d-flex align-center" v-if="definedprops.useSearch">
         <v-text-field v-if="definedprops.closeSearch !== true"
@@ -31,7 +31,7 @@
       :loading="dataLengthLoading"
       return-object class="elevation-1"
       :custom-filter="filterMiRNA"
-      v-model="selectedShow_miRNA">
+      v-model="selected_RNA_seq">
       <template v-slot:item.Ratio="{item}">
         <div>
           <p :style="{ 'color': Number(item.Log2Ratio) >=0 ? '#D32F2F' : '#2962FF' }">{{ Math.abs(item.Ratio) > 0.001? item.Ratio.toLocaleString('en-US'):item.Ratio }}</p>
@@ -139,7 +139,7 @@
   const emits = defineEmits(['select_RNAseq_name']);
   // import { dataService } from '../service/data_service.js'; 
   const toggleShowSelect = ref(false);
-  const selectedShow_miRNA = ref([]);
+  const selected_RNA_seq = ref([]);
   const headers = ref([]);
   const tableBody = ref([]);
   const dataTable_height = ref('');
@@ -151,7 +151,7 @@
     if(tableInfo.headers.length === 0) return;
     if(tableInfo.body.length > 3000)dataLengthLoading.value = true;
     return new Promise((resolve, reject)=>{
-    selectedShow_miRNA.value.length = 0;
+    selected_RNA_seq.value.length = 0;
     let bodyInfo = [];
     if(tableInfo.showCheckBox) toggleShowSelect.value = true;
     const geneIDindex = tableInfo.headers.indexOf('Gene ID');
@@ -274,14 +274,15 @@
     
   };
   const selected_display_plot_text = ()=>{
-    const miRNANames = [];
-    selectedShow_miRNA.value.forEach((item)=>{
-      miRNANames.push(item.microRNAID)
-    })
-    emits('select_RNAseq_name', miRNANames);
+    const RNAseq = [];
+    console.log(selected_RNA_seq.value, 'selected_RNA_seq')
+    selected_RNA_seq.value.forEach((item)=>{
+      RNAseq.push(item.GeneID)
+    });
+    emits('select_RNAseq_name', RNAseq);
   }
   const reseted_display_plot_text = ()=>{
-    selectedShow_miRNA.value.length = 0;
+    selected_RNA_seq.value.length = 0;
     emits('select_RNAseq_name', []);;
   }
   const filterMiRNA = (val, query, item)=>{
