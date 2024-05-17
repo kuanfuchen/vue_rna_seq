@@ -52,7 +52,7 @@
   import BarPlot_FE from '../../components/poltly/BarPlot_Fun_Enrich.vue';
   import DotPlot_FE from '../../components/poltly/DotPlot_Func_Enrich.vue';
   const comSubject$ = new Subject();
-  const dispalyCondition = ref('q-value <= 0.05, -1 <= log2 fold change < =1');
+  const dispalyCondition = ref('q-value ≤ 0.05, -1 ≤ log2 fold change ≤ 1');
   // const KEGG = ref(false);
   const select_kegg_Regular = ref('UP');
   const display_KEGG_BarNum = ref(10);

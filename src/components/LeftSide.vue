@@ -50,7 +50,7 @@
     color: #00000099;
   }
   .subTitleStyle{
-      font-size: 16px;
+      font-size: 15px;
       color: #546E7A;
   }
   .footerAbout{
@@ -95,7 +95,7 @@
     to:'/functionEnrichment'
   },{
     vlaue:'functionEnrichmentKEGG',
-    title:'Function Enrichment_KEGG',
+    title:'Functional Enrichment_KEGG',
     to:'/fe_kegg'
   }];
 </script>

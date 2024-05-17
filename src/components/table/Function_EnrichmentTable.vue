@@ -67,7 +67,6 @@
 ]);
 const regulate = ref('UP');
   const displayTableInfo = (tableInfo)=>{
-    console.log(tableInfo, 'tableInfo');
     regulate.value = tableInfo.regulation;
     const changeStyle = JSON.parse(JSON.stringify(tableInfo.data));
     for(let i = 0 ; changeStyle.length > i ; i++){

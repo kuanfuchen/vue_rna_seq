@@ -1,23 +1,45 @@
 <template>
   <div>
-    <div id="observeGenePlot"></div>
+    <div class="d-flex justify-end">
+      <div class="toggle_expand" @click="toogle_Plot_Screen = true">
+        <v-icon icon="fa:fas fa-expand mr-5"></v-icon>
+      </div>
+    </div>
+    <div  id="observeGenePlot"></div>
+    <v-dialog v-model="toogle_Plot_Screen"  width="90vw" >
+      <v-card class="bg-white" style="overflow-y: hidden;">
+        <v-card-text >
+          <h5 class="text-h5" style="font-weight: 700;">
+            Bar Plot
+          </h5>  
+          <div class="ml-auto mr-5">
+            <Dialog_plot :listen_plot_data="transfer_FullScreen_data" @toggle_tranfer_dialog_plot="close_dialog" ></Dialog_plot>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script setup>
 import { ref, watch } from 'vue';
 import Plotly from 'plotly.js-dist-min';
 import {image_config, imageCapture} from '../../utils/image_download';
+import Dialog_plot from '../Dialog_Plot.vue';
 const props = defineProps(['fe_obsergene_data']);
+const transfer_FullScreen_data = ref({});
+const toogle_Plot_Screen = ref(false);
 const layout = {
   title: 'Bar Plot',
-  xaxis:{title:{ text:'Observed gene count',font:{size:14,weight:'bold'}}},
+  xaxis:{title:{ text:'False Discovery Rate',font:{size:14,weight:'bold'}}},
   // 
   showlegend: false,
   hovermode:'closest',
   yaxis:{
-    tickformat:'none',
+    // tickformat:'none',
     tickmode: 'array',
-  }
+    automargin:true,
+    
+  },
   // barmode: 'stack',
   // annotations:[],
 };
@@ -32,8 +54,8 @@ const plotData = {
   text: [],
   mode: 'markers',
   marker: {
-    colorscale:'RdBu',
-    colorbar:{},
+    // colorscale:'RdBu',
+    // colorbar:{},
     color: 'rgb(158,202,225)',
     opacity: 0.6,
     line: {
@@ -56,29 +78,44 @@ const handlePlotInfo = (info)=>{
   const observeGenePlot = document.getElementById('observeGenePlot');
   Plotly.purge(observeGenePlot);
   const infoArr = info;
-  const color = [];
+  // const color = [];
   const plotX = [];
   const plotY = [];
   const plotDesc = []
-  const sortInfoArr = infoArr.sort((a,b)=>{if( b.data > a.data)return -1});
+  // const sortInfoArr = infoArr.sort((a,b)=>{if( b.data > a.data)return -1});
+  const sortInfoArr = infoArr.sort((a,b)=>{if( b.FDR > a.FDR)return -1});
   for(let i = 0 ; sortInfoArr.length > i ; i++){
-    plotY.push(sortInfoArr[i].name);
-    plotX.push(sortInfoArr[i].data);
-    color.push(sortInfoArr[i].FDR);
-    plotDesc.push(sortInfoArr[i].desc);
+    // plotY.push(sortInfoArr[i].name);
+    // plotX.push(sortInfoArr[i].data);
+    // color.push(sortInfoArr[i].FDR);
+    // plotDesc.push(sortInfoArr[i].desc);
+    plotY.push(sortInfoArr[i].desc);
+    plotX.push(sortInfoArr[i].FDR);
+    plotDesc.push(sortInfoArr[i].name);
   }
 
   plotData.y = plotY;
   plotData.x = plotX;
-  plotData.marker.color = color;
+  // plotData.marker.color = color;
   plotData.text = plotDesc;
   layout.yaxis.tickvals = plotY;
+  transfer_FullScreen_data.value = {
+    data:[plotData],
+    plotConfig,
+    layout
+  }
   setTimeout(()=>{
     Plotly.newPlot(observeGenePlot, [plotData], layout, plotConfig);
   })
-}
+};
+const close_dialog = (val) => toogle_Plot_Screen.value = val;
 watch(props.fe_obsergene_data,(newVal)=>{
   if( newVal.length === 0) return;
   handlePlotInfo(newVal);
 })
 </script>
+<style scope>
+  .toggle_expand{
+    cursor: pointer;
+  }
+</style>

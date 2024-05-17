@@ -61,7 +61,7 @@
   const MF = ref(true);
   const BP = ref(false);
   const CC = ref(false);
-  const dispalyCondition = ref('q-value <= 0.05, -1 <= log2 fold change < =1')
+  const dispalyCondition = ref('q-value ≤ 0.05, -1 ≤ log2 fold change ≤ 1')
   // const KEGG = ref(false);
   // const pubMed = ref(false);
   const selectRegular = ref('UP');
