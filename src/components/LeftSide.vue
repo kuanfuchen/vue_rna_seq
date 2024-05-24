@@ -43,7 +43,7 @@
     </v-navigation-drawer>
   </div>
 </template>
-<style lang="scss">
+<style lang="scss" scope>
   .titleStyle{
     font-size: 18px;
     font-weight: 700;
@@ -60,6 +60,19 @@
     bottom: 0;
     width:100%;
     // text-align:center;
+  }
+  @media (max-width:1599px) {
+    .footerAbout{
+    font-size: 14px;
+    color: #546E7A;
+    position: fixed;
+    bottom: 0;
+    width:100%;
+    img{
+      width:150px
+    }
+    // text-align:center;
+  }
   }
 </style>
 <script setup>

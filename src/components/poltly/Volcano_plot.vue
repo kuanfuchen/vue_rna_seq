@@ -4,7 +4,6 @@
     <div class="d-flex justify-space-between">
       <div class="ml-3" style="font-weight: 700;font-size: 15px;">
         {{ valcanoTitle }}
-      <!-- <p class="ml-3" style="font-weight: 700;font-size: 18px;" >{{ valcanoTitle }}</p> -->
       </div>
       <!-- <div class="d-flex">
         <div class="toggle_cols" @click="changedContentSize(6, 220, 650)">
@@ -17,14 +16,14 @@
     </div>
     <v-row class="d-flex justify-space-between mt-1">
       <v-col :cols="contentCols">
-        <v-card >
+        <v-card style="height:740px">
           <v-card-text>
             <DE_Bar_Plot :style="{'height':plot_bar_height + 'vh'}" :de_bar_plot_data="deBarPlotData"></DE_Bar_Plot>
           </v-card-text>
         </v-card>
       </v-col>
       <v-col :cols="contentCols">
-        <v-card>
+        <v-card style="height:740px">
           <v-card-text>
             <div class="d-flex justify-space-between mt-1">
             <!-- <div class="ml-5" style="font-weight: 700;font-size: 14px;">
@@ -151,7 +150,8 @@
   let display_Text_volcano__plot_plotlyjs_data = {
     x:[],
     y:[],
-    mode:'markers+text',
+    // mode:'markers+text',
+    mode:'markers',
     type: 'scatter',
     name: '',
     text: [],
@@ -173,6 +173,7 @@
       t:30
     },
     showlegend: false,
+    annotations:[],
   };
   // 
   const positiveLine = {
@@ -243,7 +244,7 @@
     total_position_number.value = 0;
     await handleDE_data(num);    
   }
-  const handleDE_data = (selectedDataNum = 0)=>{
+  const handleDE_data = (selectedDataNum = 0) => {
     valcanoTitle.value = storagedDE_folder.headers[selectedDataNum];
     const selected_DE_pValue = [];
     const selected_DE_log2 = [];
@@ -263,12 +264,15 @@
     if(p_or_q_value_index === -1)return;
     const lo2_index = headersUppers.indexOf('LOG2');
     // 
-    let index = 0
+    let index = 0;
     for(let i = 0 ; storagedDE_folder.info[selectedDataNum].body.length > i ; i++){
       if(storagedDE_folder.info[selectedDataNum].body[i][p_or_q_value_index] !== '?'){
         const floatNum = parseFloat(storagedDE_folder.info[selectedDataNum].body[i][p_or_q_value_index]);
         const logCalu = - Math.log10(floatNum);
-        selected_RNA_name.push(storagedDE_folder.info[selectedDataNum].body[i][0]);
+        // selected_RNA_name.push(storagedDE_folder.info[selectedDataNum].body[i][0]);
+        // const geneName = `${storagedDE_folder.info[selectedDataNum].body[i][0]} - ${storagedDE_folder.info[selectedDataNum].body[i][1]}`
+        const geneName = storagedDE_folder.info[selectedDataNum].body[i][1];
+        selected_RNA_name.push(geneName);
         selected_DE_pValue.push(logCalu);
         // selected_DE_log2.push(storagedDE_folder.info[selectedDataNum].body[i][4]);
         selected_DE_log2.push(storagedDE_folder.info[selectedDataNum].body[i][lo2_index]);
@@ -280,6 +284,7 @@
   const displatVolcano = (p_value, log2, RNA_ID) => {
     return new Promise((resolve, reject) => {
       try{
+        layout.annotations.length = 0;
         for(let i = 0 ; log2.length> i ; i++){
           const floatNum = parseFloat(log2[i]);
           const selecte_miRNAs_Name_Index = selecte_miRNAs_Name.indexOf(RNA_ID[i]);
@@ -293,6 +298,21 @@
               display_Text_volcano__plot_plotlyjs_data.y.push(p_value[i]);
               display_Text_volcano__plot_plotlyjs_data.text.push(RNA_ID[i]);
               display_Text_volcano__plot_plotlyjs_data.marker.color.push('#EF5350');
+              // 
+              layout.annotations.push({
+                x:log2[i],
+                y:p_value[i],
+                text:RNA_ID[i],
+                showarrow: true,
+                arrowhead: 1,
+                ax: 10,
+                ay: -30,
+                bgcolor: 'rgba(224, 247, 250,0.6)',
+                borderpad: 4,
+                textfont:{
+                  size:16
+                }
+              })
             }
             positive_position_number.value ++;
           }else if( log2Lower >= floatNum && p_value[i] >= log_SelectStyleNum ){
@@ -305,6 +325,21 @@
               display_Text_volcano__plot_plotlyjs_data.y.push(p_value[i]);
               display_Text_volcano__plot_plotlyjs_data.text.push(RNA_ID[i]);
               display_Text_volcano__plot_plotlyjs_data.marker.color.push('#1976D2');
+              // 
+              layout.annotations.push({
+                x:log2[i],
+                y:p_value[i],
+                text:RNA_ID[i],
+                showarrow: true,
+                arrowhead: 1,
+                ax: -10,
+                ay: -30,
+                bgcolor: 'rgba(224, 247, 250,0.6)',
+                borderpad: 4,
+                textfont:{
+                  size:16
+                }
+              })
             }
             negative_position_number.value ++;
           }
@@ -318,6 +353,21 @@
               display_Text_volcano__plot_plotlyjs_data.y.push(p_value[i]);
               display_Text_volcano__plot_plotlyjs_data.text.push(RNA_ID[i]);
               display_Text_volcano__plot_plotlyjs_data.marker.color.push('#B0BEC5');
+              // 
+              layout.annotations.push({
+                x:log2[i],
+                y:p_value[i],
+                text:RNA_ID[i],
+                showarrow: true,
+                arrowhead: 1,
+                ax: 0,
+                ay: -30,
+                bgcolor: 'rgba(224, 247, 250,0.6)',
+                borderpad: 4,
+                textfont:{
+                  size:16
+                }
+              })
             }
           }
           total_position_number.value = positive_position_number.value + negative_position_number.value;
@@ -339,9 +389,8 @@
         layout.yaxis = {
           range:[ minValYaxis, maxValYaxis ],
           // range:[0, 20]
-          title: { text:`log<span style="font-size:12px;">10</span>(${P_or_Q_value==='P-VALUE'?'P-value':'Q-value'})`, font:{size:20}}
+          title: { text:`-log<span style="font-size:12px;">10</span>(${P_or_Q_value==='P-VALUE'?'P-value':'Q-value'})`, font:{size:20}}
         };
-        // layout.height = 
         const postitiveYMax = Math.ceil(maxValYaxis);
         positiveLine.y = [ 0, postitiveYMax ];
         negativeLine.y = [ 0, postitiveYMax];
@@ -401,5 +450,6 @@
 <style lang="scss">
   .download_xlsx{
     cursor: pointer;
+    // background: rgba(224, 247, 250,0.6);
   }
 </style>

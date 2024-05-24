@@ -1,17 +1,18 @@
 <template>
   <div>
+    <CircularLoading v-if="toggleCircularLoadingPage"></CircularLoading>
     <v-tabs v-model="condition_header" color="primary" @click="displayRNAseqTable">
       <v-tab v-for="(item, i) in conditionHeaders" color="primary" :key="i" class="text-none">
         {{ item }}
       </v-tab>
     </v-tabs>
     <div class="d-flex justify-end  mt-1">
-      <!-- <div class="d-flex align-center mb-1 mr-3" >
-        <div class="download_xlsx" @click="exportXlsxFile">
+      <div class="d-flex align-center mb-1 mr-3" >
+        <!-- <div class="download_xlsx" @click="exportXlsxFile">
           <v-icon icon="fa:fas fa-file-excel mr-5"></v-icon>
-        </div>
-        <v-icon icon="fa:fas fa-file-arrow-down" class="text-teal mr-3" style="font-size: 24px;"></v-icon>
-      </div> -->
+        </div> -->
+        <v-icon icon="fa:fas fa-file-arrow-down" class="text-teal mr-3" style="font-size: 24px;" @click="toggleCircularLoadingPage = true; exportXlsxFile()"></v-icon>
+      </div>
       <div class="d-flex align-center" style="width:250px">
         <v-icon icon="fa:fas fa-magnifying-glass" class="mr-3"></v-icon>
         <v-text-field
@@ -47,6 +48,7 @@
 import { ref, reactive, shallowRef  } from 'vue';
 import { dataFolder_RNAseq } from '../../service/rna_seq_dataservice';
 import { Subject, takeUntil, debounceTime } from 'rxjs';
+import CircularLoading from '../Loading_page.vue'; 
 const itemsPerPage = ref(25);
 const comSubject$ = new Subject();
 let table_RNAseq = {}
@@ -55,7 +57,8 @@ const search_RNAseq = ref('');
 const conditionHeaders = ref([]);
 const dataTable_height = ref('');
 const tableComponentInfo = ref({});
-let miRNATables = {};
+const toggleCircularLoadingPage =ref(false);
+// let miRNATables = {};
 const pageItemsOptions = ref([
   {value: 10, title: '10'},
   {value: 25, title: '25'},
@@ -63,6 +66,7 @@ const pageItemsOptions = ref([
   {value: 100, title: '100'},
   // {value: 1000, title: '1000'}
 ]);
+let tabsRNA_Data = {};
 const tableHeader_RNA_seq = [
   // {title: 'Gene Symbol', align: 'center', sortable: true, key: 'title'},
   {title: 'Gene ID', align: 'center', sortable: true, key: 'gene_id'},
@@ -79,13 +83,14 @@ const tableHeader_RNA_seq = [
 ];
 const dataTableLoading = shallowRef(false);
 dataFolder_RNAseq.RNAseq_handleRawReadsFolder$.pipe(takeUntil(comSubject$),debounceTime(300)).subscribe((rowReads_normalizedData)=>{
+  console.log(rowReads_normalizedData,'rowReads_normalizedData')
   createdRNAseqTable(rowReads_normalizedData);
 });
 const createdRNAseqTable = (rowReads_normalizedData)=>{
   if( !rowReads_normalizedData.globalData || rowReads_normalizedData.globalData.length === 0) return;
   conditionHeaders.value = rowReads_normalizedData.sampleNameTitle.sort();
   const sampleNameIndex = rowReads_normalizedData.globalTitle.indexOf('Gene Symbol');
-  const tabsRNA_Data = {};
+  tabsRNA_Data = {};
   for(let i = 0 ; rowReads_normalizedData.sampleNameTitle.length > i ; i++){
     if(!tabsRNA_Data[rowReads_normalizedData.sampleNameTitle[i]]){ 
       tabsRNA_Data[rowReads_normalizedData.sampleNameTitle[i]] = {}
@@ -110,6 +115,7 @@ const createdRNAseqTable = (rowReads_normalizedData)=>{
       }
     }
   }
+  
   table_RNAseq = tabsRNA_Data;
   const windowInnerheight = window.innerHeight;
   dataTable_height.value =  Math.ceil((windowInnerheight - 340)/ windowInnerheight * 100) + 'vh';
@@ -125,12 +131,29 @@ const displayRNAseqTable = ()=>{
     collect_RNAseq.title = select_RNAseq_name[i];
     displayTableArr.push(collect_RNAseq);
   }
+  // console.log(tableHeader_RNA_seq, 'tableHeader_RNA_seq');
+  // console.log(displayTableArr, 'displayTableArr');
   tableComponentInfo.value.headers = tableHeader_RNA_seq;
   tableComponentInfo.value.body = displayTableArr;
-  setTimeout(()=>{ dataTableLoading.value = false; },2000)
+  setTimeout(()=>{ dataTableLoading.value = false; },2000);
 }
-const exportXlsxFile = ()=>{
-
+const exportXlsxFile = async()=>{
+  const tabsRNA_Data_pageName = Object.keys(tabsRNA_Data);
+  let tabsRNA_Data_Val_header = [];
+  let tabsRNA_Data_Val_Body = [];
+  for(let i = 0 ; tabsRNA_Data_pageName.length > i ; i++){
+    const tabsRNA_Data_ObjectValue = Object.values(tabsRNA_Data[tabsRNA_Data_pageName[i]]);
+    tabsRNA_Data_Val_Body[i] = [];
+    for(let j = 0 ; tabsRNA_Data_ObjectValue.length > j ;j++){
+      if(i === 0 && j === 0) tabsRNA_Data_Val_header= Object.keys(tabsRNA_Data_ObjectValue[j]);
+      tabsRNA_Data_Val_Body[i].push(Object.values(tabsRNA_Data_ObjectValue[j]));
+    }
+    tabsRNA_Data_Val_Body[i].unshift(tabsRNA_Data_Val_header);
+  }
+  await dataFolder_RNAseq.export_Visualization(tabsRNA_Data_Val_Body, tabsRNA_Data_pageName);
+  setTimeout(() => {
+    toggleCircularLoadingPage.value= false;
+  }, 1000);
 }
 </script>
 <style scope lang="scss">

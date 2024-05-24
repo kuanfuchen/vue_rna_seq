@@ -6,7 +6,7 @@
       >
       <template v-slot:header.matching_proteins_in_your_network_labels="{ column }">
         {{ column.title }} 
-        <span :style="{color:regulate==='UP'?'red':'blue'}">
+        <span :style="{color:regulate === 'UP' ? 'red' : 'blue' }">
           ({{ regulate.toLowerCase() }})
         </span> 
       </template>
@@ -20,8 +20,12 @@
           {{ item.observed_gene_count }}
         </div>
       </template>
-      <template v-slot:item.matching_proteins_in_your_network_labels="{ item }"  >
-
+      <template v-slot:item.strength="{item}">
+        <div style="color:rgb(158,202,225)">
+          {{ item.strength }}
+        </div>
+      </template>
+      <template v-slot:item.matching_proteins_in_your_network_labels="{ item }">
         <div class="my-1" :style="{color:regulate === 'UP' ? 'red' : 'blue' }">
           <span class="" v-for="(ii, key) in item.matching_proteins_in_your_network_labels" :key="key">
             <span v-if="toogleLabels[item['#term ID']]? key > 0 : key < 10">{{ ii }}
@@ -60,11 +64,11 @@
   const itemsPerPage = ref(25);
   const toogleLabels = ref({});
   const pageItemsOptions = ref([
-  {value: 10, title: '10'},
-  {value: 25, title: '25'},
-  {value: 50, title: '50'},
-  {value: 100, title: '100'},
-]);
+    {value: 10, title: '10'},
+    {value: 25, title: '25'},
+    {value: 50, title: '50'},
+    {value: 100, title: '100'},
+  ]);
 const regulate = ref('UP');
   const displayTableInfo = (tableInfo)=>{
     regulate.value = tableInfo.regulation;

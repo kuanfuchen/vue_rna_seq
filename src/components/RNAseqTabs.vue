@@ -12,12 +12,27 @@
       <v-window v-model="rnaTab">
         <v-window-item v-for="(tab, index) in rnaseqTabs" :key="index" :value="tab">
           <DisplayTable :table="tableComponentInfo" :useSearch="false"></DisplayTable>
+          <!-- <div class="" v-if="rnaTab=== ">
+          </div> -->
           <div class="mt-2" v-if="rnaTab === 'Alignment'">
-            <p class="text-h7">%Total reads: Total fragments in paired-end (the term “read” refers to the fragment being sequenced, and since each fragment is sequenced from two directions, one can expect to get two alignments per fragment)</p>
-            <p class="text-h7 mt-1">%Aligned%: the fraction of all the reads that were aligned to the reference assembly (multi-mappers are also taken into account) (Aligned%) = (Unique paired%) + (Non-unique paired%)</p>
-            <p class="text-h7 mt-1">%Unique paired: fraction of alignments corresponding to the reads where both of the paired reads can be uniquely aligned</p>
-            <p class="text-h7 mt-1">%Non-unique paired: fraction of paired reads that align to multiple locations</p>
+            <p class="text-h7">
+              1. Total reads: total fragments in paired-end (the term “read” refers to the fragment being sequenced, and since each fragment is sequenced from two directions, one can expect to get two alignments per fragment).
+            </p>
+            <p class="text-h7 mt-1">
+              2. %Aligned: the fraction of all the reads that were aligned to the reference assembly (multi-mappers are also taken into account). %Aligned = (%Unique paired) + (%Non-unique paired).
+            </p>
+            <p class="text-h7 mt-1">
+              3. %Unique paired: fraction of alignments corresponding to the reads where both of the paired reads can be uniquely aligned.
+            </p>
+            <p class="text-h7 mt-1">
+              4. %Non-unique paired: fraction of paired reads that align to multiple locations.%Non-unique paired: fraction of paired reads that align to multiple locations
+            </p>
             <p class="text-h6">Reference information: <a class="ml-2" href="https://documentation.partek.com/pages/viewpage.action?pageId=3768905" target="_blank">Click Here</a></p>
+          </div>
+          <div class="mt-2" v-else>
+            <p class="text-h7 mt-1">
+              %N: proportion of no-calls.
+            </p>
           </div>
           <!-- :exportName="props.export_miRNA_Name" -->
         </v-window-item>
@@ -96,14 +111,18 @@
     }});
     tableInfo.headers = headers;
     if(rnaTab.value === 'Alignment'){
-      const alignmentBody = []
+      const alignmentBody = [];
+      // 0.1.2.4.9,10,11,12
       // tableComponentInfo.headers = ['Sample name','condition', 'Total reads', 'Total alignments reads',
       // '%Aligned', 'Total unaligned reads', '%Unaligned', 'Avg. length', 'Avg. quality', '%GC'];
       tableComponentInfo.headers = ['Sample name', 'condition', 'Total reads', '%Aligned', 'Total unique paired', '%Unique paired', 'Total non-unique paired', '%Non-unique paired']
       for(let i = 0 ; tableInfo.body.length > i ; i++){
         alignmentBody[i] = [];
         for(let j = 0 ; tableInfo.body[i].length > j ; j++){
-          if(j <= 6 || j >=17 ){
+          // if(j <= 6 || j >=17 ){
+          //   alignmentBody[i].push(tableInfo.body[i][j])
+          // }
+          if(j <= 2 || j === 4 || j >= 9 && j <=12){
             alignmentBody[i].push(tableInfo.body[i][j])
           }
         }
@@ -135,6 +154,6 @@
   }
   .text-h7{
     font-size: 16px;
-    color:#03A9F4;
+    // color:#03A9F4;
   }
 </style>

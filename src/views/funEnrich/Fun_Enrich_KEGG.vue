@@ -5,10 +5,25 @@
         <p class="text-h4 text-teal">Function Enrichment KEGG Analysis</p>
       </template>
       <v-card-text>
-        <p class="mb-2 pl-4 py-2" style="background: #90CAF9;border-radius: 5px;">
-          {{ dispalyCondition }}
-        </p>
-        <div class="d-flex mt-3">
+        <!-- <p class="mb-2 pl-4 py-2" style="background: #90CAF9;border-radius: 5px;">
+          Condition {{ dispalyCondition }}
+        </p> -->
+        <div class="mb-2 ml-3 py-2" style="background: #90CAF9;border-radius: 5px;">
+          <p class="ml-3">Filtered by {{ dispalyCondition }}</p> 
+          <p class="ml-3">DEGs: <span>{{ up_RNA_seq_num + down_RNA_seq_num }}</span></p>
+          <p class="ml-3" style="color: #B71C1C;">Up:<span class="ml-2">{{ up_RNA_seq_num }}</span></p>
+          <p class="ml-3" style="color:#3F51B5">Down:<span class="ml-2">{{ down_RNA_seq_num }}</span></p>
+        </div>
+        <div class="mt-4">
+          <v-row no-gutters>
+            <v-col cols="6">
+              <!-- <span class="font-weight-bold text-right">Compare</span> -->
+              <v-select class="ml-3" label="Select compare" :items="compare_de_title_group" v-model="compare_de_title"
+                variant="outlined" density="compact"></v-select>
+            </v-col>
+          </v-row>
+        </div>
+        <div class="d-flex mt-2">
           <div class="px-3" style="width:30vw">
             <v-select label="Select Regular" :items="['UP','DOWN']" 
               v-model="select_kegg_Regular" variant="outlined" density="compact">
@@ -51,6 +66,8 @@
   import FeTable from '../../components/table/Function_EnrichmentTable.vue';
   import BarPlot_FE from '../../components/poltly/BarPlot_Fun_Enrich.vue';
   import DotPlot_FE from '../../components/poltly/DotPlot_Func_Enrich.vue';
+  import filter_RNA_num from '../../utils/filterRNA_seq_num.js';
+  import { dataFolder_RNAseq } from '../../service/rna_seq_dataservice.js';
   const comSubject$ = new Subject();
   const dispalyCondition = ref('q-value ≤ 0.05, -1 ≤ log2 fold change ≤ 1');
   // const KEGG = ref(false);
@@ -60,13 +77,27 @@
   const data_KEGG_strengthCollect = reactive([])
   const kegg_headers = reactive([]);
   const fe_KEGG_TableBody = reactive({items:[], data:[]});
+  const compare_de_title_group = ref([]);
+  const compare_de_title = ref('');
+  const up_RNA_seq_num = ref(0);
+  const down_RNA_seq_num = ref(0);
   let fe_KEGG_Table = [];
   const gene_KEGG_FDR = {};
+  dataFolder_RNAseq.RNAseq_DE_Folder_Info$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(deFolderData)=>{
+    compare_de_title_group.value = deFolderData.title_Group;
+    if(deFolderData.title_Group.length > 0 ) compare_de_title.value = deFolderData.title_Group[0];
+    const rna_num = await filter_RNA_num(0, deFolderData);
+    await display_filter_RNA_num(rna_num);
+  });
   papaDate.papaFun_enrichment$.pipe(takeUntil(comSubject$),debounceTime(300)).subscribe(async(papaData) => {
     fe_KEGG_Table = papaData;
     await handleHeaders(papaData.headers);
     await handleFe_KEGG();
   });
+  const display_filter_RNA_num = (RNA_seq_num)=>{
+    up_RNA_seq_num.value = RNA_seq_num.positive_position_number;
+    down_RNA_seq_num.value = RNA_seq_num.negative_position_number;
+  };
   const handleHeaders = (feheaders)=>{
     for(let i = 0 ; feheaders.length > i ; i++){
       kegg_headers.push({

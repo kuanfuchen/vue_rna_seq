@@ -3,14 +3,13 @@
     <div>
       <div class="ml-5" style="font-weight: 700;font-size: 14px;">
         <p class="text-h6 text-teal" style="font-weight: 700;">Bar Plot</p>
-        <!-- <div class="" style="height:50px"></div> -->
-        <p>Total filtered RNA-seq: {{ total_position_number }}</p>
-        <p style="color:#EF5350;margin-left:90px">UP: {{ positive_position_number }}</p>
-        <p style="color:#1976D2;margin-left:90px">Down: {{ negative_position_number }}</p>
+        <div id="de_bar_plot" :style="{'height':plot_height + 'vh'}"></div>
+        <!-- <p>Total filtered RNA-seq: {{ total_position_number }}</p> -->
+        <p>DEGs: {{ total_position_number }}</p>
+        <p style="color:#EF5350;">UP: {{ positive_position_number }}</p>
+        <p style="color:#1976D2;">Down: {{ negative_position_number }}</p>
       </div>
-      <div id="de_bar_plot" :style="{'height':plot_height + 'vh'}"></div>
     </div>
-    
   </div>
 </template>
 <script setup>

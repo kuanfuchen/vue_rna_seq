@@ -148,6 +148,7 @@
   const dataLengthLoading = ref(false);
   const listenTable = () => {
     const tableInfo = definedprops.table;
+    console.log(tableInfo, 'tableInfo')
     if(tableInfo.headers.length === 0) return;
     if(tableInfo.body.length > 3000)dataLengthLoading.value = true;
     return new Promise((resolve, reject)=>{
@@ -275,9 +276,9 @@
   };
   const selected_display_plot_text = ()=>{
     const RNAseq = [];
-    console.log(selected_RNA_seq.value, 'selected_RNA_seq')
     selected_RNA_seq.value.forEach((item)=>{
-      RNAseq.push(item.GeneID)
+      // RNAseq.push(item.GeneID)
+      RNAseq.push(item.Genename);
     });
     emits('select_RNAseq_name', RNAseq);
   }

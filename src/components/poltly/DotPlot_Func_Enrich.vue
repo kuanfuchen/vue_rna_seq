@@ -30,7 +30,7 @@
   const toogle_Plot_Screen = ref(false);
   const layout ={
     title:'Dot Plot',
-    xaxis:{title:{ text:'False Discovery Rate',font:{size:14,weight:'bold'}}},
+    xaxis:{title:{ text:`-log<span style="font-size:10">10</span>(FDR)`,font:{size:14,weight:'bold'}}},
     yaxis:{
       tickformat:'none',
       tickmode: 'array',
@@ -79,15 +79,15 @@
       plotY.push(sortInfoArr[i].desc);
       // plotX.push(sortInfoArr[i].data);
       // color.push(sortInfoArr[i].FDR);
+      const descName = `(${sortInfoArr[i].data}, ${sortInfoArr[i].name})`;
       dotsSize.push(sortInfoArr[i].data * 100);
       plotX.push(sortInfoArr[i].FDR)
-      plotName.push(sortInfoArr[i].name)
-      // plotDesc.push(sortInfoArr[i].desc)
+      // plotName.push(sortInfoArr[i].name);
+      plotName.push(descName);
     }
     plotData.y = plotY;
     plotData.x = plotX;
     const evaluateValueMax = Math.max(...dotsSize);
-    console.log(evaluateValueMax, 'evaluateValueMax');
     if(evaluateValueMax > 55){
       const calcDotsSize = dotsSize.map((item)=>{return item / 2.8});
       plotData.marker.size = calcDotsSize;
@@ -98,7 +98,6 @@
       plotData.marker.size = dotsSize;
     }
     // plotData.marker.color = color;
-    console.log(dotsSize, 'dotSize')
     plotData.text = plotName;
     // plotData.text = plotDesc;
     layout.yaxis.tickvals = plotY;

@@ -57,7 +57,6 @@ const handleRawReads_normalizedCount =async ( RNAseq_raw_reads_count, RNAseq_nor
       }
     }
   });
-  
   RNAseq_raw_reads_count.body.forEach((item, i )=>{ 
     globalData[i] = [];
     rowReadsData[i] = [];
@@ -111,6 +110,15 @@ const exportXlsx = async(readFile, fileName, sheetsName)=> {
   }
   writeFileXLSX(export_wb, excelName + '.xlsx');
 };
+const export_Visualization = async(fileContent, sheetsName) => {
+  if(sheetsName.length === 0 || fileContent.length === 0) return;
+  const export_Visualization_wb = utils.book_new();
+  for(let i = 0 ; fileContent.length > i ; i++){
+    const ws = await utils.aoa_to_sheet(fileContent[i]);
+    await utils.book_append_sheet(export_Visualization_wb, ws, sheetsName[i])
+  }
+  writeFileXLSX(export_Visualization_wb, 'Visualization.xlsx')
+}
 const handleRNAseq_CPM_PCA = () => {
   const pca_data = handleSplitTxt(RNAseq_CPM_PCA);
   pca_data.sortOrder = conditionSort;
@@ -142,6 +150,7 @@ export const dataFolder_RNAseq = {
   handleRNAseq_CPM_PCA,
   exportXlsx,
   handled_RNAseq_DE,
+  export_Visualization,
   rnaseq_ReadAlignmentSubject$: _RNAseq_ReadAlignmentSubject$.asObservable(),
   RNAseq_handleRawReadsFolder$:_RNAseq_handleRawReadsFolder$.asObservable(),
   RNAseq_scatter_Plot$:_RNAseq_scatter_Plot$.asObservable(),

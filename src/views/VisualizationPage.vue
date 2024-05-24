@@ -70,53 +70,9 @@
         </v-row>
         </v-window-item>
         <v-window-item value="Table">
+          
           <v-card class="visual_Data_Table">
             <Visualization_Table></Visualization_Table>
-            <!-- <v-tabs v-model="condition_header" color="primary" @click="displayRNAseqTable">
-              <v-tab v-for="(item, i) in conditionHeaders" color="primary" :key="i" class="text-none">
-                {{ item }}
-              </v-tab>
-            </v-tabs>
-            <div class="d-flex justify-end mt-1">
-              <div class="d-flex align-center mb-1 mr-3" >
-                <div class="download_xlsx" @click="exportXlsxFile">
-                  <v-icon icon="fa:fas fa-file-arrow-down" class="text-teal mr-3" style="font-size: 24px;"></v-icon>
-            </div>
-            <v-icon icon="fa:fas fa-magnifying-glass mr-3"></v-icon>
-            <v-text-field
-              v-model="search_RNAname" label="Search"  single-line variant="solo-filled" hide-details density="compact" style="width:250px">
-            </v-text-field>
-              </div>
-            </div>
-            <v-data-table fixed-header v-model:items-per-page="itemsPerPage" :headers="tableComponentInfo.headers"
-              :items="tableComponentInfo.body" item-value="Sample name" class="elevation-1" :height="dataTable_height"
-              :search="search_RNAname" :items-per-page-options="pageItemsOptions" :loading="dataTableLoading">
-              <template v-slot:item.Length="{item}">
-                <div>
-                  {{ item.Length.toLocaleString('en-US') }}
-                </div>
-              </template>
-              <template v-slot:item.Start="{item}">
-                <div>
-                  {{ item.Start.toLocaleString('en-US') }}
-                </div>
-              </template>
-              <template v-slot:item.Stop="{item}">
-                <div>
-                  {{ item.Stop.toLocaleString('en-US') }}
-                </div>
-              </template>
-              <template v-slot:item.normalizedCount="{item}">
-                <div>
-                  {{ item.normalizedCount.toLocaleString('en-US') }}
-                </div>
-              </template>
-              <template v-slot:item.readcount="{item}">
-                <div>
-                  {{ item.readcount.toLocaleString('en-US') }}
-                </div>
-              </template>
-            </v-data-table> -->
           </v-card>
         </v-window-item>
       </v-window>
@@ -138,7 +94,7 @@
   const comSubject$ = new Subject();
   // const tableComponentInfo = ref({});
   // const itemsPerPage = ref(25);
-  let miRNATables = {};
+  // let miRNATables = {};
   // const headers = [];
   // const conditionHeaders = ref([]);
   // const condition_header = ref(0);
@@ -256,33 +212,33 @@
     selectedSampleTitle.length = 0;
     selectedSampleTitle.push(sample1Item.value, sample2Item.value)
   };
-  const exportXlsxFile = ()=>{
-    const miRNATables_Obj_Keys = Object.keys(miRNATables);
-    const visual_table = [];
-    for(let i = 0 ; miRNATables_Obj_Keys.length > i ; i++){
-      visual_table[i] = [];
-      const miRNATables_Obj_Keys_num_key = Object.keys(miRNATables[miRNATables_Obj_Keys[i]]);
-      let headers_title_Index = -1;
-      let headers = [];
-      for(let j = 0 ; miRNATables_Obj_Keys_num_key.length > j ; j++){
-        visual_table[i][j]=[];
-        const miRNA_val = miRNATables[miRNATables_Obj_Keys[i]][miRNATables_Obj_Keys_num_key[j]];
-        if( j===0){
-          headers = Object.keys(miRNA_val);
-          headers.unshift('microRNA ID');
-          headers_title_Index = headers.indexOf('title');
-          if(headers_title_Index > -1) headers.splice(headers_title_Index, 1);
-        }
-        const miRNA_Table_values = Object.values(miRNA_val);
-        miRNA_Table_values.unshift(miRNATables_Obj_Keys_num_key[j]);
-        if(headers_title_Index > -1) miRNA_Table_values.splice(headers_title_Index, 1);
-        visual_table[i][j] = miRNA_Table_values;
-      }
-      visual_table[i].unshift(headers);
-    }
-    dataService.exportXlsx(visual_table, 'visualization', miRNATables_Obj_Keys);
+  // const exportXlsxFile = ()=>{
+  //   const miRNATables_Obj_Keys = Object.keys(miRNATables);
+  //   const visual_table = [];
+  //   for(let i = 0 ; miRNATables_Obj_Keys.length > i ; i++){
+  //     visual_table[i] = [];
+  //     const miRNATables_Obj_Keys_num_key = Object.keys(miRNATables[miRNATables_Obj_Keys[i]]);
+  //     let headers_title_Index = -1;
+  //     let headers = [];
+  //     for(let j = 0 ; miRNATables_Obj_Keys_num_key.length > j ; j++){
+  //       visual_table[i][j]=[];
+  //       const miRNA_val = miRNATables[miRNATables_Obj_Keys[i]][miRNATables_Obj_Keys_num_key[j]];
+  //       if( j===0){
+  //         headers = Object.keys(miRNA_val);
+  //         headers.unshift('microRNA ID');
+  //         headers_title_Index = headers.indexOf('title');
+  //         if(headers_title_Index > -1) headers.splice(headers_title_Index, 1);
+  //       }
+  //       const miRNA_Table_values = Object.values(miRNA_val);
+  //       miRNA_Table_values.unshift(miRNATables_Obj_Keys_num_key[j]);
+  //       if(headers_title_Index > -1) miRNA_Table_values.splice(headers_title_Index, 1);
+  //       visual_table[i][j] = miRNA_Table_values;
+  //     }
+  //     visual_table[i].unshift(headers);
+  //   }
+  //   dataService.exportXlsx(visual_table, 'visualization', miRNATables_Obj_Keys);
 
-  }
+  // }
 </script>
 <style lang="scss">
   .v-table .v-data-table__th,  .v-table .v-data-table__td{

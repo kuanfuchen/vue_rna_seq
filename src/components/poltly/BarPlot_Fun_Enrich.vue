@@ -30,23 +30,19 @@ const transfer_FullScreen_data = ref({});
 const toogle_Plot_Screen = ref(false);
 const layout = {
   title: 'Bar Plot',
-  xaxis:{title:{ text:'False Discovery Rate',font:{size:14,weight:'bold'}}},
+  xaxis:{title:{ text:`-log<span style="font-size:10">10</span>(FDR)`,font:{size:14,weight:'bold'}}},
   // 
   showlegend: false,
   hovermode:'closest',
   yaxis:{
-    // tickformat:'none',
     tickmode: 'array',
     automargin:true,
-    
   },
-  // barmode: 'stack',
-  // annotations:[],
 };
 const plotData = {
   x: [],
   y: [],
-  z:[],
+  // z:[],
   type: 'bar',
   orientation:'h',
   textposition: 'none',
@@ -81,7 +77,7 @@ const handlePlotInfo = (info)=>{
   // const color = [];
   const plotX = [];
   const plotY = [];
-  const plotDesc = []
+  const plotDesc = [];
   // const sortInfoArr = infoArr.sort((a,b)=>{if( b.data > a.data)return -1});
   const sortInfoArr = infoArr.sort((a,b)=>{if( b.FDR > a.FDR)return -1});
   for(let i = 0 ; sortInfoArr.length > i ; i++){
@@ -89,11 +85,12 @@ const handlePlotInfo = (info)=>{
     // plotX.push(sortInfoArr[i].data);
     // color.push(sortInfoArr[i].FDR);
     // plotDesc.push(sortInfoArr[i].desc);
+    const descName = `(${sortInfoArr[i].data}, ${sortInfoArr[i].name})`;
     plotY.push(sortInfoArr[i].desc);
     plotX.push(sortInfoArr[i].FDR);
-    plotDesc.push(sortInfoArr[i].name);
+    // plotDesc.push(sortInfoArr[i].name);
+    plotDesc.push(descName);
   }
-
   plotData.y = plotY;
   plotData.x = plotX;
   // plotData.marker.color = color;
