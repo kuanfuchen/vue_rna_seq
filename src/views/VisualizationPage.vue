@@ -52,7 +52,7 @@
             </v-card>
           </v-col>
           <v-col :cols="plot_cols">
-            <v-card class="px-3" width="100%">
+            <v-card class="px-3" width="100%" height="650px">
               <template v-slot:title>
                 <p class="pr-3 font-weight-bold d-flex">PCA Plot<span style="font-size: 14px;">( Color by condition )</span></p>
               </template>
@@ -60,17 +60,20 @@
             </v-card>
           </v-col>
           <v-col :cols="plot_cols">
-            <v-card class="px-3" width="100%">
+            <v-card class="px-3" width="100%" height="650px">
               <template v-slot:title>
                 <span class="font-weight-bold pr-3">Heatmap Plot (top 100 variance)</span>
               </template>
-              <Dendrograms  :heatmapHeight="plot_height"></Dendrograms>
+              <div  style="height: 100%;" class="d-flex align-center">
+                <Dendrograms  ></Dendrograms>
+                <!-- :heatmapHeight="plot_height" -->
+              </div>
+              
             </v-card>
           </v-col>
         </v-row>
         </v-window-item>
         <v-window-item value="Table">
-          
           <v-card class="visual_Data_Table">
             <Visualization_Table></Visualization_Table>
           </v-card>
@@ -92,99 +95,16 @@
   import Dendrograms from '../components/poltly/Dendrogram.vue';
   import Visualization_Table from '../components/table/Visualization_Table.vue';
   const comSubject$ = new Subject();
-  // const tableComponentInfo = ref({});
-  // const itemsPerPage = ref(25);
-  // let miRNATables = {};
-  // const headers = [];
-  // const conditionHeaders = ref([]);
-  // const condition_header = ref(0);
   const selctedSampleItem = ref([]);
   const sample1Item = ref('');
   const sample2Item = ref('');
   const selectedSampleTitle = reactive([]);
   const displayStyle = ref(['QC Graph', 'Table']);
   const useStyleTab = ref(0);
-  // const dataTable_height = ref('');
-  // const search_RNAname = ref('');
-  // const dataTableLoading = shallowRef(false);
-  // let table_RNAseq = {}
   const plot_height = reactive({
     height:550
   });
   const plot_cols = ref(6);
-  // const tableHeader_RNA_seq = [
-  //   // {title: 'Gene Symbol', align: 'center', sortable: true, key: 'title'},
-  //   {title: 'Gene ID', align: 'center', sortable: true, key: 'gene_id'},
-  //   {title: 'Gene Symbol', align: 'center', sortable: true, key: 'gene_name'},
-  //   {title: 'Gene Type', align: 'center', sortable: true, key: 'gene_type'},
-  //   {title: 'NormalizedCount', align: 'center', sortable: true, key: 'normalizedCount'},
-  //   {title: 'Readcount', align: 'center', sortable: true, key: 'readcount'},
-  //   {title: 'Chromosome', align: 'center', sortable: true, key: 'Chromosome'},
-  //   {title: 'Length', align: 'center', sortable: true, key: 'Length'},
-  //   {title: 'Start', align: 'center', sortable: true, key: 'Start'},
-  //   {title: 'Stop', align: 'center', sortable: true, key: 'Stop'},
-  //   {title: 'Strand', align: 'center', sortable: true, key: 'Strand'},
-  //   // {title: 'Gene name', align: 'center', sortable: true, key: 'gene_name'},
-    
-  // ];
-  // const pageItemsOptions = ref([
-  //   {value: 10, title: '10'},
-  //   {value: 25, title: '25'},
-  //   {value: 50, title: '50'},
-  //   {value: 100, title: '100'},
-  //   {value: 1000, title: '1000'}
-  // ]);
-  // dataFolder_RNAseq.RNAseq_handleRawReadsFolder$.pipe(takeUntil(comSubject$),debounceTime(300)).subscribe((rowReads_normalizedData)=>{
-  //   createdRNAseqTable(rowReads_normalizedData);
-  // })
-  // const createdRNAseqTable = (rowReads_normalizedData)=>{
-  //   if( !rowReads_normalizedData.globalData || rowReads_normalizedData.globalData.length === 0) return;
-  //   conditionHeaders.value = rowReads_normalizedData.sampleNameTitle.sort();
-  //   const sampleNameIndex = rowReads_normalizedData.globalTitle.indexOf('Gene Symbol');
-  //   const tabsRNA_Data = {};
-  //   for(let i = 0 ; rowReads_normalizedData.sampleNameTitle.length > i ; i++){
-  //     if(!tabsRNA_Data[rowReads_normalizedData.sampleNameTitle[i]]){ 
-  //       tabsRNA_Data[rowReads_normalizedData.sampleNameTitle[i]] = {}
-  //     }
-  //     for(let j = 0 ; rowReads_normalizedData.globalData.length > j ; j++){
-  //       if(!tabsRNA_Data[rowReads_normalizedData.sampleNameTitle[i]][rowReads_normalizedData.globalData[j][sampleNameIndex]]){
-  //         tabsRNA_Data[rowReads_normalizedData.sampleNameTitle[i]][rowReads_normalizedData.globalData[j][sampleNameIndex]] = {};
-  //         tabsRNA_Data[rowReads_normalizedData.sampleNameTitle[i]][rowReads_normalizedData.globalData[j][sampleNameIndex]].title = rowReads_normalizedData.globalData[j][sampleNameIndex];
-  //         tabsRNA_Data[rowReads_normalizedData.sampleNameTitle[i]][rowReads_normalizedData.globalData[j][sampleNameIndex]].readcount = Number(rowReads_normalizedData.rowReadsData[j][i]);
-  //         tabsRNA_Data[rowReads_normalizedData.sampleNameTitle[i]][rowReads_normalizedData.globalData[j][sampleNameIndex]].normalizedCount = Number(rowReads_normalizedData.normalizedData[j][i]);
-  //         for(let k = 0 ; rowReads_normalizedData.globalTitle.length > k ; k++){
-  //           if(!tabsRNA_Data[rowReads_normalizedData.sampleNameTitle[i]][rowReads_normalizedData.globalData[j][sampleNameIndex]][rowReads_normalizedData.globalTitle[k]]){
-  //             let transformNumber;
-  //             if(rowReads_normalizedData.globalTitle[k] === 'Start' || rowReads_normalizedData.globalTitle[k] === 'Stop' || rowReads_normalizedData.globalTitle[k] === 'Length' ){
-  //               transformNumber = Number( rowReads_normalizedData.globalData[j][k] );
-  //             }else{
-  //               transformNumber = rowReads_normalizedData.globalData[j][k];
-  //             }
-  //             tabsRNA_Data[rowReads_normalizedData.sampleNameTitle[i]][rowReads_normalizedData.globalData[j][sampleNameIndex]][rowReads_normalizedData.globalTitle[k]] =  transformNumber;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  //   table_RNAseq = tabsRNA_Data;
-  //   const windowInnerheight = window.innerHeight;
-  //   dataTable_height.value =  Math.ceil((windowInnerheight - 340)/ windowInnerheight * 100) + 'vh';
-  //   displayRNAseqTable();
-  // }
-  // const displayRNAseqTable = ()=>{
-  //   dataTableLoading.value = true;
-  //   const selectedHeaderName = conditionHeaders.value[condition_header.value];
-  //   const displayTableArr = [];
-  //   const select_RNAseq_name = Object.keys(table_RNAseq[selectedHeaderName]);
-  //   for(let i  = 0 ; select_RNAseq_name.length > i ; i++){
-  //     const collect_RNAseq = table_RNAseq[selectedHeaderName][select_RNAseq_name[i]];
-  //     collect_RNAseq.title = select_RNAseq_name[i];
-  //     displayTableArr.push(collect_RNAseq);
-  //   }
-  //   tableComponentInfo.value.headers = tableHeader_RNA_seq;
-  //   tableComponentInfo.value.body = displayTableArr;
-  //   setTimeout(()=>{ dataTableLoading.value = false; },2000)
-  // }
   dataFolder_RNAseq.RNAseq_visual_scatter_sampleName$.pipe(takeUntil(comSubject$),debounceTime(100)).subscribe((visualization_info)=>{
     const tempSampleList = [];
     for(let i = 0 ; visualization_info.headers.length > i ; i++){
@@ -212,33 +132,6 @@
     selectedSampleTitle.length = 0;
     selectedSampleTitle.push(sample1Item.value, sample2Item.value)
   };
-  // const exportXlsxFile = ()=>{
-  //   const miRNATables_Obj_Keys = Object.keys(miRNATables);
-  //   const visual_table = [];
-  //   for(let i = 0 ; miRNATables_Obj_Keys.length > i ; i++){
-  //     visual_table[i] = [];
-  //     const miRNATables_Obj_Keys_num_key = Object.keys(miRNATables[miRNATables_Obj_Keys[i]]);
-  //     let headers_title_Index = -1;
-  //     let headers = [];
-  //     for(let j = 0 ; miRNATables_Obj_Keys_num_key.length > j ; j++){
-  //       visual_table[i][j]=[];
-  //       const miRNA_val = miRNATables[miRNATables_Obj_Keys[i]][miRNATables_Obj_Keys_num_key[j]];
-  //       if( j===0){
-  //         headers = Object.keys(miRNA_val);
-  //         headers.unshift('microRNA ID');
-  //         headers_title_Index = headers.indexOf('title');
-  //         if(headers_title_Index > -1) headers.splice(headers_title_Index, 1);
-  //       }
-  //       const miRNA_Table_values = Object.values(miRNA_val);
-  //       miRNA_Table_values.unshift(miRNATables_Obj_Keys_num_key[j]);
-  //       if(headers_title_Index > -1) miRNA_Table_values.splice(headers_title_Index, 1);
-  //       visual_table[i][j] = miRNA_Table_values;
-  //     }
-  //     visual_table[i].unshift(headers);
-  //   }
-  //   dataService.exportXlsx(visual_table, 'visualization', miRNATables_Obj_Keys);
-
-  // }
 </script>
 <style lang="scss">
   .v-table .v-data-table__th,  .v-table .v-data-table__td{

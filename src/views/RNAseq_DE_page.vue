@@ -22,7 +22,7 @@
             <v-col cols="3">
               <v-sheet class="mx-5">
                 <!-- <p class="text-right font-weight-bold">P-value</p> -->
-                <v-select label="Select" v-model="selectP_or_Qval" :items="['P-Value', 'Q-Value']" variant="outlined" density="compact"></v-select> 
+                <v-select label="Select" v-model="selectP_or_Qval" :items="['Q-Value','P-Value']" variant="outlined" density="compact"></v-select> 
               </v-sheet>
             </v-col>
             <v-col cols="2">
@@ -108,7 +108,7 @@
   const fdrVal = ref(1);
   const display_plotText = [];
   const plot_height = ref(650);
-  const selectP_or_Qval = ref('P-Value');
+  const selectP_or_Qval = ref('Q-Value');
   // const tableComponentInfo = ref({
   //   headers:[],
   //   body:[],
@@ -119,7 +119,7 @@
   })
   const comSubject$ = new Subject();
   const compare_de_Obj = ref({
-    selectType:'P-Value',
+    selectType:'Q-Value',
     title:'',
     selectStyle:'',
     log2_LowerBound:'',
@@ -193,14 +193,16 @@
         // if(compare_de_tables_info[i].title === compare_de_title.value){
         const headers = [];
         for(let j = 0 ; compare_de_tables_info[i].headers.length > j; j++){
-          let header = compare_de_tables_info[i].headers[j].split(/\(/)[0];
-          // let header = '';
-          // const headerIndex = compare_de_tables_info[i].headers[j].indexOf('LSMean');
-          // if(headerIndex > -1){
-            // header = compare_de_tables_info[i].headers[j];
-          // }else{
-            // header = compare_de_tables_info[i].headers[j].split(/\(/)[0];
-          // };
+          // let header = compare_de_tables_info[i].headers[j].split(/\(/)[0];
+          // 
+          let header = '';
+          const headerIndex = compare_de_tables_info[i].headers[j].indexOf('LSMean');
+          if(headerIndex > -1){
+            header = compare_de_tables_info[i].headers[j];
+          }else{
+            header = compare_de_tables_info[i].headers[j].split(/\(/)[0];
+          };
+          // 
           const headerUpper = header.toUpperCase().trim();
           if(headerUpper === 'LOG2'){
             checkedUpDownIndex = j;
@@ -273,7 +275,6 @@
                 }
                 display_Table.push(tempCompare_de_tables_infoRemoveGeneid);
             }
-            
           };
         }
         if(compare_de_tables_info[i].headers.length === 0){

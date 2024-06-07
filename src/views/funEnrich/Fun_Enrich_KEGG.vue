@@ -23,7 +23,7 @@
             </v-col>
           </v-row>
         </div>
-        <div class="d-flex mt-2">
+        <div class="d-flex mt-3">
           <div class="px-3" style="width:30vw">
             <v-select label="Select Regular" :items="['UP','DOWN']" 
               v-model="select_kegg_Regular" variant="outlined" density="compact">
@@ -35,7 +35,7 @@
             </v-select>
           </div>
         </div>
-        <div class="">
+        <div class="mt-2 ml-3">
           <v-btn color="indigo-darken-3" class="text-none" @click="handleFe_KEGG()" >Enter</v-btn>
         </div>
       </v-card-text>
@@ -50,10 +50,10 @@
         </v-row>
       </v-card-text>
       <v-card-text>
-        <div class="">
+        <!-- <div class="">
           <span>up-regulation DEGs</span>
           <span>down-regulation DEGs</span>
-        </div>
+        </div> -->
         <FeTable :feheaders="kegg_headers" :feTableData="fe_KEGG_TableBody" />
       </v-card-text>
     </v-card>

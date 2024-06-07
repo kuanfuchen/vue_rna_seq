@@ -55,7 +55,7 @@
     yaxis: { range: [] },
     height:() => defineScatterGraphInfo.plot_size.height - 100,
     minallowed:0,
-    title:`log<span style='font-size:12px'>10</span> (Normalized Count)`,
+    title:`-log<span style='font-size:12px'>10</span> (Normalized Count)`,
   };
   const plotConfig = {
     responsive:true, 

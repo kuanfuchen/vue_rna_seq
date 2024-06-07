@@ -3,7 +3,8 @@
     <div>
       <div class="ml-5" style="font-weight: 700;font-size: 14px;">
         <p class="text-h6 text-teal" style="font-weight: 700;">Bar Plot</p>
-        <div id="de_bar_plot" :style="{'height':plot_height + 'vh'}"></div>
+        <div id="de_bar_plot" ></div>
+        <!-- :style="{'height':plot_height + 'vh'}" -->
         <!-- <p>Total filtered RNA-seq: {{ total_position_number }}</p> -->
         <p>DEGs: {{ total_position_number }}</p>
         <p style="color:#EF5350;">UP: {{ positive_position_number }}</p>
@@ -14,7 +15,7 @@
 </template>
 <script setup>
   import Plotly from 'plotly.js-dist-min';
-  import { imageCapture} from '../../utils/image_download';
+  import { image_config, imageCapture} from '../../utils/image_download';
   import { watch, ref } from 'vue';
   const plot_height = ref(30);
   const positive_position_number = ref(0);
@@ -25,8 +26,9 @@
     // height:definedProps.plot_size.height,
     // xaxis: { title: {text:'Sample', font:{ size:16, weight:'bold' }}, automargin:'height',tickformat:'none' },
     // yaxis:{title:{ text:`log<span style="font-size:12px">10</span>(Normalized Count)`, font:{ size:16, weight:'bold' }},tickformat:'none' },
-    font:{ size:12}, 
+    font:{ size:12},
     margin:{ t:70,},
+    height:550
     // title:'Normalized Read Counts distribution of sample'
   };
   const plotConfig = {
@@ -53,6 +55,7 @@
     positive_position_number.value = de_bar_plot_data.positive;
     negative_position_number.value = de_bar_plot_data.neightive;
     total_position_number.value = de_bar_plot_data.positive + de_bar_plot_data.neightive;
+    image_config.filename = 'Bar plot';
     setTimeout(()=>{
       Plotly.newPlot(de_bar_plot, de_bar_data, layout, plotConfig );
     })

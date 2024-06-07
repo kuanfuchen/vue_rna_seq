@@ -55,7 +55,7 @@
   const layout = {
     height:definedProps.plot_size.height,
     xaxis: { title: {text:'Sample', font:{ size:16, weight:'bold' }}, automargin:'height',tickformat:'none' },
-    yaxis:{title:{ text:`log<span style="font-size:12px">10</span>(Normalized Count)`, font:{ size:16, weight:'bold' }},tickformat:'none' },
+    yaxis:{title:{ text:`-log<span style="font-size:12px">10</span>(Normalized Count)`, font:{ size:16, weight:'bold' }},tickformat:'none' },
     font:{ size:12}, 
     margin:{ t:70,},
     title:'Normalized Read Counts distribution of sample'

@@ -119,7 +119,7 @@
       },
       yaxis:{
         // title:layout.yaxis.title
-        title:{ text:layout.yaxis.title.text, font:{ size:20, weight:'bold' }}}
+        title:{ text:layout.yaxis.title.text, font:{ size:20, weight:'bold' }}},
     }
     image_config.filename = `Visualization_PCA_plot`;
     setTimeout(() => {

@@ -113,9 +113,7 @@
     if(rnaTab.value === 'Alignment'){
       const alignmentBody = [];
       // 0.1.2.4.9,10,11,12
-      // tableComponentInfo.headers = ['Sample name','condition', 'Total reads', 'Total alignments reads',
-      // '%Aligned', 'Total unaligned reads', '%Unaligned', 'Avg. length', 'Avg. quality', '%GC'];
-      tableComponentInfo.headers = ['Sample name', 'condition', 'Total reads', '%Aligned', 'Total unique paired', '%Unique paired', 'Total non-unique paired', '%Non-unique paired']
+      tableComponentInfo.headers = ['Sample name', 'condition', 'Total reads','Aligned reads', '%Aligned', 'Total unique paired', '%Unique paired', 'Total non-unique paired', '%Non-unique paired']
       for(let i = 0 ; tableInfo.body.length > i ; i++){
         alignmentBody[i] = [];
         for(let j = 0 ; tableInfo.body[i].length > j ; j++){
@@ -126,6 +124,8 @@
             alignmentBody[i].push(tableInfo.body[i][j])
           }
         }
+        const alignReads = (tableInfo.body[i][2] * tableInfo.body[i][4]).toString();
+        alignmentBody[i].splice(3,0, alignReads)
       }
       tableComponentInfo.body = alignmentBody;
     }else{

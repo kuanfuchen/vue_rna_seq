@@ -9,6 +9,7 @@ const _RNAseq_visual_scatter_sampleName$ = new BehaviorSubject({});
 const _RNAseq_visual_boxPlot$ = new  BehaviorSubject({});
 const _RNAseq_CPM_PCA_Data$ = new BehaviorSubject({});
 const _RNAseq_DE_Folder_Info$ = new BehaviorSubject({});
+const _closeXlsx_info$ = new BehaviorSubject(false);
 import { rawFastqQC, trimemd_fastqQC, filterOutrRNAfastqQC, star_alignmentQC, quantify_to_annotation_gene_counts, normalized_counts, RNAseq_CPM_PCA } from './getData.js';
 // import down_Bio_Process from '../../public/06_01. Functional analysis - STRINGdb/input/down_regulated/Biological Process (Gene Ontology).tsv';
 const conditionSort = [];
@@ -108,16 +109,36 @@ const exportXlsx = async(readFile, fileName, sheetsName)=> {
     const ws = await utils.aoa_to_sheet(readFile[i]);
     await utils.book_append_sheet(export_wb, ws, sheets_Title[i]);
   }
-  writeFileXLSX(export_wb, excelName + '.xlsx');
+  await writeFileXLSX(export_wb, excelName + '.xlsx');
+  _closeXlsx_info$.next(false);
 };
-const export_Visualization = async(fileContent, sheetsName) => {
-  if(sheetsName.length === 0 || fileContent.length === 0) return;
-  const export_Visualization_wb = utils.book_new();
-  for(let i = 0 ; fileContent.length > i ; i++){
-    const ws = await utils.aoa_to_sheet(fileContent[i]);
-    await utils.book_append_sheet(export_Visualization_wb, ws, sheetsName[i])
-  }
-  writeFileXLSX(export_Visualization_wb, 'Visualization.xlsx')
+const export_Visualization = (fileContent, sheetsName) => {
+  return new Promise((resolve, reject)=>{
+    if(sheetsName.length === 0 || fileContent.length === 0) return;
+    setTimeout(async()=>{
+      const export_Visualization_wb = utils.book_new();
+      for(let i = 0 ; fileContent.length > i ; i++){
+        const ws = await utils.aoa_to_sheet(fileContent[i]);
+        await utils.book_append_sheet(export_Visualization_wb, ws, sheetsName[i])
+      }
+      await writeFileXLSX(export_Visualization_wb, 'Visualization.xlsx');
+    },1000)
+     // const workerContent = {
+    //   content:fileContent,
+    //   sheetsName
+    // };
+      // const xlsxWorker = new Worker(new URL('workerExportExcel.js', import.meta.url),{ type:'module' });
+      
+      // xlsxWorker.onmessage = async(ev)=>{
+      //   resolve(ev)
+      //   await writeFileXLSX(ev.data, 'Visualization.xlsx');
+      // };
+      // xlsxWorker.onerror = (err) => {
+      //   reject(err);
+      //   console.log(err)
+      // };
+      // await xlsxWorker.postMessage(workerContent);
+  })
 }
 const handleRNAseq_CPM_PCA = () => {
   const pca_data = handleSplitTxt(RNAseq_CPM_PCA);
@@ -151,6 +172,7 @@ export const dataFolder_RNAseq = {
   exportXlsx,
   handled_RNAseq_DE,
   export_Visualization,
+  closeXlsx_info$:_closeXlsx_info$.asObservable(),
   rnaseq_ReadAlignmentSubject$: _RNAseq_ReadAlignmentSubject$.asObservable(),
   RNAseq_handleRawReadsFolder$:_RNAseq_handleRawReadsFolder$.asObservable(),
   RNAseq_scatter_Plot$:_RNAseq_scatter_Plot$.asObservable(),

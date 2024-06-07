@@ -1,6 +1,5 @@
 <template>
   <div>
-    <CircularLoading v-if="toggleCircularLoadingPage"></CircularLoading>
     <v-tabs v-model="condition_header" color="primary" @click="displayRNAseqTable">
       <v-tab v-for="(item, i) in conditionHeaders" color="primary" :key="i" class="text-none">
         {{ item }}
@@ -8,17 +7,22 @@
     </v-tabs>
     <div class="d-flex justify-end  mt-1">
       <div class="d-flex align-center mb-1 mr-3" >
-        <!-- <div class="download_xlsx" @click="exportXlsxFile">
-          <v-icon icon="fa:fas fa-file-excel mr-5"></v-icon>
-        </div> -->
+        <v-icon icon="fa:fas fa-file-arrow-down" class="text-primary mr-3" style="font-size: 24px;" 
+        @click="exportSinglePageXlsxFile()"></v-icon>
         <v-icon icon="fa:fas fa-file-arrow-down" class="text-teal mr-3" style="font-size: 24px;" @click="toggleCircularLoadingPage = true; exportXlsxFile()"></v-icon>
+        <!-- <v-icon v-if="!toggleCircularLoadingPage" icon="fa:fas fa-file-arrow-down" class="text-teal mr-3" style="font-size: 24px;" @click="toggleCircularLoadingPage = true; exportXlsxFile()"></v-icon>
+        <div class="d-flex mr-3" v-else>
+          <p style="font-weight: bolder;">file export waiting</p>
+          <v-progress-circular class="ml-2" :size="30" color="teal" indeterminate ></v-progress-circular>
+        </div> -->
       </div>
       <div class="d-flex align-center" style="width:250px">
         <v-icon icon="fa:fas fa-magnifying-glass" class="mr-3"></v-icon>
         <v-text-field
-          v-model="search_RNAseq" label="Search" single-line  variant="solo-filled" hide-details
-          density="compact" >
+          v-model="search_RNAseq" label="Search" single-line  variant="solo-filled" 
+          density="compact"  append-inner-icon="fa:fas fa-close" @click:append-inner="search_RNAseq = ''">
         </v-text-field>
+        <!-- <v-icon class="ml-5" icon="fa:fas fa-close" @click="()=>console.log(123)"></v-icon> -->
       </div>
     </div>
     <v-data-table fixed-header v-model:items-per-page="itemsPerPage" :headers="tableComponentInfo.headers"
@@ -48,7 +52,6 @@
 import { ref, reactive, shallowRef  } from 'vue';
 import { dataFolder_RNAseq } from '../../service/rna_seq_dataservice';
 import { Subject, takeUntil, debounceTime } from 'rxjs';
-import CircularLoading from '../Loading_page.vue'; 
 const itemsPerPage = ref(25);
 const comSubject$ = new Subject();
 let table_RNAseq = {}
@@ -64,7 +67,6 @@ const pageItemsOptions = ref([
   {value: 25, title: '25'},
   {value: 50, title: '50'},
   {value: 100, title: '100'},
-  // {value: 1000, title: '1000'}
 ]);
 let tabsRNA_Data = {};
 const tableHeader_RNA_seq = [
@@ -78,17 +80,20 @@ const tableHeader_RNA_seq = [
   {title: 'Length', align: 'center', sortable: true, key: 'Length'},
   {title: 'Start', align: 'center', sortable: true, key: 'Start'},
   {title: 'Stop', align: 'center', sortable: true, key: 'Stop'},
-  {title: 'Strand', align: 'center', sortable: true, key: 'Strand'},
-  // {title: 'Gene name', align: 'center', sortable: true, key: 'gene_name'},  
+  {title: 'Strand', align: 'center', sortable: true, key: 'Strand'},  
 ];
 const dataTableLoading = shallowRef(false);
 dataFolder_RNAseq.RNAseq_handleRawReadsFolder$.pipe(takeUntil(comSubject$),debounceTime(300)).subscribe((rowReads_normalizedData)=>{
-  console.log(rowReads_normalizedData,'rowReads_normalizedData')
   createdRNAseqTable(rowReads_normalizedData);
 });
+dataFolder_RNAseq.closeXlsx_info$.pipe(takeUntil(comSubject$),debounceTime(300)).subscribe((boolean)=>{
+  console.log(boolean, 'boolean')
+  toggleCircularLoadingPage.value = boolean;
+})
 const createdRNAseqTable = (rowReads_normalizedData)=>{
   if( !rowReads_normalizedData.globalData || rowReads_normalizedData.globalData.length === 0) return;
-  conditionHeaders.value = rowReads_normalizedData.sampleNameTitle.sort();
+  // conditionHeaders.value = rowReads_normalizedData.sampleNameTitle.sort();
+  conditionHeaders.value = rowReads_normalizedData.sampleNameTitle;
   const sampleNameIndex = rowReads_normalizedData.globalTitle.indexOf('Gene Symbol');
   tabsRNA_Data = {};
   for(let i = 0 ; rowReads_normalizedData.sampleNameTitle.length > i ; i++){
@@ -131,11 +136,9 @@ const displayRNAseqTable = ()=>{
     collect_RNAseq.title = select_RNAseq_name[i];
     displayTableArr.push(collect_RNAseq);
   }
-  // console.log(tableHeader_RNA_seq, 'tableHeader_RNA_seq');
-  // console.log(displayTableArr, 'displayTableArr');
   tableComponentInfo.value.headers = tableHeader_RNA_seq;
   tableComponentInfo.value.body = displayTableArr;
-  setTimeout(()=>{ dataTableLoading.value = false; },2000);
+  setTimeout(()=>{ dataTableLoading.value = false; },1000);
 }
 const exportXlsxFile = async()=>{
   const tabsRNA_Data_pageName = Object.keys(tabsRNA_Data);
@@ -151,9 +154,21 @@ const exportXlsxFile = async()=>{
     tabsRNA_Data_Val_Body[i].unshift(tabsRNA_Data_Val_header);
   }
   await dataFolder_RNAseq.export_Visualization(tabsRNA_Data_Val_Body, tabsRNA_Data_pageName);
-  setTimeout(() => {
-    toggleCircularLoadingPage.value= false;
-  }, 1000);
+  // setTimeout(() => {
+  //   toggleCircularLoadingPage.value= false;
+  // }, 1000);
+}
+const exportSinglePageXlsxFile = async() => {
+  const selectedHeaderName = conditionHeaders.value[condition_header.value];
+  const tableRNA_data = Object.values(tabsRNA_Data[selectedHeaderName]);
+  const exportData = [];
+  let exportKeys = [];
+  for(let i = 0 ; tableRNA_data.length > i ; i++){
+    if(i === 0)exportKeys = Object.keys(tableRNA_data[i]);
+    exportData.push(Object.values(tableRNA_data[i]))
+  }
+  exportData.unshift(exportKeys);
+  await dataFolder_RNAseq.export_Visualization([exportData], [selectedHeaderName]);
 }
 </script>
 <style scope lang="scss">

@@ -16,14 +16,15 @@
     </div>
     <v-row class="d-flex justify-space-between mt-1">
       <v-col :cols="contentCols">
-        <v-card style="height:740px">
+        <v-card style="height:700px">
           <v-card-text>
-            <DE_Bar_Plot :style="{'height':plot_bar_height + 'vh'}" :de_bar_plot_data="deBarPlotData"></DE_Bar_Plot>
+            <DE_Bar_Plot  :de_bar_plot_data="deBarPlotData"></DE_Bar_Plot>
+            <!-- :style="{'height':plot_bar_height + 'vh'}" -->
           </v-card-text>
         </v-card>
       </v-col>
       <v-col :cols="contentCols">
-        <v-card style="height:740px">
+        <v-card style="height:700px">
           <v-card-text>
             <div class="d-flex justify-space-between mt-1">
             <!-- <div class="ml-5" style="font-weight: 700;font-size: 14px;">
@@ -36,7 +37,8 @@
                 <v-icon icon="fa:fas fa-expand mr-5"></v-icon>
               </div>
             </div>
-            <div class="mt-3" :style="{'height':plot_height + 'vh'}" id="displatVolcanoPlot"></div>
+            <div class="mt-3"  id="displatVolcanoPlot"></div>
+            <!-- :style="{'height':plot_height + 'vh'}" -->
           </v-card-text>
         </v-card>
       </v-col>
@@ -174,6 +176,7 @@
     },
     showlegend: false,
     annotations:[],
+    height:600
   };
   // 
   const positiveLine = {
@@ -306,7 +309,9 @@
                 showarrow: true,
                 arrowhead: 1,
                 ax: 10,
-                ay: -30,
+                ay: -80,
+                xanchor:'left',
+                // yanchor:'bottom',
                 bgcolor: 'rgba(224, 247, 250,0.6)',
                 borderpad: 4,
                 textfont:{
@@ -332,8 +337,10 @@
                 text:RNA_ID[i],
                 showarrow: true,
                 arrowhead: 1,
+                xanchor:'right',
+                // yanchor:'bottom',
                 ax: -10,
-                ay: -30,
+                ay: -80,
                 bgcolor: 'rgba(224, 247, 250,0.6)',
                 borderpad: 4,
                 textfont:{
@@ -361,7 +368,7 @@
                 showarrow: true,
                 arrowhead: 1,
                 ax: 0,
-                ay: -30,
+                ay: -80,
                 bgcolor: 'rgba(224, 247, 250,0.6)',
                 borderpad: 4,
                 textfont:{
@@ -403,12 +410,18 @@
         deBarPlotData.positive = positive_position_number.value;
         deBarPlotData.neightive = negative_position_number.value;
         setTimeout(()=>{
+          const full_layout = JSON.parse(JSON.stringify(layout));
+          
+          full_layout.height = window.innerHeight * 0.8;
+          console.log(full_layout , 'full_layout')
           if(!document.getElementById('displatVolcanoPlot')) return;
           transfer_FullScreen_data.value = {
             data: DE_folder_data,
-            layout,
+            // layout,
+            layout:full_layout,
             plotConfig
           };
+          // transfer_FullScreen_data.value.layout.height = window.innerHeight * 0.8;
           Plotly.newPlot('displatVolcanoPlot', DE_folder_data, layout, plotConfig)
         },100)
       }catch(err){

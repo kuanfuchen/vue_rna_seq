@@ -16,10 +16,10 @@
       <div class="d-flex align-center" v-if="definedprops.useSearch">
         <v-text-field v-if="definedprops.closeSearch !== true"
           v-model="search_RNAname_field" variant="solo-filled"
-          label="RNA Name search" hide-details style="width:250px"
-          single-line density="compact">
+          label="RNA Name search" hide-details style="width:250px" append-inner-icon="fa:fas fa-close"
+          single-line density="compact" @click:append-inner="search_RNAname_field = ''">
         </v-text-field>
-        <v-btn class="ml-2" color="primary" @click="search_RNAname = search_RNAname_field">
+        <v-btn class="ml-2" color="primary" @click="search_RNAname = search_RNAname_field.toUpperCase()">
           <v-icon icon="fa:fas fa-magnifying-glass"></v-icon>
         </v-btn>
       </div>
@@ -32,6 +32,17 @@
       return-object class="elevation-1"
       :custom-filter="filterMiRNA"
       v-model="selected_RNA_seq">
+      <template v-slot:header.P-value="{column, getSortIcon}">
+        <div style="width:80px;">
+          {{ column.title }} 
+          <!-- <v-icon icon="getSortIcon"></v-icon> -->
+        </div>
+      </template>
+      <template v-slot:header.FDRstepup="{ column }">
+        <div style="width:80px">
+          {{ column.title.split(' ')[0] }}
+        </div>
+      </template>
       <template v-slot:item.Ratio="{item}">
         <div>
           <p :style="{ 'color': Number(item.Log2Ratio) >=0 ? '#D32F2F' : '#2962FF' }">{{ Math.abs(item.Ratio) > 0.001? item.Ratio.toLocaleString('en-US'):item.Ratio }}</p>
@@ -74,7 +85,8 @@
       </template>
       <template v-slot:item.Foldchange="{ item }">
         <div>
-          {{  item.Foldchange.toLocaleString('en-US')  }}
+          <!-- {{  item.Foldchange.toLocaleString('en-US')  }} -->
+          {{ parseFloat(item.Foldchange) }}
         </div>
       </template>
       <template v-slot:item.lsmean0="{ item }">
@@ -93,49 +105,28 @@
           <p class="text-primary">{{ item.GeneIDGeneName.split('-')[1] }}</p>
         </div>
       </template>
-      <!-- <template v-slot:item.Start="{ item }">
+      <template v-slot:item.Alignedreads="{item}">
         <div>
-          {{  item.Start.toLocaleString('en-US')  }}
+          {{ item.Alignedreads.toLocaleString('en-US') }}
         </div>
       </template>
-      <template v-slot:item.Stop="{ item }">
+      <!-- <template v-slot:item.FC95%lowerlimit="{item}">
         <div>
-          {{  item.Stop.toLocaleString('en-US')  }}
+          {{ parseFloat(item['FC95%lowerlimit']) }}
         </div>
       </template>
-      <template v-slot:item.Length="{ item }">
+      <template v-slot:item.FC95%lowerlimit="{item}">
         <div>
-          {{  item.Length.toLocaleString('en-US')  }}
-        </div>
-      </template>
-      <template v-slot:item.Totalcounts="{ item }">
-        <div>
-          {{  item.Totalcounts.toLocaleString('en-US')  }}
-        </div>
-      </template>
-      <template v-slot:item.Maximumcounts="{ item }">
-        <div>
-          {{  item.Maximumcounts.toLocaleString('en-US')  }}
-        </div>
-      </template>
-      <template v-slot:item.Geometricmean="{ item }">
-        <div>
-          {{  item.Geometricmean.toLocaleString('en-US')  }}
-        </div>
-      </template>
-      <template v-slot:item.Arithmeticmean="{ item }">
-        <div>
-          {{  item.Arithmeticmean.toLocaleString('en-US')  }}
+          {{ parseFloat(item['FC95%lowerlimit']) }}
         </div>
       </template> -->
     </v-data-table>
   </div>
 </template>
 <script setup>
-  import { ref, onMounted, watch, defineEmits } from 'vue';
+  import { ref, onMounted, watch, defineEmits,computed } from 'vue';
   const itemsPerPage = ref(25);
   const definedprops = defineProps (['table','useSearch', 'expresstablestyle']);
-  // 'exportName',
   const emits = defineEmits(['select_RNAseq_name']);
   // import { dataService } from '../service/data_service.js'; 
   const toggleShowSelect = ref(false);
@@ -145,12 +136,12 @@
   const dataTable_height = ref('');
   const search_RNAname_field = ref('');
   const search_RNAname = ref('');
+  // const  search_RNAname= computed((val) => { val.toUpperCase() });
   const dataLengthLoading = ref(false);
   const listenTable = () => {
     const tableInfo = definedprops.table;
-    console.log(tableInfo, 'tableInfo')
     if(tableInfo.headers.length === 0) return;
-    if(tableInfo.body.length > 3000)dataLengthLoading.value = true;
+    if(tableInfo.body.length > 3000) dataLengthLoading.value = true;
     return new Promise((resolve, reject)=>{
     selected_RNA_seq.value.length = 0;
     let bodyInfo = [];
@@ -159,13 +150,11 @@
     const geneNameIndex = tableInfo.headers.indexOf('Gene name');
     for(let i = 0 ; tableInfo.body.length > i ; i++){
       let setLSMeanKeyNumber = -1;
-      
       bodyInfo[i] = [];
       for(let j = 0 ; tableInfo.headers.length > j ; j++){
       // header
         let checkLSMean = -1;
         checkLSMean = tableInfo.headers[j].indexOf('LSMean');
-        
         let headerSplitWord;
         if(checkLSMean > -1) {
           setLSMeanKeyNumber ++;
@@ -272,12 +261,10 @@
         },1000)
       }
     })
-    
   };
   const selected_display_plot_text = ()=>{
     const RNAseq = [];
-    selected_RNA_seq.value.forEach((item)=>{
-      // RNAseq.push(item.GeneID)
+    selected_RNA_seq.value.forEach((item) => {
       RNAseq.push(item.Genename);
     });
     emits('select_RNAseq_name', RNAseq);

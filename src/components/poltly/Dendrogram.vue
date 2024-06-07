@@ -3,20 +3,25 @@
     <div class="d-flex justify-space-between" style="height:21px;margin-bottom: 9.5px;">
       <div class="pl-5 btn-icon" @click="downloadHeatmapImage">
           <v-icon icon="fa:fas fa-download"></v-icon>
-          <span class="ml-2">open new window save</span>
+          <span class="ml-2">Download image</span>
       </div>
       <div class="btn-icon"  @click="showHeatmap()">
         <v-icon icon="fa:fas fa-expand mr-5"></v-icon>
       </div>
     </div>
     <!-- zoomist-container -->
-    <div class="zoomist-container" >
-      <div class="zoomist-wrapper">
-        <div class="zoomist-image">
-          <img :src="getHeatmapImg()" id="heatmapPicture" :style="{ height:heatmapHight }" />
+    <div class="d-flex align-center" style="height: 550px;">
+      <div class="zoomist-container" >
+        <div class="zoomist-wrapper">
+          <div class="zoomist-image">
+            <img :src="getHeatmapImg()" id="heatmapPicture"  />
+            <!-- :style="{ height:heatmapHight }" -->
+          </div>
         </div>
       </div>
     </div>
+    <!-- <v-btn color="primary">+</v-btn>
+    <v-btn color="yellow" class="ml-2">-</v-btn> -->
   </div>
   <v-dialog v-model="toggle_Heatmap"  width="95vw" >
     <v-card class="bg-white" style="height: 92vh;">
@@ -36,7 +41,8 @@
         <div class="zoomist-dialogContainer" >
           <div class="zoomist-wrapper">
             <div class="zoomist-image">
-              <img :src="getHeatmapImg()" :style="{width:`${dialogHeatmapWidth}%`,height:`${dialogHeatmapHight}vh`}" />
+              <img :src="getHeatmapImg()"  />
+              <!-- :style="{width:`${dialogHeatmapWidth}%`,height:`${dialogHeatmapHight}vh`}" -->
             </div>
           </div>
         </div>
@@ -82,12 +88,11 @@
   import Zoomist from 'zoomist'; 
   // import html2canvas from 'html2canvas';
   const toggle_Heatmap = ref(false);
-  const definedProps = defineProps(['heatmapHeight']);
-  import { saveAs } from 'file-saver';
+  // const definedProps = defineProps(['heatmapHeight']);
+  // import { saveAs } from 'file-saver';
   const heatmapHight = ref('535px');
-  const dialogHeatmapHight = ref(80);
-  const dialogHeatmapWidth = ref(100);
-
+  // const dialogHeatmapHight = ref(80);
+  // const dialogHeatmapWidth = ref(100);
   // const getHeatmapImg = ()=> new URL('@/assets/miRNA-seq/Bowtie2/heatmap.png', import.meta.url).href;
   const getHeatmapImg = ()=> new URL('@/assets/Partek_Flow/For_report_html/04. normalized reads/heatmap.png', import.meta.url).href;
   const downloadHeatmapImage = () => {
@@ -104,22 +109,23 @@
       new Zoomist('.zoomist-dialogContainer', {
         maxScale: 6,
         bounds: true,
-        zoomer: true
+        // zoomer: true
       })
     },50);
   }
-  watch(definedProps.heatmapHeight, (newVal)=>{
-    if(newVal.height === 550){
-      heatmapHight.value = '535px';
-    }else{
-      heatmapHight.value = '100%'
-    }
-  });
+  // watch(definedProps.heatmapHeight, (newVal)=>{
+  //   console.log(newVal, 'newVal')
+  //   if(newVal.height === 550){
+  //     heatmapHight.value = '535px';
+  //   }else{
+  //     heatmapHight.value = '100%'
+  //   }
+  // });
   const openZoomist = ()=>{
     new Zoomist('.zoomist-container', {
       maxScale: 6,
       bounds: true,
-      zoomer: true
+      // zoomer: true
     })
   }
   onMounted(async() => {

@@ -6,6 +6,18 @@
       </div>
     </div>
     <div id="dotPlot_observeGene"></div>
+    <div class="d-flex justify-end" style="z-index: 999;">
+      <div class=" mr-5">
+        <p style="font-weight: 700;">Strength</p>
+        <div class="d-flex align-center px-1 py-1" style="width:95px;border:1px solid black">
+          <div class="roundPlot" style="width:10px;height: 10px;"></div>
+          <div class="roundPlot ml-1" style="width:15px;height: 15px;"></div>
+          <div class="roundPlot ml-1" style="width:20px;height: 20px;"></div>
+          <div class="roundPlot ml-1" style="width:27px;height: 27px;"></div>
+        </div>
+      </div>
+      
+    </div>
     <v-dialog v-model="toogle_Plot_Screen"  width="90vw" >
       <v-card class="bg-white" style="overflow-y: hidden;">
         <v-card-text >
@@ -101,6 +113,7 @@
     plotData.text = plotName;
     // plotData.text = plotDesc;
     layout.yaxis.tickvals = plotY;
+    image_config.filename = 'Dot plot Function enrichment';
     transfer_FullScreen_data.value = {
       data:[plotData],
       plotConfig,
@@ -119,5 +132,10 @@
 <style scope>
   .toggle_expand{
     cursor: pointer;
+  }
+  .roundPlot{
+    border: 1px solid black;
+    border-radius: 50%;
+    background: rgb(158,202,225);
   }
 </style>

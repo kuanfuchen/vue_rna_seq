@@ -91,6 +91,7 @@ const handlePlotInfo = (info)=>{
     // plotDesc.push(sortInfoArr[i].name);
     plotDesc.push(descName);
   }
+  image_config.filename = 'Bar plot Function enrichment';
   plotData.y = plotY;
   plotData.x = plotX;
   // plotData.marker.color = color;

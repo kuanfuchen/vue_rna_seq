@@ -20,7 +20,7 @@
             </v-col>
           </v-row>
         </div>
-        <div class="d-flex mt-2">
+        <div class="d-flex mt-3">
           <div class="px-3" style="width:30vw">
             <v-select label="Select Regular" :items="['UP','DOWN']" 
               v-model="selectRegular" variant="outlined" density="compact">
