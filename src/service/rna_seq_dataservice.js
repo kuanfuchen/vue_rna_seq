@@ -9,7 +9,7 @@ const _RNAseq_visual_scatter_sampleName$ = new BehaviorSubject({});
 const _RNAseq_visual_boxPlot$ = new  BehaviorSubject({});
 const _RNAseq_CPM_PCA_Data$ = new BehaviorSubject({});
 const _RNAseq_DE_Folder_Info$ = new BehaviorSubject({});
-const _closeXlsx_info$ = new BehaviorSubject(false);
+const _closeXlsx_info$ = new Subject(false);
 import { rawFastqQC, trimemd_fastqQC, filterOutrRNAfastqQC, star_alignmentQC, quantify_to_annotation_gene_counts, normalized_counts, RNAseq_CPM_PCA } from './getData.js';
 // import down_Bio_Process from '../../public/06_01. Functional analysis - STRINGdb/input/down_regulated/Biological Process (Gene Ontology).tsv';
 const conditionSort = [];
@@ -110,7 +110,6 @@ const exportXlsx = async(readFile, fileName, sheetsName)=> {
     await utils.book_append_sheet(export_wb, ws, sheets_Title[i]);
   }
   await writeFileXLSX(export_wb, excelName + '.xlsx');
-  _closeXlsx_info$.next(false);
 };
 const export_Visualization = (fileContent, sheetsName) => {
   return new Promise((resolve, reject)=>{
@@ -122,6 +121,7 @@ const export_Visualization = (fileContent, sheetsName) => {
         await utils.book_append_sheet(export_Visualization_wb, ws, sheetsName[i])
       }
       await writeFileXLSX(export_Visualization_wb, 'Visualization.xlsx');
+      await _closeXlsx_info$.next(false);
     },1000)
      // const workerContent = {
     //   content:fileContent,

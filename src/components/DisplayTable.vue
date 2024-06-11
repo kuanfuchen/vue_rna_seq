@@ -7,7 +7,7 @@
             <v-icon icon="fa:fas fa-image" style="font-size: 16px;"></v-icon>
           </v-btn>
         </div>
-        <div class="" v-if="toggleShowSelect">
+        <div v-if="toggleShowSelect">
           <v-btn color="primary" class="text-none" density="comfortable" @click="reseted_display_plot_text" :disabled="selected_RNA_seq.length === 0">
             Reset
           </v-btn>
@@ -179,17 +179,6 @@
               // fixed: headerSplitWord === 'GeneID' ? true : false,
             })
           }
-          // const uppercaseFirst = tableInfo.headers[k].split('');
-          // const getFirst = uppercaseFirst.splice(0, 1);
-          // const firstcase=getFirst[0].toUpperCase();
-          // const combinedTitle = firstcase+ uppercaseFirst.join('');
-          // headers.value.push({
-          //   title:combinedTitle,
-          //   align: 'center',
-          //   sortable: true,
-          //   key: checkLSMean === -1 ? headerSplitWord : 'lsmean' + setLSMeanKeyNumber, 
-          //   fixed: headerSplitWord === 'GeneID' ? true : false,
-          // })
         }
         if(!bodyInfo[i][headerSplitWord]){
           bodyInfo[i][headerSplitWord] = tableInfo.body[i][j];
@@ -265,7 +254,8 @@
   const selected_display_plot_text = ()=>{
     const RNAseq = [];
     selected_RNA_seq.value.forEach((item) => {
-      RNAseq.push(item.Genename);
+      // RNAseq.push(item.Genename);
+      RNAseq.push(item.GeneID)
     });
     emits('select_RNAseq_name', RNAseq);
   }

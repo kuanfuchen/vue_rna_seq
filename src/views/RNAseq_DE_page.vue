@@ -190,7 +190,6 @@
       const log2Low = log2_LowerBound.value;
       let questionMark = 0;
       for(let i = 0 ; compare_de_tables_info.length > i ; i++){
-        // if(compare_de_tables_info[i].title === compare_de_title.value){
         const headers = [];
         for(let j = 0 ; compare_de_tables_info[i].headers.length > j; j++){
           // let header = compare_de_tables_info[i].headers[j].split(/\(/)[0];
@@ -210,7 +209,6 @@
           }else{
             const headerTrim = header.trim();
             headers.push(headerTrim);
-            // headers.push(header);
           }
           if(headerUpper === 'FDR STEP UP'){
             fdrIndex = j;
@@ -263,7 +261,7 @@
             };
             // 
             if(compare_de_tables_p_value_Number > p_value_number_val) continue;
-            if(headers_log2_Ratio >=0 && compare_de_tables_log2_Number >=log2Up ||
+            if(headers_log2_Ratio >=0 && compare_de_tables_log2_Number >= log2Up ||
               headers_log2_Ratio >=0 && compare_de_tables_log2_Number <= log2_LowerBound.value){
                 compare_de_tables_info[i].body[j][headers_log2_Ratio] = Number(compare_de_tables_info[i].body[j][headers_log2_Ratio]);
                 compare_de_tables_info[i].body[j][headers_ratio] = Number(compare_de_tables_info[i].body[j][headers_ratio]);

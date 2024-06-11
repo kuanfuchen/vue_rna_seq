@@ -124,7 +124,7 @@
             alignmentBody[i].push(tableInfo.body[i][j])
           }
         }
-        const alignReads = (tableInfo.body[i][2] * tableInfo.body[i][4]).toString();
+        const alignReads = parseInt(tableInfo.body[i][2] * Math.round(tableInfo.body[i][4] * 100) / 100 / 100).toString();
         alignmentBody[i].splice(3,0, alignReads)
       }
       tableComponentInfo.body = alignmentBody;

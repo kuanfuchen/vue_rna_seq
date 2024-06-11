@@ -7,14 +7,14 @@
     </v-tabs>
     <div class="d-flex justify-end  mt-1">
       <div class="d-flex align-center mb-1 mr-3" >
-        <v-icon icon="fa:fas fa-file-arrow-down" class="text-primary mr-3" style="font-size: 24px;" 
-        @click="exportSinglePageXlsxFile()"></v-icon>
-        <v-icon icon="fa:fas fa-file-arrow-down" class="text-teal mr-3" style="font-size: 24px;" @click="toggleCircularLoadingPage = true; exportXlsxFile()"></v-icon>
-        <!-- <v-icon v-if="!toggleCircularLoadingPage" icon="fa:fas fa-file-arrow-down" class="text-teal mr-3" style="font-size: 24px;" @click="toggleCircularLoadingPage = true; exportXlsxFile()"></v-icon>
+        <!-- <v-icon icon="fa:fas fa-file-arrow-down" class="text-primary mr-3" style="font-size: 24px;" 
+        @click="exportSinglePageXlsxFile()"></v-icon> -->
+        <!-- <v-icon icon="fa:fas fa-file-arrow-down" class="text-teal mr-3" style="font-size: 24px;" @click="toggleCircularLoadingPage = true; exportXlsxFile()"></v-icon> -->
+        <v-icon v-if="!toggleCircularLoadingPage" icon="fa:fas fa-file-arrow-down" class="text-teal mr-3" style="font-size: 24px;" @click="toggleCircularLoadingPage = true; exportXlsxFile()"></v-icon>
         <div class="d-flex mr-3" v-else>
-          <p style="font-weight: bolder;">file export waiting</p>
+          <p style="font-weight: bolder;">waiting</p>
           <v-progress-circular class="ml-2" :size="30" color="teal" indeterminate ></v-progress-circular>
-        </div> -->
+        </div>
       </div>
       <div class="d-flex align-center" style="width:250px">
         <v-icon icon="fa:fas fa-magnifying-glass" class="mr-3"></v-icon>
@@ -87,7 +87,6 @@ dataFolder_RNAseq.RNAseq_handleRawReadsFolder$.pipe(takeUntil(comSubject$),debou
   createdRNAseqTable(rowReads_normalizedData);
 });
 dataFolder_RNAseq.closeXlsx_info$.pipe(takeUntil(comSubject$),debounceTime(300)).subscribe((boolean)=>{
-  console.log(boolean, 'boolean')
   toggleCircularLoadingPage.value = boolean;
 })
 const createdRNAseqTable = (rowReads_normalizedData)=>{
@@ -158,18 +157,18 @@ const exportXlsxFile = async()=>{
   //   toggleCircularLoadingPage.value= false;
   // }, 1000);
 }
-const exportSinglePageXlsxFile = async() => {
-  const selectedHeaderName = conditionHeaders.value[condition_header.value];
-  const tableRNA_data = Object.values(tabsRNA_Data[selectedHeaderName]);
-  const exportData = [];
-  let exportKeys = [];
-  for(let i = 0 ; tableRNA_data.length > i ; i++){
-    if(i === 0)exportKeys = Object.keys(tableRNA_data[i]);
-    exportData.push(Object.values(tableRNA_data[i]))
-  }
-  exportData.unshift(exportKeys);
-  await dataFolder_RNAseq.export_Visualization([exportData], [selectedHeaderName]);
-}
+// const exportSinglePageXlsxFile = async() => {
+//   const selectedHeaderName = conditionHeaders.value[condition_header.value];
+//   const tableRNA_data = Object.values(tabsRNA_Data[selectedHeaderName]);
+//   const exportData = [];
+//   let exportKeys = [];
+//   for(let i = 0 ; tableRNA_data.length > i ; i++){
+//     if(i === 0)exportKeys = Object.keys(tableRNA_data[i]);
+//     exportData.push(Object.values(tableRNA_data[i]))
+//   }
+//   exportData.unshift(exportKeys);
+//   await dataFolder_RNAseq.export_Visualization([exportData], [selectedHeaderName]);
+// }
 </script>
 <style scope lang="scss">
   .v-table .v-data-table__th,  .v-table .v-data-table__td{

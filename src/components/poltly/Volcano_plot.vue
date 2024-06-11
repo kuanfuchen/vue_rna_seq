@@ -33,8 +33,47 @@
               <p style="color:#1976D2;margin-left:90px">Down: {{ negative_position_number }}</p>
             </div> -->
               <p class="text-h6 ml-3 text-teal" style="font-weight: 700;">Volcano Plot</p>
-              <div class="download_xlsx" @click="toogle_Plot_Screen = true">
-                <v-icon icon="fa:fas fa-expand mr-5"></v-icon>
+              <div class="d-flex">
+                <div v-if="annotationsValue.length > 0">
+                  <v-menu v-model="toggledPointSite" :close-on-content-click="false">
+                    <template v-slot:activator="{ props }">
+                      <v-btn size="small" outline v-bind="props">
+                        <v-icon color="teal" icon="fa:fas fa-gear"></v-icon>
+                      </v-btn>
+                    </template>
+                    <v-card min-width="400">
+                      <template v-slot:title>
+                        <span class="font-weight-black">Regular label site</span>
+                      </template>
+                      <v-list lines="one">
+                        <v-list-item v-for="annotation in annotationsValue" :key="annotation.name"
+                        :title="annotation.name" :subtitle="annotation.ID">
+                          <template v-slot:append>
+                            <div class="ml-1">
+                              <v-text-field density="compact"
+                                v-model="annotation.x"
+                                label="x"
+                              ></v-text-field>
+                            </div>
+                            <div class="ml-2">
+                              <v-text-field density="compact"  v-model="annotation.y" label="y"></v-text-field>
+                            </div>
+                          </template>
+                          </v-list-item>
+                          <div class="d-flex justify-space-around">
+                            <v-btn  width="80" class="text-none" color="blue-grey"
+                            @click="toggledPointSite = false">Close</v-btn>
+                            <v-btn  outlined width="80" @click="plotSettingChange" color="blue"> 
+                              <v-icon icon="fa:fas fa-image" style="font-size: 16px;"></v-icon>
+                            </v-btn> 
+                          </div>
+                      </v-list>
+                    </v-card>
+                  </v-menu>
+                </div>
+                <div class="download_xlsx ml-3" @click="toogle_Plot_Screen = true">
+                  <v-icon icon="fa:fas fa-expand mr-5"></v-icon>
+                </div>
               </div>
             </div>
             <div class="mt-3"  id="displatVolcanoPlot"></div>
@@ -69,6 +108,7 @@
   const props = defineProps(['change_volcano_plot', ]);
   // const emit = defineEmits(['maxValYaxis']);
   const toogle_Plot_Screen = ref(false);
+  const toggledPointSite = ref(false);
   let log2Upper = 1;
   let log2Lower = -1;
   let P_or_Q_value ='P-VALUE';
@@ -87,6 +127,7 @@
   const contentCols = ref(6);
   const plot_height = ref(30);
   const plot_bar_height = ref(30);
+  const annotationsValue = ref([]);
   const plotConfig = {
     responsive:true, 
     displaylogo: false,
@@ -245,6 +286,7 @@
     positive_position_number.value = 0;
     negative_position_number.value = 0;
     total_position_number.value = 0;
+    annotationsValue.value.length = 0;
     await handleDE_data(num);    
   }
   const handleDE_data = (selectedDataNum = 0) => {
@@ -252,6 +294,7 @@
     const selected_DE_pValue = [];
     const selected_DE_log2 = [];
     const selected_RNA_name = [];
+    const selected_Gene_ID = [];
     const headersUppers = [];
     for(let i = 0; storagedDE_folder.info[selectedDataNum].headers.length > i ; i++){
       const splitHeaders = storagedDE_folder.info[selectedDataNum].headers[i].split(/\(/)[0];
@@ -275,22 +318,25 @@
         // selected_RNA_name.push(storagedDE_folder.info[selectedDataNum].body[i][0]);
         // const geneName = `${storagedDE_folder.info[selectedDataNum].body[i][0]} - ${storagedDE_folder.info[selectedDataNum].body[i][1]}`
         const geneName = storagedDE_folder.info[selectedDataNum].body[i][1];
+        const geneID = storagedDE_folder.info[selectedDataNum].body[i][0];
         selected_RNA_name.push(geneName);
         selected_DE_pValue.push(logCalu);
+        selected_Gene_ID.push(geneID)
         // selected_DE_log2.push(storagedDE_folder.info[selectedDataNum].body[i][4]);
         selected_DE_log2.push(storagedDE_folder.info[selectedDataNum].body[i][lo2_index]);
         index ++;
       }
     }
-    displatVolcano(selected_DE_pValue, selected_DE_log2, selected_RNA_name);
+    displatVolcano(selected_DE_pValue, selected_DE_log2, selected_RNA_name, selected_Gene_ID);
   }
-  const displatVolcano = (p_value, log2, RNA_ID) => {
+  const displatVolcano = (p_value, log2, RNA_ID, Gene_ID) => {
     return new Promise((resolve, reject) => {
       try{
         layout.annotations.length = 0;
         for(let i = 0 ; log2.length> i ; i++){
           const floatNum = parseFloat(log2[i]);
-          const selecte_miRNAs_Name_Index = selecte_miRNAs_Name.indexOf(RNA_ID[i]);
+          // const selecte_miRNAs_Name_Index = selecte_miRNAs_Name.indexOf(RNA_ID[i]);
+          const selecte_miRNAs_Name_Index = selecte_miRNAs_Name.indexOf(Gene_ID[i]);
           if( log2Upper <= floatNum &&  p_value[i] >= log_SelectStyleNum){
             if(selecte_miRNAs_Name_Index === -1){
               volcano_plot_plotlyjs_data.y.push(p_value[i]);
@@ -303,13 +349,14 @@
               display_Text_volcano__plot_plotlyjs_data.marker.color.push('#EF5350');
               // 
               layout.annotations.push({
+                originName:Gene_ID[i],
                 x:log2[i],
                 y:p_value[i],
                 text:RNA_ID[i],
                 showarrow: true,
-                arrowhead: 1,
+                arrowhead: 0,
                 ax: 10,
-                ay: -80,
+                ay: -30,
                 xanchor:'left',
                 // yanchor:'bottom',
                 bgcolor: 'rgba(224, 247, 250,0.6)',
@@ -332,15 +379,16 @@
               display_Text_volcano__plot_plotlyjs_data.marker.color.push('#1976D2');
               // 
               layout.annotations.push({
+                originName:Gene_ID[i],
                 x:log2[i],
                 y:p_value[i],
                 text:RNA_ID[i],
                 showarrow: true,
-                arrowhead: 1,
+                arrowhead: 0,
                 xanchor:'right',
                 // yanchor:'bottom',
                 ax: -10,
-                ay: -80,
+                ay: -30,
                 bgcolor: 'rgba(224, 247, 250,0.6)',
                 borderpad: 4,
                 textfont:{
@@ -362,13 +410,14 @@
               display_Text_volcano__plot_plotlyjs_data.marker.color.push('#B0BEC5');
               // 
               layout.annotations.push({
+                originName:Gene_ID[i],
                 x:log2[i],
                 y:p_value[i],
                 text:RNA_ID[i],
                 showarrow: true,
-                arrowhead: 1,
+                arrowhead: 0,
                 ax: 0,
-                ay: -80,
+                ay: -30,
                 bgcolor: 'rgba(224, 247, 250,0.6)',
                 borderpad: 4,
                 textfont:{
@@ -409,11 +458,21 @@
         deBarPlotData.height = plot_height.value;
         deBarPlotData.positive = positive_position_number.value;
         deBarPlotData.neightive = negative_position_number.value;
+        if(layout.annotations.length > 0){
+          for(let i = 0 ; layout.annotations.length > i ; i++ ){
+            annotationsValue.value.push({
+              name:layout.annotations[i].originName, 
+              ID:layout.annotations[i].text,
+              x:layout.annotations[i].ax,
+              y:layout.annotations[i].ay,
+            })
+          }
+        }else{
+          annotationsValue.value.length = 0;
+        }
         setTimeout(()=>{
           const full_layout = JSON.parse(JSON.stringify(layout));
-          
           full_layout.height = window.innerHeight * 0.8;
-          console.log(full_layout , 'full_layout')
           if(!document.getElementById('displatVolcanoPlot')) return;
           transfer_FullScreen_data.value = {
             data: DE_folder_data,
@@ -428,6 +487,17 @@
         reject(err)
       }
     })
+  }
+  const plotSettingChange = () => {
+    if(annotationsValue.value.length <= 0)return;
+    for(let i = 0 ; annotationsValue.value.length > i ; i++){
+      if(layout.annotations.originName === annotationsValue.value[i].name)
+      layout.annotations[i].ax = annotationsValue.value[i].x;
+      layout.annotations[i].ay = annotationsValue.value[i].y;
+    }
+    
+    Plotly.relayout('displatVolcanoPlot', layout);
+    toggledPointSite.value = false;
   }
   const changedContentSize = (col,changedTableHeight,changePlotHeight)=>{
     if(contentCols.value === col) return;
