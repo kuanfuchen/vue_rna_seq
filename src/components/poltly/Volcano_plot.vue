@@ -444,7 +444,6 @@
         };
         layout.yaxis = {
           range:[ minValYaxis, maxValYaxis ],
-          // range:[0, 20]
           title: { text:`-log<span style="font-size:12px;">10</span>(${P_or_Q_value==='P-VALUE'?'P-value':'Q-value'})`, font:{size:20}}
         };
         const postitiveYMax = Math.ceil(maxValYaxis);

@@ -150,7 +150,7 @@ const handled_RNAseq_DE = async() =>{
   assetsContent.keys().forEach((key)=>{
     const keySplit = key.split(/\/(\w+)\./);
     compare_RNAseq_name.push(keySplit[1]);
-  })
+  });
   const txtground_DE = [];
   for(let i = 0 ; compare_RNAseq_name.length > i ; i++){
     const readTxt = require(`../assets/Partek_Flow/For_report_html/05. DE genes/${compare_RNAseq_name[i]}.txt`);

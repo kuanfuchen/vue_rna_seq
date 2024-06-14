@@ -86,7 +86,6 @@
 <script setup >
   /* eslint-disable */
   import { ref, reactive, shallowRef  } from 'vue';
-  import { dataService } from '../service/data_service.js';
   import { dataFolder_RNAseq } from '../service/rna_seq_dataservice.js';
   import { Subject, takeUntil, debounceTime } from 'rxjs';
   import BoxPlot from '../components/poltly/BoxPlot.vue';

@@ -14,21 +14,16 @@
   
 </template>
 <script setup>
-  //
-  import { onMounted } from 'vue';
+  import { onMounted, onBeforeMount } from 'vue';
   import {dataFolder_RNAseq} from './service/rna_seq_dataservice.js';
   import { papaDate } from './service/papaResolve_getData.js';
-  // import { dataService } from '@/service/data_service.js';
-// import data from './service/data_service';
-// export default defineComponent({
-//   name: 'App'
-// })
-onMounted(async() => {
+  onBeforeMount( async () => {
   await dataFolder_RNAseq.handleRNAseqQCReadAlignmentfolder();
   await dataFolder_RNAseq.rnaSeq_handleRawReads_normalizedCounts();
   await dataFolder_RNAseq.handleRNAseq_CPM_PCA();
   await dataFolder_RNAseq.handled_RNAseq_DE();
-  await papaDate.handleFunctionalAnalysis();
+  // await papaDate.handleFunctionalAnalysis();
+  await papaDate.searchFunction_enrichment_file();
 });
 </script>
 <style lang="scss">

@@ -19,7 +19,7 @@
             <v-col cols="6">
               <!-- <span class="font-weight-bold text-right">Compare</span> -->
               <v-select class="ml-3" label="Select compare" :items="compare_de_title_group" v-model="compare_de_title"
-                variant="outlined" density="compact"></v-select>
+                variant="outlined" density="compact" ></v-select>
             </v-col>
           </v-row>
         </div>
@@ -36,7 +36,7 @@
           </div>
         </div>
         <div class="mt-2 ml-3">
-          <v-btn color="indigo-darken-3" class="text-none" @click="handleFe_KEGG()" >Enter</v-btn>
+          <v-btn color="indigo-darken-3" class="text-none" @click="changeFeFile();" >Enter</v-btn>
         </div>
       </v-card-text>
       <v-card-text>
@@ -62,7 +62,7 @@
 <script setup>
   import { Subject, takeUntil,debounceTime } from 'rxjs';
   import { papaDate } from '../../service/papaResolve_getData';
-  import { ref, reactive } from 'vue';
+  import { ref, reactive, onMounted } from 'vue';
   import FeTable from '../../components/table/Function_EnrichmentTable.vue';
   import BarPlot_FE from '../../components/poltly/BarPlot_Fun_Enrich.vue';
   import DotPlot_FE from '../../components/poltly/DotPlot_Func_Enrich.vue';
@@ -84,8 +84,8 @@
   let fe_KEGG_Table = [];
   const gene_KEGG_FDR = {};
   dataFolder_RNAseq.RNAseq_DE_Folder_Info$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(deFolderData)=>{
-    compare_de_title_group.value = deFolderData.title_Group;
-    if(deFolderData.title_Group.length > 0 ) compare_de_title.value = deFolderData.title_Group[0];
+    // compare_de_title_group.value = deFolderData.title_Group;
+    // if(deFolderData.title_Group.length > 0 ) compare_de_title.value = deFolderData.title_Group[0];
     const rna_num = await filter_RNA_num(0, deFolderData);
     await display_filter_RNA_num(rna_num);
   });
@@ -94,6 +94,10 @@
     await handleHeaders(papaData.headers);
     await handleFe_KEGG();
   });
+  papaDate.name_Fun_enrichment$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(feFileName) => {
+    compare_de_title_group.value = feFileName;
+    if(feFileName.length > 0 ) compare_de_title.value = feFileName[0];
+  })
   const display_filter_RNA_num = (RNA_seq_num)=>{
     up_RNA_seq_num.value = RNA_seq_num.positive_position_number;
     down_RNA_seq_num.value = RNA_seq_num.negative_position_number;
@@ -101,12 +105,16 @@
   const handleHeaders = (feheaders)=>{
     for(let i = 0 ; feheaders.length > i ; i++){
       kegg_headers.push({
-        key:feheaders[i],
-        title:feheaders[i],
-        align:'start',
+        key: feheaders[i],
+        title: feheaders[i],
+        align: 'start',
         sortable: true
       })
     };
+  }
+  const changeFeFile = async()=>{
+    // await papaDate.handle_FE_file(compare_de_title.value);
+    await papaDate.received_FEkegg_Info(compare_de_title.value);
   }
   const handleFe_KEGG = async()=>{
     fe_KEGG_TableBody.items.length = 0;
@@ -159,4 +167,7 @@
       }
     }
   }
+  onMounted(async()=>{
+    await changeFeFile();
+  })
 </script>
