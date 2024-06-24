@@ -7,8 +7,20 @@
     </div>
     <div id="dotPlot_observeGene"></div>
     <div class="d-flex justify-end" style="z-index: 999;">
+      <div class="mr-5">
+        <p class="d-flex justify-center" style="font-weight: 700;">Color-Name</p>
+        <div class="d-flex align-center px-1 py-1 " style=";border:1px solid black">
+          <div class="squarePlot " style="width:25px;height: 20px; background: rgb(158,202,225);"></div>
+          <p class="ml-1">MF</p>
+          <div class="squarePlot ml-1" style="width:25px;height: 20px;background: rgba(255, 127, 15, 0.7)"></div>
+          <p class="ml-1">BP</p>
+          <div class="squarePlot ml-1" style="width:25px;height: 20px;background: rgba(44, 160, 44, 0.7)"></div>
+          <p class="ml-1">CC</p>
+        </div>
+      </div>
+      
       <div class=" mr-5">
-        <p style="font-weight: 700;">Strength</p>
+        <p class="d-flex justify-center" style="font-weight: 700;">Strength</p>
         <div class="d-flex align-center px-1 py-1" style="width:95px;border:1px solid black">
           <div class="roundPlot" style="width:10px;height: 10px;"></div>
           <div class="roundPlot ml-1" style="width:15px;height: 15px;"></div>
@@ -16,7 +28,6 @@
           <div class="roundPlot ml-1" style="width:27px;height: 27px;"></div>
         </div>
       </div>
-      
     </div>
     <v-dialog v-model="toogle_Plot_Screen"  width="90vw" >
       <v-card class="bg-white" style="overflow-y: hidden;">
@@ -76,35 +87,37 @@
     displayModeBar: true
   };
   const handleDotPlotInfo = (info)=>{
+    if(info.length === 0 )return;
     const dotPlot_observeGene = document.getElementById('dotPlot_observeGene');
     Plotly.purge(dotPlot_observeGene);
     const infoArr = info;
-    // const sortInfoArr = infoArr.sort((a,b)=>{if( b.data > a.data)return -1});
     const sortInfoArr = infoArr.sort((a,b)=>{if( b.FDR > a.FDR)return -1})
-    // const color = [];
     const plotX = [];
     const plotY = [];
     const plotName = [];
     const dotsSize = [];
+    const markerColor = [];
     for(let i = 0 ; sortInfoArr.length > i ; i++){
       // plotY.push(sortInfoArr[i].name);
       plotY.push(sortInfoArr[i].desc);
       // plotX.push(sortInfoArr[i].data);
       // color.push(sortInfoArr[i].FDR);
-      const descName = `(${sortInfoArr[i].data}, ${sortInfoArr[i].name})`;
-      dotsSize.push(sortInfoArr[i].data * 100);
-      plotX.push(sortInfoArr[i].FDR)
+      const descName = `(${sortInfoArr[i].data}, ${sortInfoArr[i].name}, ${sortInfoArr[i].category})`;
+      dotsSize.push(parseInt(sortInfoArr[i].data * 100));
+      plotX.push(sortInfoArr[i].FDR);
+      markerColor.push(sortInfoArr[i].color);
       // plotName.push(sortInfoArr[i].name);
       plotName.push(descName);
     }
     plotData.y = plotY;
     plotData.x = plotX;
+    plotData.marker.color= markerColor;
     const evaluateValueMax = Math.max(...dotsSize);
     if(evaluateValueMax > 55){
-      const calcDotsSize = dotsSize.map((item)=>{return item / 2.8});
+      const calcDotsSize = dotsSize.map((item)=>{return item / 1.5});
       plotData.marker.size = calcDotsSize;
     }else if(evaluateValueMax > 33){
-      const calcDotsSize = dotsSize.map((item)=> item / 2);
+      const calcDotsSize = dotsSize.map((item)=> item / 1.5);
       plotData.marker.size = calcDotsSize;
     }else{
       plotData.marker.size = dotsSize;
@@ -124,8 +137,9 @@
     })
   }
   watch(props.fe_Dot_Plot,(newVal)=>{
-    if(!newVal.length === 0) return;
-    handleDotPlotInfo(newVal)
+    if(newVal.length === 0) return;
+    const val = JSON.parse(JSON.stringify(newVal))
+    handleDotPlotInfo(val)
   })
   const close_dialog = (val) => toogle_Plot_Screen.value = val;
 </script>
@@ -133,9 +147,12 @@
   .toggle_expand{
     cursor: pointer;
   }
+  .squarePlot{
+    border: 1px solid black;
+  }
   .roundPlot{
     border: 1px solid black;
     border-radius: 50%;
-    background: rgb(158,202,225);
+    /* background: #7b9daf; */
   }
 </style>

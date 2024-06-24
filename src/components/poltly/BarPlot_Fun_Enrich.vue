@@ -42,7 +42,6 @@ const layout = {
 const plotData = {
   x: [],
   y: [],
-  // z:[],
   type: 'bar',
   orientation:'h',
   textposition: 'none',
@@ -78,6 +77,7 @@ const handlePlotInfo = (info)=>{
   const plotX = [];
   const plotY = [];
   const plotDesc = [];
+  const markerColor = [];
   // const sortInfoArr = infoArr.sort((a,b)=>{if( b.data > a.data)return -1});
   const sortInfoArr = infoArr.sort((a,b)=>{if( b.FDR > a.FDR)return -1});
   for(let i = 0 ; sortInfoArr.length > i ; i++){
@@ -85,9 +85,10 @@ const handlePlotInfo = (info)=>{
     // plotX.push(sortInfoArr[i].data);
     // color.push(sortInfoArr[i].FDR);
     // plotDesc.push(sortInfoArr[i].desc);
-    const descName = `(${sortInfoArr[i].data}, ${sortInfoArr[i].name})`;
+    const descName = `(${sortInfoArr[i].data}, ${sortInfoArr[i].name}, ${sortInfoArr[i].category})`;
     plotY.push(sortInfoArr[i].desc);
     plotX.push(sortInfoArr[i].FDR);
+    markerColor.push(sortInfoArr[i].color);
     // plotDesc.push(sortInfoArr[i].name);
     plotDesc.push(descName);
   }
@@ -95,6 +96,7 @@ const handlePlotInfo = (info)=>{
   plotData.y = plotY;
   plotData.x = plotX;
   // plotData.marker.color = color;
+  plotData.marker.color= markerColor;
   plotData.text = plotDesc;
   layout.yaxis.tickvals = plotY;
   transfer_FullScreen_data.value = {
@@ -108,8 +110,9 @@ const handlePlotInfo = (info)=>{
 };
 const close_dialog = (val) => toogle_Plot_Screen.value = val;
 watch(props.fe_obsergene_data,(newVal)=>{
-  if( newVal.length === 0) return;
-  handlePlotInfo(newVal);
+  if(newVal.length === 0) return;
+  const val = JSON.parse(JSON.stringify(newVal))
+  handlePlotInfo(val);
 })
 </script>
 <style scope>

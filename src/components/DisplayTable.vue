@@ -16,7 +16,7 @@
       <div class="d-flex align-center" v-if="definedprops.useSearch">
         <v-text-field v-if="definedprops.closeSearch !== true"
           v-model="search_RNAname_field" variant="solo-filled"
-          label="RNA Name search" hide-details style="width:250px" append-inner-icon="fa:fas fa-close"
+          label="DEGs ID/Name search" hide-details style="width:250px" append-inner-icon="fa:fas fa-close"
           single-line density="compact" @click:append-inner="search_RNAname_field = ''">
         </v-text-field>
         <v-btn class="ml-2" color="primary" @click="search_RNAname = search_RNAname_field.toUpperCase()">

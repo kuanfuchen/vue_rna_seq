@@ -82,6 +82,9 @@
   /* object-fit: cover;
   object-position: center; */
 }
+.zoomist-wrapper{
+  background-color:#fff;
+}
 </style>
 <script setup>
   import { ref, watch, onMounted } from 'vue';

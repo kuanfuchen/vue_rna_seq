@@ -1,6 +1,5 @@
 <template>
   <div>
-    
     <div class="d-flex justify-space-between">
       <div class="ml-3" style="font-weight: 700;font-size: 15px;">
         {{ valcanoTitle }}
@@ -37,11 +36,11 @@
                 <div v-if="annotationsValue.length > 0">
                   <v-menu v-model="toggledPointSite" :close-on-content-click="false">
                     <template v-slot:activator="{ props }">
-                      <v-btn size="small" outline v-bind="props">
+                      <v-btn size="small" outline v-bind="props" >
                         <v-icon color="teal" icon="fa:fas fa-gear"></v-icon>
                       </v-btn>
                     </template>
-                    <v-card min-width="400">
+                    <v-card min-width="500">
                       <template v-slot:title>
                         <span class="font-weight-black">Regular label site</span>
                       </template>
@@ -50,19 +49,16 @@
                         :title="annotation.name" :subtitle="annotation.ID">
                           <template v-slot:append>
                             <div class="ml-1">
-                              <v-text-field density="compact"
-                                v-model="annotation.x"
-                                label="x"
-                              ></v-text-field>
+                              <v-text-field density="compact" label="x" v-model="annotation.x"></v-text-field>
                             </div>
-                            <div class="ml-2">
+                            <div class="ml-1">
                               <v-text-field density="compact"  v-model="annotation.y" label="y"></v-text-field>
                             </div>
                           </template>
                           </v-list-item>
                           <div class="d-flex justify-space-around">
                             <v-btn  width="80" class="text-none" color="blue-grey"
-                            @click="toggledPointSite = false">Close</v-btn>
+                              @click="toggledPointSite = false">Close</v-btn>
                             <v-btn  outlined width="80" @click="plotSettingChange" color="blue"> 
                               <v-icon icon="fa:fas fa-image" style="font-size: 16px;"></v-icon>
                             </v-btn> 
@@ -71,7 +67,7 @@
                     </v-card>
                   </v-menu>
                 </div>
-                <div class="download_xlsx ml-3" @click="toogle_Plot_Screen = true">
+                <div class="download_xlsx ml-3 pt-1" @click="toogle_Plot_Screen = true">
                   <v-icon icon="fa:fas fa-expand mr-5"></v-icon>
                 </div>
               </div>
@@ -131,8 +127,8 @@
   const plotConfig = {
     responsive:true, 
     displaylogo: false,
-    modeBarButtonsToRemove: ['pan2d','select2d','lasso2d','zoom', 'toImage'],
-    modeBarButtonsToAdd:[imageCapture],
+    modeBarButtonsToRemove: ['pan2d', 'select2d', 'lasso2d', 'zoom', 'toImage'],
+    modeBarButtonsToAdd: [ imageCapture ],
     displayModeBar: true
   }
   const valcanoTitle = ref('');
@@ -359,7 +355,7 @@
                 ay: -30,
                 xanchor:'left',
                 // yanchor:'bottom',
-                bgcolor: 'rgba(224, 247, 250,0.6)',
+                bgcolor: 'rgba(224, 247, 250,0.8)',
                 borderpad: 4,
                 textfont:{
                   size:16
@@ -389,7 +385,7 @@
                 // yanchor:'bottom',
                 ax: -10,
                 ay: -30,
-                bgcolor: 'rgba(224, 247, 250,0.6)',
+                bgcolor: 'rgba(224, 247, 250,0.8)',
                 borderpad: 4,
                 textfont:{
                   size:16
@@ -418,7 +414,7 @@
                 arrowhead: 0,
                 ax: 0,
                 ay: -30,
-                bgcolor: 'rgba(224, 247, 250,0.6)',
+                bgcolor: 'rgba(224, 247, 250,0.8)',
                 borderpad: 4,
                 textfont:{
                   size:16
@@ -462,8 +458,8 @@
             annotationsValue.value.push({
               name:layout.annotations[i].originName, 
               ID:layout.annotations[i].text,
-              x:layout.annotations[i].ax,
-              y:layout.annotations[i].ay,
+              x:Math.abs(layout.annotations[i].ax),
+              y:Math.abs(layout.annotations[i].ay),
             })
           }
         }else{
@@ -490,11 +486,11 @@
   const plotSettingChange = () => {
     if(annotationsValue.value.length <= 0)return;
     for(let i = 0 ; annotationsValue.value.length > i ; i++){
-      if(layout.annotations.originName === annotationsValue.value[i].name)
-      layout.annotations[i].ax = annotationsValue.value[i].x;
-      layout.annotations[i].ay = annotationsValue.value[i].y;
+      if(layout.annotations[i].originName === annotationsValue.value[i].name){
+        layout.annotations[i].ax = Number(annotationsValue.value[i].x) * -1;
+        layout.annotations[i].ay = Number(annotationsValue.value[i].y) * -1;
+      }
     }
-    
     Plotly.relayout('displatVolcanoPlot', layout);
     toggledPointSite.value = false;
   }
@@ -519,7 +515,8 @@
     }else if(change_Val.displayText.length === 0){
       selecte_miRNAs_Name.length = 0;
     }
-    removePlotHeight.value = change_Val.height;
+    // removePlotHeight.value = change_Val.height;
+    removePlotHeight.value = 650;
     if(change_Val.selectStyleNum === '') return;
     // if(change_Val.selectStyleNum === '' || change_Val.selectStyleNum === Infinity )return;
     log_SelectStyleNum = - Math.log10(change_Val.selectStyleNum);

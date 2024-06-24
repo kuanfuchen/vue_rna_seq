@@ -34,9 +34,11 @@
         </div>
         <div class="d-flex">
           <v-checkbox v-model="checkAll" label="All" class="mx-1" @change="changeSelect(checkAll)"></v-checkbox>
-          <v-checkbox v-model="MF" label="Molecullar Function" class="mx-1"></v-checkbox>
-          <v-checkbox v-model="BP" label="Biological Process" class="mx-1"></v-checkbox>
-          <v-checkbox v-model="CC" label="Cellular Component" class="mx-1"></v-checkbox>
+          <v-checkbox v-model="MF" label="Molecullar Function(MF)" style="color:#7b9daf" class="mx-1" color="rgb(158,202,225)">
+            
+          </v-checkbox>
+          <v-checkbox v-model="BP" label="Biological Process(BP)" style="color:rgb(255, 127, 15)" class="mx-1" color="rgba(255, 127, 15, 0.7)"></v-checkbox>
+          <v-checkbox v-model="CC" label="Cellular Component(CC)" style="color:rgb(44, 160, 44)" class="mx-1" color="rgba(44, 160, 44, 0.7)"></v-checkbox>
           <!-- <v-checkbox v-model="KEGG" label="KEGG" class="mx-1"></v-checkbox>
           <v-checkbox v-model="pubMed" label="PubMed" class="mx-1"></v-checkbox> -->
         </div>
@@ -65,7 +67,7 @@
 <script setup>
   import { Subject, takeUntil, debounceTime } from 'rxjs';
   import { papaDate } from '../../service/papaResolve_getData';
-  import { ref, reactive, onMounted } from 'vue';
+  import { ref, reactive } from 'vue';
   import FeTable from '../../components/table/Function_EnrichmentTable.vue';
   import BarPlot_FE from '../../components/poltly/BarPlot_Fun_Enrich.vue';
   import DotPlot_FE from '../../components/poltly/DotPlot_Func_Enrich.vue';
@@ -99,7 +101,8 @@
   papaDate.papaFun_enrichment$.pipe(takeUntil(comSubject$),debounceTime(300)).subscribe(async(papaData) => {
     functionEnrichData = papaData;
     await handleHeaders(papaData.headers);
-    await handleFunctionEnrichment();
+    setTimeout(async()=>await handleFunctionEnrichment(),100)
+    
   });
   papaDate.name_Fun_enrichment$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(feFileName) => {
     compare_de_title_group.value = feFileName;
@@ -121,7 +124,8 @@
   }
   const changeFeFile = async()=>{
     // await papaDate.handle_FE_file(compare_de_title.value);
-    await papaDate.received_FEgo_info(compare_de_title.value);
+    // await papaDate.received_FEgo_info(compare_de_title.value);
+    await handleFunctionEnrichment()
   }
   const changeSelect = (ev)=>{
     MF.value = ev;
@@ -143,6 +147,7 @@
     feTableBody.items.length = 0;
     feTableBody.data.length = 0;
     const selectRegularLower = selectRegular.value.toLowerCase();
+    
     const selectRegularData = feData[selectRegularLower];
     let exportTableInfo = [];
     const selectItem = [];
@@ -150,18 +155,20 @@
     const strengthCollect = {};
     const geneFDR = {};
     const desc_RNA_seq = {};
+    const category_type = {};
     data_obseredGeneCollect.length = 0;
     data_StrengthCollect.length = 0;
+    if(compare_de_title.value === '')compare_de_title_group.value[0];
     if(MF.value){
-      await pushTableInfo(selectRegularData.MF.data, exportTableInfo,'MF')
+      await pushTableInfo(selectRegularData.MF[compare_de_title.value].data, exportTableInfo,'MF')
       selectItem.push('MF');
     }
     if(BP.value){
-      await pushTableInfo(selectRegularData.BP.data, exportTableInfo,'BP')
+      await pushTableInfo(selectRegularData.BP[compare_de_title.value].data, exportTableInfo,'BP')
       selectItem.push('BP');
     }
     if(CC.value){
-      await pushTableInfo(selectRegularData.CC.data, exportTableInfo,'CC');
+      await pushTableInfo(selectRegularData.CC[compare_de_title.value].data, exportTableInfo,'CC');
       selectItem.push('CC');
     }
     // if(pubMed.value){
@@ -175,7 +182,6 @@
     feTableBody.items = selectItem;
     feTableBody.data = exportTableInfo;
     feTableBody.regulation = selectRegular.value;
-
     for(let i = 0 ; exportTableInfo.length > i ;i++){
       if(!obseredGeneCollect[exportTableInfo[i]['#term ID']]) obseredGeneCollect[exportTableInfo[i]['#term ID']] = exportTableInfo[i]['observed gene count'];
       if(!strengthCollect[exportTableInfo[i]['#term ID']])strengthCollect[exportTableInfo[i]['#term ID']] = exportTableInfo[i].strength;
@@ -185,26 +191,33 @@
         geneFDR[exportTableInfo[i]['#term ID']] = log10_FDR;
         // geneFDR[exportTableInfo[i]['#term ID']] = exportTableInfo[i]['false discovery rate']
       };
+      if(!category_type[exportTableInfo[i]['#term ID']]) category_type[exportTableInfo[i]['#term ID']] = exportTableInfo[i]['category'];
     }
     const obseredGeneCollect_keys = Object.keys(obseredGeneCollect);
-    for(let i = 0 ; obseredGeneCollect_keys.length > i ; i++){
+    const orderFDR = obseredGeneCollect_keys.sort((a, b)=>{
+      return Number(geneFDR[b]) - Number(geneFDR[a])
+    })
+    
+    for(let i = 0 ; orderFDR.length > i ; i++){
+      const color = category_type[orderFDR[i]] ==='MF' ? 'background: rgb(158,202,225)' : category_type[orderFDR[i]] ==='BP' ? 'background: rgba(255, 127, 15, 0.7)' :'background: rgba(44, 160, 44, 0.7)';
       if(i < displayBarNum.value){
         data_obseredGeneCollect.push({
-          name:obseredGeneCollect_keys[i],
-          data:Number(obseredGeneCollect[obseredGeneCollect_keys[i]]),
-          FDR:geneFDR[obseredGeneCollect_keys[i]],
-          desc:desc_RNA_seq[obseredGeneCollect_keys[i]]
+          name:orderFDR[i],
+          data:Number(obseredGeneCollect[orderFDR[i]]),
+          FDR:geneFDR[orderFDR[i]],
+          desc:desc_RNA_seq[orderFDR[i]],
+          category:category_type[orderFDR[i]],
+          color
         });
         data_StrengthCollect.push({
-          name:obseredGeneCollect_keys[i],
-          data:Number(strengthCollect[obseredGeneCollect_keys[i]]),
-          FDR:geneFDR[obseredGeneCollect_keys[i]],
-          desc:desc_RNA_seq[obseredGeneCollect_keys[i]]
+          name:orderFDR[i],
+          data:Number(strengthCollect[orderFDR[i]]),
+          FDR:geneFDR[orderFDR[i]],
+          desc:desc_RNA_seq[orderFDR[i]],
+          category:category_type[orderFDR[i]],
+          color
         })
       }
     }
   }
-  onMounted(async()=>{
-    await changeFeFile()
-  })
 </script>

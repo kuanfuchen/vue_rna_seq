@@ -62,7 +62,7 @@
 <script setup>
   import { Subject, takeUntil,debounceTime } from 'rxjs';
   import { papaDate } from '../../service/papaResolve_getData';
-  import { ref, reactive, onMounted } from 'vue';
+  import { ref, reactive } from 'vue';
   import FeTable from '../../components/table/Function_EnrichmentTable.vue';
   import BarPlot_FE from '../../components/poltly/BarPlot_Fun_Enrich.vue';
   import DotPlot_FE from '../../components/poltly/DotPlot_Func_Enrich.vue';
@@ -92,7 +92,8 @@
   papaDate.papaFun_enrichment$.pipe(takeUntil(comSubject$),debounceTime(300)).subscribe(async(papaData) => {
     fe_KEGG_Table = papaData;
     await handleHeaders(papaData.headers);
-    await handleFe_KEGG();
+    setTimeout(async()=>await handleFe_KEGG(),100);
+    
   });
   papaDate.name_Fun_enrichment$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(feFileName) => {
     compare_de_title_group.value = feFileName;
@@ -114,7 +115,8 @@
   }
   const changeFeFile = async()=>{
     // await papaDate.handle_FE_file(compare_de_title.value);
-    await papaDate.received_FEkegg_Info(compare_de_title.value);
+    // await papaDate.received_FEkegg_Info(compare_de_title.value);
+    await handleFe_KEGG();
   }
   const handleFe_KEGG = async()=>{
     fe_KEGG_TableBody.items.length = 0;
@@ -125,7 +127,10 @@
     fe_KEGG_TableBody.regulation = select_kegg_Regular.value;
     // fe_KEGG_Table.data = data
     const selectArrow = select_kegg_Regular.value.toLowerCase();
-    const selectedTableData = fe_KEGG_Table.data[selectArrow]['KEGG'].data;
+    // const selectedTableData = fe_KEGG_Table.data[]
+    // const selectedTableData = fe_KEGG_Table.data[selectArrow]['KEGG'].data;
+    if(compare_de_title.value === '') compare_de_title_group.value[0];
+    const selectedTableData = fe_KEGG_Table.data[selectArrow]['KEGG'][compare_de_title.value].data;
     for(let i = 0 ; selectedTableData.length > i ; i++ ){
       if(Object.keys(selectedTableData[i]).length > 1){
         selectedTableData[i].category = 'KEGG';
@@ -167,7 +172,4 @@
       }
     }
   }
-  onMounted(async()=>{
-    await changeFeFile();
-  })
 </script>
