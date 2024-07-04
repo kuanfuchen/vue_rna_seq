@@ -30,7 +30,7 @@
       :height="dataTable_height" :show-select="toggleShowSelect"
       :loading="dataLengthLoading"
       return-object class="elevation-1"
-      :custom-filter="filterMiRNA"
+      :custom-filter="filterRNAseq"
       v-model="selected_RNA_seq">
       <template v-slot:header.P-value="{column, getSortIcon}">
         <div style="width:80px;">
@@ -110,16 +110,6 @@
           {{ item.Alignedreads.toLocaleString('en-US') }}
         </div>
       </template>
-      <!-- <template v-slot:item.FC95%lowerlimit="{item}">
-        <div>
-          {{ parseFloat(item['FC95%lowerlimit']) }}
-        </div>
-      </template>
-      <template v-slot:item.FC95%lowerlimit="{item}">
-        <div>
-          {{ parseFloat(item['FC95%lowerlimit']) }}
-        </div>
-      </template> -->
     </v-data-table>
   </div>
 </template>
@@ -263,7 +253,7 @@
     selected_RNA_seq.value.length = 0;
     emits('select_RNAseq_name', []);;
   }
-  const filterMiRNA = (val, query, item)=>{
+  const filterRNAseq = (val, query, item)=>{
     return val != null && query != null && typeof val === 'string'&& item.columns.GeneIDGeneName.indexOf(query) !==-1&& val.toString().toLocaleUpperCase().indexOf(query) !== -1
   };
   watch(definedprops.table,(/*newTble*/)=>{

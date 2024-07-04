@@ -69,7 +69,7 @@
     {value: 50, title: '50'},
     {value: 100, title: '100'},
   ]);
-const regulate = ref('UP');
+  const regulate = ref('UP');
   const displayTableInfo = (tableInfo)=>{
     regulate.value = tableInfo.regulation;
     const changeStyle = JSON.parse(JSON.stringify(tableInfo.data));
@@ -81,7 +81,6 @@ const regulate = ref('UP');
       }
       if(!changeStyle[i]['matching_proteins_in_your_network_labels']){
         changeStyle[i]['matching_proteins_in_your_network_labels'] = changeStyleArr;
-        // changeStyle[i]['matching_proteins_in_your_network_labels'] = changeStyle[i]['matching proteins in your network (labels)'];
       }
       if(!changeStyle[i]['observed_gene_count']){
         changeStyle[i]['observed_gene_count'] = changeStyle[i]['observed gene count'];

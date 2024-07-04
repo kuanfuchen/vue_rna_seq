@@ -14,7 +14,6 @@ let up_KEGG = {name:'up_KEGG', arr:{}};
 let up_Mole_Fun = {name:'up_Mole_Fun', arr:{}};
 let up_Reference_Pub = {name:'up_Reference_Pub', arr:{}};
 const function_Enrichment_file = [];
-// let saveFileName = "";
 let down_Bio_Process_site=[], down_cellular_site=[], down_KEGG_site=[], down_Mole_Fun_site=[], down_Reference_Pub_site=[], up_Bio_Process_site=[], up_cellular_site=[], up_KEGG_site=[], up_Mole_Fun_site=[], up_Reference_Pub_site=[];
 const handlePapaParse = async (arr, data)=>{
   arr.forEach(async(arrItem)=>{
@@ -25,13 +24,7 @@ const handlePapaParse = async (arr, data)=>{
       header:true,
     });
     if(!data.arr[fileName])data.arr[fileName] = papaItem;
-    // data.arr.push({[fileName]:papaItem});
   })
-  // data.arr = await Papa.parse(arr,{
-  //   delimiter:"\t",
-  //   worker:false,
-  //   header:true,
-  // });
 }
 const handleHeaders = (arr) => {
   if(!arr) return;
@@ -49,28 +42,7 @@ const searchFunction_enrichment_file = async()=>{
   await _name_Fun_enrichment$.next(function_Enrichment_file)
   
 }
-// const received_FEkegg_Info = (selectName = 0)=>{
-//   let saveFileName = "";
-//   if(selectName === 0) {
-//     saveFileName = function_Enrichment_file[0]
-//   }else{
-//     saveFileName = selectName;
-//   };
-//   handle_FE_file(saveFileName, 'FEKEGG')
-// }
-// const received_FEgo_info = (selectName = 0)=>{
-//   let saveFileName = "";
-//   if(selectName === 0) {
-//     saveFileName = function_Enrichment_file[0]
-//   }else{
-//     saveFileName = selectName;
-//   };
-//   handle_FE_file(saveFileName, 'FEGO')
-// }
 const handle_FE_file = (saveFilesName)=>{
-  // if(saveFileName === 0 || saveFileName === '') {
-  //   saveFileName = function_Enrichment_file[0]
-  // }
   saveFilesName.forEach((fileName)=>{
     up_Bio_Process_site.push({
       data:require(`../assets/Partek_Flow/For_report_html/06_01. Functional analysis - STRINGdb/${fileName}/up_regulated/Biological Process (Gene Ontology).tsv`),
@@ -113,19 +85,6 @@ const handle_FE_file = (saveFilesName)=>{
       fileName
     });
   });
-
-  // up_Bio_Process_site = require(`../assets/Partek_Flow/For_report_html/06_01. Functional analysis - STRINGdb/${saveFileName}/up_regulated/Biological Process (Gene Ontology).tsv`);
-  // up_cellular_site = require(`../assets/Partek_Flow/For_report_html/06_01. Functional analysis - STRINGdb/${saveFileName}/up_regulated/Cellular Component (Gene Ontology).tsv`);
-  // up_KEGG_site = require(`../assets/Partek_Flow/For_report_html/06_01. Functional analysis - STRINGdb/${saveFileName}/up_regulated/KEGG Pathways.tsv`);
-  // up_Mole_Fun_site = require(`../assets/Partek_Flow/For_report_html/06_01. Functional analysis - STRINGdb/${saveFileName}/up_regulated/Molecular Function (Gene Ontology).tsv`);
-  // up_Reference_Pub_site = require(`../assets/Partek_Flow/For_report_html/06_01. Functional analysis - STRINGdb/${saveFileName}/up_regulated/Reference publications (PubMed).tsv`);
-  // down_Bio_Process_site = require(`../assets/Partek_Flow/For_report_html/06_01. Functional analysis - STRINGdb/${saveFileName}/down_regulated/Biological Process (Gene Ontology).tsv`);
-  // down_cellular_site = require(`../assets/Partek_Flow/For_report_html/06_01. Functional analysis - STRINGdb/${saveFileName}/down_regulated/Cellular Component (Gene Ontology).tsv`);
-  // down_KEGG_site = require(`../assets/Partek_Flow/For_report_html/06_01. Functional analysis - STRINGdb/${saveFileName}/down_regulated/KEGG Pathways.tsv`);
-  // down_Mole_Fun_site = require(`../assets/Partek_Flow/For_report_html/06_01. Functional analysis - STRINGdb/${saveFileName}/down_regulated/Molecular Function (Gene Ontology).tsv`);
-  // down_Reference_Pub_site = require(`../assets/Partek_Flow/For_report_html/06_01. Functional analysis - STRINGdb/${saveFileName}/down_regulated/Reference publications (PubMed).tsv`);
-  // }
-  
   handleFunctionalAnalysis()
 }
 

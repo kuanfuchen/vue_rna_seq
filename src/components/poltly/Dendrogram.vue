@@ -42,7 +42,6 @@
           <div class="zoomist-wrapper">
             <div class="zoomist-image">
               <img :src="getHeatmapImg()"  />
-              <!-- :style="{width:`${dialogHeatmapWidth}%`,height:`${dialogHeatmapHight}vh`}" -->
             </div>
           </div>
         </div>
@@ -116,14 +115,6 @@
       })
     },50);
   }
-  // watch(definedProps.heatmapHeight, (newVal)=>{
-  //   console.log(newVal, 'newVal')
-  //   if(newVal.height === 550){
-  //     heatmapHight.value = '535px';
-  //   }else{
-  //     heatmapHight.value = '100%'
-  //   }
-  // });
   const openZoomist = ()=>{
     new Zoomist('.zoomist-container', {
       maxScale: 6,

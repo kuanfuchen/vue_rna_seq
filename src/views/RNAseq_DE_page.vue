@@ -2,7 +2,7 @@
   <div>
     <v-card class="px-3 mt-2" width="100%">
         <template v-slot:title>
-          <p class="text-teal font-weight-bold">Difference Expression Analysis</p> 
+          <p class="text-teal font-weight-bold">Differential Expression Analysis</p> 
         </template>
         <v-card-text>
           <v-row no-gutters>
@@ -74,7 +74,7 @@
             <v-col :cols="12">
               <v-card>
                 <template v-slot:title>
-                  <p class="text-h6 my-2 text-teal" style="font-weight: 700;">Difference Expression RNA-seq Table</p>   
+                  <p class="text-h6 my-2 text-teal" style="font-weight: 700;">Differential Expression RNA-seq Table</p>   
                 </template>
                 <v-card-text>
                   <div class="d-flex justify-space-between">
@@ -128,9 +128,9 @@
     displayText:''
   });
   dataFolder_RNAseq.RNAseq_DE_Folder_Info$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe((RNAseq_info)=>{
-    sort_deFolderData(RNAseq_info)
+    fillSelectedDeFolderData(RNAseq_info)
   });
-  const sort_deFolderData = async(de_data) => {
+  const fillSelectedDeFolderData = async(de_data) => {
     if(Object.keys(de_data).length === 0)return;
     if(de_data.title_Group.length === 0){
       console.log("don't deData");
@@ -154,7 +154,6 @@
 
   const changed_compare_de_Obj = (obj_title)=>{
     compare_de_Obj.value.title = obj_title;
-    // compare_de_Obj.value.selectStyle = select_P_Q_Style.value;
     compare_de_Obj.value.selectStyleNum = p_value_number.value;
     compare_de_Obj.value.log2_LowerBound = log2_LowerBound.value;
     compare_de_Obj.value.log2_UpperBound = log2_UpperBound.value;
@@ -296,14 +295,6 @@
       tableComponentInfo.headers = response.headers;
       tableComponentInfo.body = response.body;
       tableComponentInfo.showCheckBox = true;
-      // tableComponentInfo.value = await response;
-      // for(let i = 0;response.headers.length > i ;i++){
-      //   tableComponentInfo.headers.push(response.headers[i])
-      // }
-      // for(let i = 0;response.body.length> i;i++){
-      //   tableComponentInfo.body.push(response.body[i])
-      // }
-      // handleDataIF.value = true;
     });
   };
   

@@ -64,16 +64,12 @@
     modeBarButtonsToAdd:[imageCapture],
     displayModeBar: true
   };
-  
-  
   const data = [ trace1,/* trace2 */];
-  
   let scatter_Info = {
     headers:[],
     info:[],
     miRNA_title:[]
   };
-  
   const handleScatterPlotInfo = () => {
     toggleWaitCircular.value = true;
     const infoTitle = defineScatterGraphInfo.scatterGraphInfo;

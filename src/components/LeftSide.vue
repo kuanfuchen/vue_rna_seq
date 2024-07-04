@@ -1,7 +1,8 @@
 <template>
   <div class="">
-    <v-navigation-drawer v-model="definedProp.leftDrawer" location="left">
-      <v-list>
+    <v-navigation-drawer v-model="definedProp.leftDrawer" location="left" >
+      <div class="sidebarStyle">
+        <v-list>
         <v-list-item to="/" :active="activeItem === 'projectInfo'" @click="activeItem = 'projectInfo'">
           <v-list-item-title v-text="'Project Information'" class="titleStyle"></v-list-item-title>
         </v-list-item>
@@ -27,12 +28,13 @@
         </v-list-item>
         <v-list-item   class="subTitleStyle"></v-list-item>
       </v-list>
-      <div class="footerAbout">
-        <div class="d-flex justify-center mb-2" >
+      </div>
+      <div class="footerAbout mt-auto" >
+        <div class="d-flex justify-center mb-2 " >
           <img src="../assets/img/logo.png" >
         </div>
         <div class="d-flex justify-center">
-          <div class="mb-5" style="text-align: center;">
+          <div class="" style="text-align: center;">
             <p>Bioinformatics Team</p>
             <p>連絡人：張益峯博士</p>
             <p>分機：03-2118800 #3941</p>
@@ -57,27 +59,29 @@
   .footerAbout{
     font-size: 16px;
     color: #546E7A;
-    position: fixed;
-    bottom: 0;
+    height: 200px;
+    // position: fixed;
+    // bottom: 0;
     width:100%;
     img{
       width:160px
     }
     // text-align:center;
   }
-  @media (max-width:1599px) {
-    .footerAbout{
-    font-size: 12px;
-    color: #546E7A;
-    position: fixed;
-    bottom: 0;
-    width:100%;
-    img{
-      width:100px
-    }
-    // text-align:center;
+  .sidebarStyle{
+    height: calc(100vh - 80px - 200px);
+    overflow-y: auto;
   }
-  }
+  // @media (max-width:1599px) {
+  //   .footerAbout{
+  //   font-size: 12px;
+  //   color: #546E7A;
+  //   width:100%;
+  //   img{
+  //     width:100px
+  //   }
+  // }
+  // }
 </style>
 <script setup>
   import { defineProps } from 'vue';
@@ -104,15 +108,15 @@
   const sideBarGroupB = [
   {
     value:'differenceExpression',
-    title:'Difference Expression',
+    title:'Differential Expression',
     to:'/differenceExpression'
   },{
     value:'functionalEnrichment',
-    title:'Functional Enrichment_GO',
+    title:'Functional Enrichment:GO',
     to:'/functionEnrichment'
   },{
     vlaue:'functionEnrichmentKEGG',
-    title:'Functional Enrichment_KEGG',
+    title:'Functional Enrichment:KEGG',
     to:'/fe_kegg'
   }];
 </script>

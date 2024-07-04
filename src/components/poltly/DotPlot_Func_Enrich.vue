@@ -6,9 +6,9 @@
       </div>
     </div>
     <div id="dotPlot_observeGene"></div>
-    <div class="d-flex justify-end" style="z-index: 999;">
-      <div class="mr-5">
-        <p class="d-flex justify-center" style="font-weight: 700;">Color-Name</p>
+    <div class="d-flex justify-end" style="z-index: 999;" >
+      <div class="mr-5" v-if="toggle_Color_category">
+        <p class="d-flex justify-center" style="font-weight: 700;">Category-Name</p>
         <div class="d-flex align-center px-1 py-1 " style=";border:1px solid black">
           <div class="squarePlot " style="width:25px;height: 20px; background: rgb(158,202,225);"></div>
           <p class="ml-1">MF</p>
@@ -51,6 +51,7 @@
   import Dialog_plot from '../Dialog_Plot.vue';
   const transfer_FullScreen_data = ref({});
   const toogle_Plot_Screen = ref(false);
+  const toggle_Color_category = ref(true);
   const layout ={
     title:'Dot Plot',
     xaxis:{title:{ text:`-log<span style="font-size:10">10</span>(FDR)`,font:{size:14,weight:'bold'}}},
@@ -70,9 +71,6 @@
       size:[],
       color: 'rgb(158,202,225)',
       opacity: 0.6,
-      // color:[],
-      // colorscale:'RdBu',//Bluered
-      // colorbar:{},
       line:{
         width:1.5,
         color:'rgb(8,48,107)'
@@ -98,23 +96,21 @@
     const dotsSize = [];
     const markerColor = [];
     for(let i = 0 ; sortInfoArr.length > i ; i++){
-      // plotY.push(sortInfoArr[i].name);
+      if(sortInfoArr[0].category === 'KEGG'){
+        toggle_Color_category.value = false;
+      };
       plotY.push(sortInfoArr[i].desc);
-      // plotX.push(sortInfoArr[i].data);
-      // color.push(sortInfoArr[i].FDR);
       const descName = `(${sortInfoArr[i].data}, ${sortInfoArr[i].name}, ${sortInfoArr[i].category})`;
       dotsSize.push(parseInt(sortInfoArr[i].data * 100));
       plotX.push(sortInfoArr[i].FDR);
       markerColor.push(sortInfoArr[i].color);
-      // plotName.push(sortInfoArr[i].name);
-      plotName.push(descName);
     }
     plotData.y = plotY;
     plotData.x = plotX;
     plotData.marker.color= markerColor;
     const evaluateValueMax = Math.max(...dotsSize);
     if(evaluateValueMax > 55){
-      const calcDotsSize = dotsSize.map((item)=>{return item / 1.5});
+      const calcDotsSize = dotsSize.map((item)=>{return item / 1.});
       plotData.marker.size = calcDotsSize;
     }else if(evaluateValueMax > 33){
       const calcDotsSize = dotsSize.map((item)=> item / 1.5);
@@ -122,15 +118,16 @@
     }else{
       plotData.marker.size = dotsSize;
     }
-    // plotData.marker.color = color;
     plotData.text = plotName;
-    // plotData.text = plotDesc;
     layout.yaxis.tickvals = plotY;
     image_config.filename = 'Dot plot Function enrichment';
     transfer_FullScreen_data.value = {
       data:[plotData],
       plotConfig,
-      layout
+      layout,
+      colorBlock:toggle_Color_category.value,
+      blockArea:true,
+      blockStrength:true
     }
     setTimeout(()=>{
       Plotly.newPlot(dotPlot_observeGene, [plotData], layout, plotConfig)

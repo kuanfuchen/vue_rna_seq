@@ -4,14 +4,6 @@
       <div class="ml-3" style="font-weight: 700;font-size: 15px;">
         {{ valcanoTitle }}
       </div>
-      <!-- <div class="d-flex">
-        <div class="toggle_cols" @click="changedContentSize(6, 220, 650)">
-          <v-icon icon="fa:fas fa-table-columns mr-5"></v-icon>
-        </div>
-        <div class="toggle_cols" @click="changedContentSize(12, 0, 650)" >
-          <v-icon icon="fa:far fa-square mr-5"></v-icon>
-        </div>
-      </div> -->
     </div>
     <v-row class="d-flex justify-space-between mt-1">
       <v-col :cols="contentCols">
@@ -26,11 +18,6 @@
         <v-card style="height:700px">
           <v-card-text>
             <div class="d-flex justify-space-between mt-1">
-            <!-- <div class="ml-5" style="font-weight: 700;font-size: 14px;">
-              <p>Total filtered miRNA: {{ total_position_number }}</p>
-              <p style="color:#EF5350;margin-left:90px">UP: {{ positive_position_number }}</p>
-              <p style="color:#1976D2;margin-left:90px">Down: {{ negative_position_number }}</p>
-            </div> -->
               <p class="text-h6 ml-3 text-teal" style="font-weight: 700;">Volcano Plot</p>
               <div class="d-flex">
                 <div v-if="annotationsValue.length > 0">
@@ -491,14 +478,9 @@
         layout.annotations[i].ay = Number(annotationsValue.value[i].y) * -1;
       }
     }
+    layout.height= 600;
     Plotly.relayout('displatVolcanoPlot', layout);
     toggledPointSite.value = false;
-  }
-  const changedContentSize = (col,changedTableHeight,changePlotHeight)=>{
-    if(contentCols.value === col) return;
-    contentCols.value = col;
-    // deTableSize.value = changedTableHeight;
-    plot_height.value = changePlotHeight;
   }
   watch(props.change_volcano_plot, (change_Val)=>{
     const titleIndex = storagedDE_folder.headers.indexOf(change_Val.title);

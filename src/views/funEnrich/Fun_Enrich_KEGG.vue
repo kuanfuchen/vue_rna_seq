@@ -5,9 +5,6 @@
         <p class="text-h4 text-teal">Function Enrichment KEGG Analysis</p>
       </template>
       <v-card-text>
-        <!-- <p class="mb-2 pl-4 py-2" style="background: #90CAF9;border-radius: 5px;">
-          Condition {{ dispalyCondition }}
-        </p> -->
         <div class="mb-2 ml-3 py-2" style="background: #90CAF9;border-radius: 5px;">
           <p class="ml-3">Filtered by {{ dispalyCondition }}</p> 
           <p class="ml-3">DEGs: <span>{{ up_RNA_seq_num + down_RNA_seq_num }}</span></p>
@@ -17,7 +14,6 @@
         <div class="mt-4">
           <v-row no-gutters>
             <v-col cols="6">
-              <!-- <span class="font-weight-bold text-right">Compare</span> -->
               <v-select class="ml-3" label="Select compare" :items="compare_de_title_group" v-model="compare_de_title"
                 variant="outlined" density="compact" ></v-select>
             </v-col>
@@ -25,14 +21,10 @@
         </div>
         <div class="d-flex mt-3">
           <div class="px-3" style="width:30vw">
-            <v-select label="Select Regular" :items="['UP','DOWN']" 
-              v-model="select_kegg_Regular" variant="outlined" density="compact">
-            </v-select>
+            <v-select label="Select Regular" :items="['UP','DOWN']" v-model="select_kegg_Regular" variant="outlined" density="compact"></v-select>
           </div>
           <div class="px-3" style="width:30vw">
-            <v-select density="compact" label="Show quantity" :items="['10','20','30','50']" variant="outlined"
-              v-model="display_KEGG_BarNum">
-            </v-select>
+            <v-select density="compact" label="Show quantity" :items="['10','20','30','50']" variant="outlined" v-model="display_KEGG_BarNum"></v-select>
           </div>
         </div>
         <div class="mt-2 ml-3">
@@ -50,10 +42,6 @@
         </v-row>
       </v-card-text>
       <v-card-text>
-        <!-- <div class="">
-          <span>up-regulation DEGs</span>
-          <span>down-regulation DEGs</span>
-        </div> -->
         <FeTable :feheaders="kegg_headers" :feTableData="fe_KEGG_TableBody" />
       </v-card-text>
     </v-card>
@@ -70,7 +58,6 @@
   import { dataFolder_RNAseq } from '../../service/rna_seq_dataservice.js';
   const comSubject$ = new Subject();
   const dispalyCondition = ref('q-value ≤ 0.05, -1 ≤ log2 fold change ≤ 1');
-  // const KEGG = ref(false);
   const select_kegg_Regular = ref('UP');
   const display_KEGG_BarNum = ref(10);
   const data_KEGG_obseredGeneCollect = reactive([]);
@@ -84,8 +71,6 @@
   let fe_KEGG_Table = [];
   const gene_KEGG_FDR = {};
   dataFolder_RNAseq.RNAseq_DE_Folder_Info$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(deFolderData)=>{
-    // compare_de_title_group.value = deFolderData.title_Group;
-    // if(deFolderData.title_Group.length > 0 ) compare_de_title.value = deFolderData.title_Group[0];
     const rna_num = await filter_RNA_num(0, deFolderData);
     await display_filter_RNA_num(rna_num);
   });
@@ -114,8 +99,6 @@
     };
   }
   const changeFeFile = async()=>{
-    // await papaDate.handle_FE_file(compare_de_title.value);
-    // await papaDate.received_FEkegg_Info(compare_de_title.value);
     await handleFe_KEGG();
   }
   const handleFe_KEGG = async()=>{
@@ -125,10 +108,7 @@
     data_KEGG_strengthCollect.length = 0;
     const tableInfo = [];
     fe_KEGG_TableBody.regulation = select_kegg_Regular.value;
-    // fe_KEGG_Table.data = data
     const selectArrow = select_kegg_Regular.value.toLowerCase();
-    // const selectedTableData = fe_KEGG_Table.data[]
-    // const selectedTableData = fe_KEGG_Table.data[selectArrow]['KEGG'].data;
     if(compare_de_title.value === '') compare_de_title_group.value[0];
     const selectedTableData = fe_KEGG_Table.data[selectArrow]['KEGG'][compare_de_title.value].data;
     for(let i = 0 ; selectedTableData.length > i ; i++ ){
@@ -141,7 +121,7 @@
     fe_KEGG_TableBody.data = tableInfo;
     drawPlotKEGG_info(tableInfo)
   }
-  const drawPlotKEGG_info = (tableInfo)=>{
+  const drawPlotKEGG_info = (tableInfo) => {
     const obseredGeneCollect_KEGG = {};
     const strengthCollect_KEGG = {};
     const desc_RNA_seq_KEGG = {};
@@ -155,19 +135,28 @@
       if(!desc_RNA_seq_KEGG[tableInfo[i]['#term ID']]) desc_RNA_seq_KEGG[tableInfo[i]['#term ID']] = tableInfo[i]['term description'];
     }
     const obseredGeneCollect_KEGG_keys = Object.keys(obseredGeneCollect_KEGG);
-    for(let i = 0 ; obseredGeneCollect_KEGG_keys.length > i ; i++){
-      if(i < display_KEGG_BarNum.value){
+    const sort_KEGG_FDR = obseredGeneCollect_KEGG_keys.sort((a,b) => {
+      return Number(gene_KEGG_FDR[b]) - Number(gene_KEGG_FDR[a])
+    });
+    for(let i = 0 ; sort_KEGG_FDR.length > i ; i++){
+      const  color = 'background: rgb(158,202,225)';
+      const category = 'KEGG';
+        if(i < display_KEGG_BarNum.value){
         data_KEGG_obseredGeneCollect.push({
-          name:obseredGeneCollect_KEGG_keys[i],
-          data:Number(obseredGeneCollect_KEGG[obseredGeneCollect_KEGG_keys[i]]),
-          FDR:gene_KEGG_FDR[obseredGeneCollect_KEGG_keys[i]],
-          desc:desc_RNA_seq_KEGG[obseredGeneCollect_KEGG_keys[i]],
+          name:sort_KEGG_FDR[i],
+          data:Number(obseredGeneCollect_KEGG[sort_KEGG_FDR[i]]),
+          FDR:gene_KEGG_FDR[sort_KEGG_FDR[i]],
+          desc:desc_RNA_seq_KEGG[sort_KEGG_FDR[i]],
+          category,
+          color
         });
         data_KEGG_strengthCollect.push({
-          name:obseredGeneCollect_KEGG_keys[i],
-          data:Number(strengthCollect_KEGG[obseredGeneCollect_KEGG_keys[i]]),
-          FDR:gene_KEGG_FDR[obseredGeneCollect_KEGG_keys[i]],
-          desc:desc_RNA_seq_KEGG[obseredGeneCollect_KEGG_keys[i]]
+          name:sort_KEGG_FDR[i],
+          data:Number(strengthCollect_KEGG[sort_KEGG_FDR[i]]),
+          FDR:gene_KEGG_FDR[sort_KEGG_FDR[i]],
+          desc:desc_RNA_seq_KEGG[sort_KEGG_FDR[i]],
+          category,
+          color
         });
       }
     }

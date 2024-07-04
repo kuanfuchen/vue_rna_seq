@@ -14,7 +14,6 @@
         <div class="mt-4">
           <v-row no-gutters>
             <v-col cols="6">
-              <!-- <span class="font-weight-bold text-right">Compare</span> -->
               <v-select class="ml-3" label="Select compare" :items="compare_de_title_group" v-model="compare_de_title"
                 variant="outlined" density="compact"></v-select>
             </v-col>
@@ -80,8 +79,6 @@
   const up_RNA_seq_num = ref(0);
   const down_RNA_seq_num = ref(0);
   const dispalyCondition = ref('q-value ≤ 0.05, -1 ≤ log2 fold change ≤ 1')
-  // const KEGG = ref(false);
-  // const pubMed = ref(false);
   const selectRegular = ref('UP');
   const displayBarNum = ref(10);
   const comSubject$ = new Subject();
@@ -93,6 +90,7 @@
   const compare_de_title = ref('');
   let functionEnrichData = [];
   dataFolder_RNAseq.RNAseq_DE_Folder_Info$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(deFolderData)=>{
+    console.log(deFolderData, 'deFolderData')
     compare_de_title_group.value = deFolderData.title_Group;
     if(deFolderData.title_Group.length > 0 ) compare_de_title.value = deFolderData.title_Group[0];
     const rna_num = await filter_RNA_num(0, deFolderData);
@@ -105,6 +103,7 @@
     
   });
   papaDate.name_Fun_enrichment$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(feFileName) => {
+    console.log(feFileName, 'feFileName')
     compare_de_title_group.value = feFileName;
     if(feFileName.length > 0 ) compare_de_title.value = feFileName[0];
   })
@@ -123,16 +122,12 @@
     };
   }
   const changeFeFile = async()=>{
-    // await papaDate.handle_FE_file(compare_de_title.value);
-    // await papaDate.received_FEgo_info(compare_de_title.value);
     await handleFunctionEnrichment()
   }
   const changeSelect = (ev)=>{
     MF.value = ev;
     BP.value =ev;
     CC.value = ev;
-    // KEGG.value = ev;
-    // pubMed.value = ev;
   }
   const pushTableInfo = (data, arr, category) => {
     for(let i = 0 ; data.length > i ; i++){
@@ -141,13 +136,11 @@
     }
   }
   const handleFunctionEnrichment = async()=>{
-    // if(!MF.value && !BP.value && !CC.value && !KEGG.value && !pubMed.value  ) return;
     if( !MF.value && !BP.value && !CC.value ) return;
     const feData = functionEnrichData.data;
     feTableBody.items.length = 0;
     feTableBody.data.length = 0;
     const selectRegularLower = selectRegular.value.toLowerCase();
-    
     const selectRegularData = feData[selectRegularLower];
     let exportTableInfo = [];
     const selectItem = [];
@@ -171,10 +164,6 @@
       await pushTableInfo(selectRegularData.CC[compare_de_title.value].data, exportTableInfo,'CC');
       selectItem.push('CC');
     }
-    // if(pubMed.value){
-    //   await pushTableInfo(selectRegularData.pubMed.data, exportTableInfo);
-    //   selectItem.push('pubMed');
-    // }
     if(exportTableInfo.length === 0) return;
     exportTableInfo = exportTableInfo.filter((item)=>{
       if(Object.keys(item).length > 1)return item
@@ -189,7 +178,6 @@
       if(!geneFDR[exportTableInfo[i]['#term ID']]){
         const log10_FDR = Math.log10(Number(exportTableInfo[i]['false discovery rate'])) * -1;
         geneFDR[exportTableInfo[i]['#term ID']] = log10_FDR;
-        // geneFDR[exportTableInfo[i]['#term ID']] = exportTableInfo[i]['false discovery rate']
       };
       if(!category_type[exportTableInfo[i]['#term ID']]) category_type[exportTableInfo[i]['#term ID']] = exportTableInfo[i]['category'];
     }

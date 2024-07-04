@@ -2,16 +2,6 @@
   <div class="allContainer mx-auto">
     <router-view/>
   </div>
-    
-  
-  <!-- <nav> -->
-    <!-- <router-link to="/">Home</router-link> |
-    <router-link :to="{name:'about'}">About</router-link> -->
-    <!-- <a href="./views/AboutView.vue">home</a> -->
-  <!-- </nav> -->
-  <!-- <div class="">123456</div> -->
-  <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-  
 </template>
 <script setup>
   import { onMounted, onBeforeMount } from 'vue';
@@ -22,7 +12,6 @@
   await dataFolder_RNAseq.rnaSeq_handleRawReads_normalizedCounts();
   await dataFolder_RNAseq.handleRNAseq_CPM_PCA();
   await dataFolder_RNAseq.handled_RNAseq_DE();
-  // await papaDate.handleFunctionalAnalysis();
   await papaDate.searchFunction_enrichment_file();
 });
 </script>
