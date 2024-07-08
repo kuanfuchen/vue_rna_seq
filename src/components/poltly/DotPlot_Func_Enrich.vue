@@ -110,7 +110,7 @@
     plotData.marker.color= markerColor;
     const evaluateValueMax = Math.max(...dotsSize);
     if(evaluateValueMax > 55){
-      const calcDotsSize = dotsSize.map((item)=>{return item / 1.});
+      const calcDotsSize = dotsSize.map((item)=>{return item / 1.8});
       plotData.marker.size = calcDotsSize;
     }else if(evaluateValueMax > 33){
       const calcDotsSize = dotsSize.map((item)=> item / 1.5);

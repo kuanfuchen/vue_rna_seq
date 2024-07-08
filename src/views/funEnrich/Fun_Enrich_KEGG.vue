@@ -70,7 +70,9 @@
   const down_RNA_seq_num = ref(0);
   let fe_KEGG_Table = [];
   const gene_KEGG_FDR = {};
+  let saveDeFolderData = {};
   dataFolder_RNAseq.RNAseq_DE_Folder_Info$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(deFolderData)=>{
+    saveDeFolderData = deFolderData;
     const rna_num = await filter_RNA_num(0, deFolderData);
     await display_filter_RNA_num(rna_num);
   });
@@ -100,6 +102,11 @@
   }
   const changeFeFile = async()=>{
     await handleFe_KEGG();
+    const compareIndex = compare_de_title_group.value.indexOf(compare_de_title.value);
+    if(compareIndex !== -1){
+      const rna_num = await filter_RNA_num(compareIndex, saveDeFolderData);
+      await display_filter_RNA_num(rna_num);
+    }
   }
   const handleFe_KEGG = async()=>{
     fe_KEGG_TableBody.items.length = 0;

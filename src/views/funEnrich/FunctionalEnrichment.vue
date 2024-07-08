@@ -89,8 +89,9 @@
   const compare_de_title_group = ref([]);
   const compare_de_title = ref('');
   let functionEnrichData = [];
+  let saveDeFolderData = {};
   dataFolder_RNAseq.RNAseq_DE_Folder_Info$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(deFolderData)=>{
-    console.log(deFolderData, 'deFolderData')
+    saveDeFolderData = deFolderData;
     compare_de_title_group.value = deFolderData.title_Group;
     if(deFolderData.title_Group.length > 0 ) compare_de_title.value = deFolderData.title_Group[0];
     const rna_num = await filter_RNA_num(0, deFolderData);
@@ -103,7 +104,6 @@
     
   });
   papaDate.name_Fun_enrichment$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(feFileName) => {
-    console.log(feFileName, 'feFileName')
     compare_de_title_group.value = feFileName;
     if(feFileName.length > 0 ) compare_de_title.value = feFileName[0];
   })
@@ -122,7 +122,12 @@
     };
   }
   const changeFeFile = async()=>{
-    await handleFunctionEnrichment()
+    await handleFunctionEnrichment();
+    const compareIndex = compare_de_title_group.value.indexOf(compare_de_title.value);
+    if(compareIndex !== -1){
+      const rna_num = await filter_RNA_num(compareIndex, saveDeFolderData);
+      await display_filter_RNA_num(rna_num);
+    }
   }
   const changeSelect = (ev)=>{
     MF.value = ev;
