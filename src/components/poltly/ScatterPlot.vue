@@ -32,7 +32,6 @@
   import Plotly from 'plotly.js-dist-min';
   import { takeUntil, Subject, debounceTime } from 'rxjs';
   import { watch, ref } from 'vue';
-  // import { dataService } from '../../service/data_service.js';
   import { dataFolder_RNAseq } from '../../service/rna_seq_dataservice';
   import Dialog_plot from '../Dialog_Plot.vue';
   import {image_config, imageCapture} from '../../utils/image_download';
@@ -64,7 +63,7 @@
     modeBarButtonsToAdd:[imageCapture],
     displayModeBar: true
   };
-  const data = [ trace1,/* trace2 */];
+  const data = [ trace1];
   let scatter_Info = {
     headers:[],
     info:[],
@@ -112,7 +111,6 @@
     layout.yaxis = {
       range:[ minVal, maxVal ],
       title: {text:infoTitle[1], font:{ size:16, weight:'bold' }}
-      // title:infoTitle[1]
     };
     const fullScreen_layout = {
       xaxis:layout.xaxis,

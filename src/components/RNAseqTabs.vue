@@ -12,8 +12,6 @@
       <v-window v-model="rnaTab">
         <v-window-item v-for="(tab, index) in rnaseqTabs" :key="index" :value="tab">
           <DisplayTable :table="tableComponentInfo" :useSearch="false"></DisplayTable>
-          <!-- <div class="" v-if="rnaTab=== ">
-          </div> -->
           <div class="mt-2" v-if="rnaTab === 'Alignment'">
             <p class="text-h7">
               1. Total reads: total fragments in paired-end (the term “read” refers to the fragment being sequenced, and since each fragment is sequenced from two directions, one can expect to get two alignments per fragment).
@@ -34,7 +32,6 @@
               %N: proportion of no-calls.
             </p>
           </div>
-          <!-- :exportName="props.export_miRNA_Name" -->
         </v-window-item>
       </v-window>
     </v-card-text>
@@ -55,12 +52,6 @@
     body:[]
   });
   import {dataFolder_RNAseq} from '../service/rna_seq_dataservice';
-  // dataService.transferMeg$.pipe(takeUntil(comSubject$)).subscribe((miRNAInfo) => {
-  //   rnaseqTabs.value = miRNAInfo.tabs;
-  //   rnaTab.value = miRNAInfo.tabs[0];
-  //   RNAseqTables.value = miRNAInfo.tabsTable;
-  //   handleTableComponent(miRNAInfo.tabsTable[0]);
-  // });
   dataFolder_RNAseq.rnaseq_ReadAlignmentSubject$.pipe(takeUntil(comSubject$),debounceTime(100)).subscribe((rnaSeqReadAlignment) => {
     rnaseqTabs.value = rnaSeqReadAlignment.tabs;
     rnaTab.value = rnaSeqReadAlignment.tabs[0];
@@ -95,7 +86,6 @@
         break;
       case "Total non-unique":
         headers.push('Total non-unique read');
-        // headers.push('Total nonUnique read');
         break;
       case "Non-unique":
         headers.push('%Non-unique')
@@ -117,9 +107,6 @@
       for(let i = 0 ; tableInfo.body.length > i ; i++){
         alignmentBody[i] = [];
         for(let j = 0 ; tableInfo.body[i].length > j ; j++){
-          // if(j <= 6 || j >=17 ){
-          //   alignmentBody[i].push(tableInfo.body[i][j])
-          // }
           if(j <= 2 || j === 4 || j >= 9 && j <=12){
             alignmentBody[i].push(tableInfo.body[i][j])
           }

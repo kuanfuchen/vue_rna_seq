@@ -38,8 +38,6 @@
           </v-checkbox>
           <v-checkbox v-model="BP" label="Biological Process(BP)" style="color:rgb(255, 127, 15)" class="mx-1" color="rgba(255, 127, 15, 0.7)"></v-checkbox>
           <v-checkbox v-model="CC" label="Cellular Component(CC)" style="color:rgb(44, 160, 44)" class="mx-1" color="rgba(44, 160, 44, 0.7)"></v-checkbox>
-          <!-- <v-checkbox v-model="KEGG" label="KEGG" class="mx-1"></v-checkbox>
-          <v-checkbox v-model="pubMed" label="PubMed" class="mx-1"></v-checkbox> -->
         </div>
         <div>
           <v-btn color="indigo-darken-3" class="text-none ml-3" @click="changeFeFile" >Enter</v-btn>
@@ -55,7 +53,6 @@
               <DotPlot_FE :fe_Dot_Plot="data_StrengthCollect"></DotPlot_FE>
             </v-col>
           </v-row>
-        <!-- </div> -->
       </v-card-text>
       <v-card-text>
         <FeTable :feheaders="headers" :feTableData="feTableBody" />

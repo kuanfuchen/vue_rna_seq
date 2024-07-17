@@ -72,20 +72,9 @@
     height: calc(100vh - 80px - 200px);
     overflow-y: auto;
   }
-  // @media (max-width:1599px) {
-  //   .footerAbout{
-  //   font-size: 12px;
-  //   color: #546E7A;
-  //   width:100%;
-  //   img{
-  //     width:100px
-  //   }
-  // }
-  // }
 </style>
 <script setup>
   import { defineProps } from 'vue';
-  // import { dataService } from '../service/data_service.js';
   const definedProp = defineProps({
     'leftDrawer':{
       type:Boolean,

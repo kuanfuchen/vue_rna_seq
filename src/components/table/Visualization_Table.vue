@@ -66,7 +66,6 @@ const pageItemsOptions = ref([
 ]);
 let tabsRNA_Data = {};
 const tableHeader_RNA_seq = [
-  // {title: 'Gene Symbol', align: 'center', sortable: true, key: 'title'},
   {title: 'Gene ID', align: 'center', sortable: true, key: 'gene_id'},
   {title: 'Gene Symbol', align: 'center', sortable: true, key: 'gene_name'},
   {title: 'Gene Type', align: 'center', sortable: true, key: 'gene_type'},
@@ -87,7 +86,6 @@ dataFolder_RNAseq.closeXlsx_info$.pipe(takeUntil(comSubject$),debounceTime(300))
 })
 const createdRNAseqTable = (rowReads_normalizedData)=>{
   if( !rowReads_normalizedData.globalData || rowReads_normalizedData.globalData.length === 0) return;
-  // conditionHeaders.value = rowReads_normalizedData.sampleNameTitle.sort();
   conditionHeaders.value = rowReads_normalizedData.sampleNameTitle;
   const sampleNameIndex = rowReads_normalizedData.globalTitle.indexOf('Gene Symbol');
   tabsRNA_Data = {};

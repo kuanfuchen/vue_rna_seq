@@ -31,7 +31,6 @@
 </template>
 <script setup>
   import Plotly from 'plotly.js-dist-min';
-  // import { dataService } from '../../service/data_service.js';
   import { dataFolder_RNAseq } from '../../service/rna_seq_dataservice';
   import { takeUntil, Subject, debounceTime } from 'rxjs';
   import { ref, watch } from 'vue';
@@ -67,10 +66,6 @@
     modeBarButtonsToAdd:[imageCapture],
     displayModeBar: true
   }
-  // const drawGraphBoxplot_visualization = () =>{
-  // const boxplot_visualization = document.getElementById('Boxplot_visualization');
-  //   Plotly.newPlot(boxplot_visualization, boxdata, layout);
-  // }
   const handleBoxPlotInfo = () => {
     if(boxPlot_Info.headers.length === 0 && boxPlot_Info.info.length === 0) return;
     const Boxplot_visualization = document.getElementById('Boxplot_visualization');
@@ -84,7 +79,6 @@
         y:[]
       };
       for( let j = 0 ; boxPlot_Info.info.length > j ; j++){
-        // traceData[i].y.push(boxPlot_Info.info[j][i])
         if(boxPlot_Info.info[j][i] > 0){
           traceData[i].y.push(boxPlot_Info.info[j][i])
         }
@@ -95,9 +89,6 @@
       const orderIndex = traceData.filter((item)=>{if( boxPlot_Info.sortOrder[i].name === item.name)return item})[0];
       dataOrder.push(orderIndex)
     }
-    // 
-    // Plotly.newPlot(Boxplot_visualization, sortTraceData, layout, { responsive: true });
-    // drawGraphBoxplot_visualization(Boxplot_visualization, traceData)
     image_config.filename = `Visualization_box_plot`;
     transfer_FullScreen_data.value = {
       data:dataOrder,
@@ -115,11 +106,6 @@
       Plotly.newPlot(Boxplot_visualization, dataOrder, layout, plotConfig);
     })
   };
-  // dataService.visualization_Plot$.pipe(takeUntil(comSubject$),debounceTime(300)).subscribe(async(visualization_info)=>{
-  //   if(visualization_info.info.length === 0) return;
-  //   boxPlot_Info = visualization_info;
-  //   await handleBoxPlotInfo();
-  // });
   dataFolder_RNAseq.RNAseq_visual_boxPlot$.pipe(takeUntil(comSubject$),debounceTime(300)).subscribe(async(visualization_info)=>{
     if(visualization_info.info.length === 0) return;
     boxPlot_Info = visualization_info;

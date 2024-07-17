@@ -7,7 +7,6 @@
         </v-btn>
       </div>
       <div id="dialog_poltly" class="plotLayout mx-auto"></div>
-      <!--  -->
       <div class="d-flex justify-end" style="z-index: 999;" v-if="toogle_block">
         <div class="mr-5" v-if="toggle_Color_category">
           <p class="d-flex justify-center" style="font-weight: 700;">Category-Name</p>
@@ -37,7 +36,6 @@
 </template>
 <script setup>
   import { onMounted, ref } from 'vue';
-  // const dialog = ref(false);
   import Plotly from 'plotly.js-dist-min';
   const toggle_Color_category = ref(false);
   const toogle_block = ref(false);

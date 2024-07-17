@@ -4,8 +4,6 @@
       <div class="ml-5" style="font-weight: 700;font-size: 14px;">
         <p class="text-h6 text-teal" style="font-weight: 700;">Bar Plot</p>
         <div id="de_bar_plot" ></div>
-        <!-- :style="{'height':plot_height + 'vh'}" -->
-        <!-- <p>Total filtered RNA-seq: {{ total_position_number }}</p> -->
         <p>DEGs: {{ total_position_number }}</p>
         <p style="color:#EF5350;">UP: {{ positive_position_number }}</p>
         <p style="color:#1976D2;">Down: {{ negative_position_number }}</p>
@@ -23,13 +21,9 @@
   const total_position_number = ref(0);
   const props = defineProps(['de_bar_plot_data']);
   const layout = {
-    // height:definedProps.plot_size.height,
-    // xaxis: { title: {text:'Sample', font:{ size:16, weight:'bold' }}, automargin:'height',tickformat:'none' },
-    // yaxis:{title:{ text:`log<span style="font-size:12px">10</span>(Normalized Count)`, font:{ size:16, weight:'bold' }},tickformat:'none' },
     font:{ size:12},
     margin:{ t:70,},
     height:550
-    // title:'Normalized Read Counts distribution of sample'
   };
   const plotConfig = {
     responsive: true, 

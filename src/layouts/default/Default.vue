@@ -2,7 +2,6 @@
   <v-app>
     <HeaderNav @handleLeftDrawers="toggleLeft" ></HeaderNav>  
     <LeftSide :leftDrawer="toggleLeftDrawer"></LeftSide>
-    <!-- <default-view />-->
     <DefaultView></DefaultView>
   </v-app>
 </template>

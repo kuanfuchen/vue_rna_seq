@@ -92,7 +92,31 @@ const handlePlotInfo = (info)=>{
   for(let i = 0 ; sortInfoArr.length > i ; i++){
     if(sortInfoArr[0].category === 'KEGG')toggle_Color_category.value = false;
     const descName = `(${sortInfoArr[i].data}, ${sortInfoArr[i].name}, ${sortInfoArr[i].category})`;
-    plotY.push(sortInfoArr[i].desc);
+    // plotY.push(sortInfoArr[i].desc);
+    // 
+    if(sortInfoArr[i].desc.length > 20){
+      const desc = sortInfoArr[i].desc.split(' ');
+      let descStr = '';
+      for(let j = 0; desc.length > j; j++){
+        if(j % 2 === 0 && j < desc.length - 1){
+          if(j <= desc.length - 2){
+            descStr += `${desc[j]} ${desc[j + 1]}<br>`
+          }
+        }else if(j % 2 === 0 && j === desc.length - 2){
+          descStr += `${desc[j]} ${desc[j + 1]}`;
+        }
+        else if(j % 2 === 0 && j === desc.length - 1){
+          descStr += `${desc[j]}`;
+        }
+        else if(j % 2 === 1 && desc.length % 2 === 1 && j === desc.length - 1){
+          descStr += desc[j];
+        }
+      }
+      plotY.push(descStr);
+    }else{
+      plotY.push(sortInfoArr[i].desc);
+    }
+    // 
     plotX.push(sortInfoArr[i].FDR);
     markerColor.push(sortInfoArr[i].color);
     plotDesc.push(descName);

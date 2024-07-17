@@ -35,14 +35,12 @@
                       :items="selctedSampleItem" variant="outlined" class="compareSelect"></v-select>
                   </div>
                 </div>
-                <!--  -->
                 <template v-slot:title>
                   <span class="font-weight-bold">Scatter Plot</span>
                 </template>
                 <ScatterPlot :plot_size="plot_height"  :scatterGraphInfo="selectedSampleTitle" ></ScatterPlot>
               </v-card>
             </v-col>
-          <!-- </v-row> -->
           <v-col :cols="plot_cols">
             <v-card class="px-3 plotStyle" width="100%">
               <template v-slot:title>
@@ -66,7 +64,6 @@
               </template>
               <div  style="height: 100%;" class="d-flex align-center">
                 <Dendrograms  ></Dendrograms>
-                <!-- :heatmapHeight="plot_height" -->
               </div>
               
             </v-card>

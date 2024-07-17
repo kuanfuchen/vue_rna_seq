@@ -58,8 +58,6 @@
   {key: 'strength', title: 'Strength', align: 'center', sortable: true, width:'5vw'},
   {key: 'false discovery rate', title: 'FDR', align: 'center', sortable: true, width:'115px'},
   {key: 'matching_proteins_in_your_network_labels', title: 'Matching proteins in your network', align: 'start', sortable:false}
-  // {key: 'matching proteins in your network (IDs)', title: 'matching proteins in your network (IDs)', align: 'start', sortable: true},
-  // {key: 'matching proteins in your network (labels)', title: 'matching proteins in your network (labels)', align: 'start', sortable: true}
   ]);
   const itemsPerPage = ref(25);
   const toogleLabels = ref({});

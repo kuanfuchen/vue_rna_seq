@@ -11,12 +11,6 @@ const filterRNA_seq_num = (selectedDataNum, storagedDE_folder)=>{
     const splitHeaders = storagedDE_folder.info[selectedDataNum].headers[i].split(/\(/)[0];
     headersUppers.push(splitHeaders.toUpperCase().trim());
   };
-  // let p_or_q_value_index = -1;
-  // if(P_or_Q_value ==='P-VALUE'){
-  //   p_or_q_value_index =  headersUppers.indexOf('P-VALUE');
-  // }else if( P_or_Q_value === 'Q-VALUE'){
-  //   p_or_q_value_index =  headersUppers.indexOf('FDR STEP UP')
-  // }
   const p_or_q_value_index =  headersUppers.indexOf('FDR STEP UP');
   if(p_or_q_value_index === -1)return;
   const lo2_index = headersUppers.indexOf('LOG2');

@@ -10,7 +10,6 @@
         <v-card style="height:700px">
           <v-card-text>
             <DE_Bar_Plot  :de_bar_plot_data="deBarPlotData"></DE_Bar_Plot>
-            <!-- :style="{'height':plot_bar_height + 'vh'}" -->
           </v-card-text>
         </v-card>
       </v-col>
@@ -60,7 +59,6 @@
               </div>
             </div>
             <div class="mt-3"  id="displatVolcanoPlot"></div>
-            <!-- :style="{'height':plot_height + 'vh'}" -->
           </v-card-text>
         </v-card>
       </v-col>
@@ -81,7 +79,6 @@
 </template>
 <script setup>
   import Plotly from 'plotly.js-dist-min';
-  // import { dataService } from '@/service/data_service';
   import { dataFolder_RNAseq } from '../../service/rna_seq_dataservice';
   import { takeUntil, debounceTime, Subject } from 'rxjs';
   import { ref, reactive, watch } from 'vue';
@@ -89,7 +86,6 @@
   import {image_config, imageCapture} from '../../utils/image_download';
   import DE_Bar_Plot from './DE_BarPlot.vue';
   const props = defineProps(['change_volcano_plot', ]);
-  // const emit = defineEmits(['maxValYaxis']);
   const toogle_Plot_Screen = ref(false);
   const toggledPointSite = ref(false);
   let log2Upper = 1;
@@ -176,7 +172,6 @@
   let display_Text_volcano__plot_plotlyjs_data = {
     x:[],
     y:[],
-    // mode:'markers+text',
     mode:'markers',
     type: 'scatter',
     name: '',
@@ -237,11 +232,6 @@
     }
   }
   const DE_folder_data = [ volcano_plot_plotlyjs_data, selected_volcano__plot_plotlyjs_data, negative_volcano_plot_plotlyjs_data, display_Text_volcano__plot_plotlyjs_data, positiveLine, negativeLine, pvalue_line];
-  // dataService.DE_Folder_Info$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe((deFolderData)=>{
-  //   storagedDE_folder.info = deFolderData.info;
-  //   storagedDE_folder.headers = deFolderData.title_Group;
-  //   handleDE_data();
-  // });
   dataFolder_RNAseq.RNAseq_DE_Folder_Info$.pipe(takeUntil(comSubject$), debounceTime(300)).subscribe(async(deFolderData)=>{
     storagedDE_folder.info = deFolderData.info;
     storagedDE_folder.headers = deFolderData.title_Group;
@@ -289,7 +279,6 @@
     }else if( P_or_Q_value === 'Q-VALUE'){
       p_or_q_value_index =  headersUppers.indexOf('FDR STEP UP')
     }
-    // const p_or_q_value_index =  headersUppers.indexOf('P-VALUE');
     if(p_or_q_value_index === -1)return;
     const lo2_index = headersUppers.indexOf('LOG2');
     // 
@@ -298,14 +287,11 @@
       if(storagedDE_folder.info[selectedDataNum].body[i][p_or_q_value_index] !== '?'){
         const floatNum = parseFloat(storagedDE_folder.info[selectedDataNum].body[i][p_or_q_value_index]);
         const logCalu = - Math.log10(floatNum);
-        // selected_RNA_name.push(storagedDE_folder.info[selectedDataNum].body[i][0]);
-        // const geneName = `${storagedDE_folder.info[selectedDataNum].body[i][0]} - ${storagedDE_folder.info[selectedDataNum].body[i][1]}`
         const geneName = storagedDE_folder.info[selectedDataNum].body[i][1];
         const geneID = storagedDE_folder.info[selectedDataNum].body[i][0];
         selected_RNA_name.push(geneName);
         selected_DE_pValue.push(logCalu);
         selected_Gene_ID.push(geneID)
-        // selected_DE_log2.push(storagedDE_folder.info[selectedDataNum].body[i][4]);
         selected_DE_log2.push(storagedDE_folder.info[selectedDataNum].body[i][lo2_index]);
         index ++;
       }
@@ -318,7 +304,6 @@
         layout.annotations.length = 0;
         for(let i = 0 ; log2.length> i ; i++){
           const floatNum = parseFloat(log2[i]);
-          // const selecte_miRNAs_Name_Index = selecte_miRNAs_Name.indexOf(RNA_ID[i]);
           const selecte_miRNAs_Name_Index = selecte_miRNAs_Name.indexOf(Gene_ID[i]);
           if( log2Upper <= floatNum &&  p_value[i] >= log_SelectStyleNum){
             if(selecte_miRNAs_Name_Index === -1){
@@ -330,7 +315,6 @@
               display_Text_volcano__plot_plotlyjs_data.y.push(p_value[i]);
               display_Text_volcano__plot_plotlyjs_data.text.push(RNA_ID[i]);
               display_Text_volcano__plot_plotlyjs_data.marker.color.push('#EF5350');
-              // 
               layout.annotations.push({
                 originName:Gene_ID[i],
                 x:log2[i],
@@ -341,7 +325,6 @@
                 ax: 10,
                 ay: -30,
                 xanchor:'left',
-                // yanchor:'bottom',
                 bgcolor: 'rgba(224, 247, 250,0.8)',
                 borderpad: 4,
                 textfont:{
@@ -369,7 +352,6 @@
                 showarrow: true,
                 arrowhead: 0,
                 xanchor:'right',
-                // yanchor:'bottom',
                 ax: -10,
                 ay: -30,
                 bgcolor: 'rgba(224, 247, 250,0.8)',
@@ -420,7 +402,6 @@
         const maxXaxisRang = absmaxValXaxis > absminValXaxis ? absmaxValXaxis : absminValXaxis;
         const emit_maxXaxisRang = Math.ceil(maxXaxisRang);
         const ceil_max_Xaxis = emit_maxXaxisRang* 1.1;
-        // emit('xaxisMaxValue', emit_maxXaxisRang);
         layout.xaxis = {
           range: [ -ceil_max_Xaxis, ceil_max_Xaxis ],
           title:{text:`log<span style="font-size:12px;">2</span>Ratio`, font:{size:20,}}
@@ -436,7 +417,6 @@
         const windowInnerheight = window.innerHeight;
         plot_height.value =  Math.ceil(( windowInnerheight - removePlotHeight.value )/ windowInnerheight * 100);
         plot_bar_height.value = Math.ceil(( windowInnerheight - removePlotHeight.value + 46 )/ windowInnerheight * 100);
-        // drawBarPlot(positive_position_number.value, negative_position_number.value);
         deBarPlotData.height = plot_height.value;
         deBarPlotData.positive = positive_position_number.value;
         deBarPlotData.neightive = negative_position_number.value;
@@ -454,6 +434,7 @@
         }
         setTimeout(()=>{
           const full_layout = JSON.parse(JSON.stringify(layout));
+          full_layout.width = window.innerWidth * 0.8;
           full_layout.height = window.innerHeight * 0.8;
           if(!document.getElementById('displatVolcanoPlot')) return;
           transfer_FullScreen_data.value = {
@@ -462,7 +443,6 @@
             layout:full_layout,
             plotConfig
           };
-          // transfer_FullScreen_data.value.layout.height = window.innerHeight * 0.8;
           Plotly.newPlot('displatVolcanoPlot', DE_folder_data, layout, plotConfig)
         },100)
       }catch(err){
@@ -476,6 +456,8 @@
       if(layout.annotations[i].originName === annotationsValue.value[i].name){
         layout.annotations[i].ax = Number(annotationsValue.value[i].x) * -1;
         layout.annotations[i].ay = Number(annotationsValue.value[i].y) * -1;
+        transfer_FullScreen_data.value.layout.annotations[i].ax = Number(annotationsValue.value[i].x) * -1;
+        transfer_FullScreen_data.value.layout.annotations[i].ay = Number(annotationsValue.value[i].y) * -1;
       }
     }
     layout.height= 600;
@@ -497,10 +479,8 @@
     }else if(change_Val.displayText.length === 0){
       selecte_miRNAs_Name.length = 0;
     }
-    // removePlotHeight.value = change_Val.height;
     removePlotHeight.value = 650;
     if(change_Val.selectStyleNum === '') return;
-    // if(change_Val.selectStyleNum === '' || change_Val.selectStyleNum === Infinity )return;
     log_SelectStyleNum = - Math.log10(change_Val.selectStyleNum);
     if(log_SelectStyleNum === Infinity || log_SelectStyleNum === '') return;
     pvalue_line.y = [ log_SelectStyleNum, log_SelectStyleNum ];

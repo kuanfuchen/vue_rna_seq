@@ -1,7 +1,6 @@
 import { BehaviorSubject, Subject } from 'rxjs';
 import { read, utils, writeFileXLSX } from 'xlsx';
 import { handleSplitTxt } from '../utils/handleTxt';
-import Papa from 'papaparse';
 const _RNAseq_ReadAlignmentSubject$ = new BehaviorSubject({});
 const _RNAseq_handleRawReadsFolder$ = new BehaviorSubject({});
 const _RNAseq_scatter_Plot$ = new BehaviorSubject({});
@@ -9,12 +8,11 @@ const _RNAseq_visual_scatter_sampleName$ = new BehaviorSubject({});
 const _RNAseq_visual_boxPlot$ = new  BehaviorSubject({});
 const _RNAseq_CPM_PCA_Data$ = new BehaviorSubject({});
 const _RNAseq_DE_Folder_Info$ = new BehaviorSubject({});
+const _RNAseq_Project_info$ = new BehaviorSubject({});
 const _closeXlsx_info$ = new Subject(false);
-import { rawFastqQC, trimemd_fastqQC, filterOutrRNAfastqQC, star_alignmentQC, quantify_to_annotation_gene_counts, normalized_counts, RNAseq_CPM_PCA } from './getData.js';
-// import down_Bio_Process from '../../public/06_01. Functional analysis - STRINGdb/input/down_regulated/Biological Process (Gene Ontology).tsv';
+import { rawFastqQC, trimemd_fastqQC, filterOutrRNAfastqQC, star_alignmentQC, quantify_to_annotation_gene_counts, normalized_counts, RNAseq_CPM_PCA, Project_info } from './getData.js';
 const conditionSort = [];
 const compare_RNAseq_name = [];
-const DE_folder_Data = [];
 const handleRNAseqQCReadAlignmentfolder = async()=>{
   const readAlignmentTitle = ['Raw reads', 'Adaptor trimmed','Base trimming', 'Alignment'];
   const rawFastqQC_RNAseq = handleSplitTxt(rawFastqQC);
@@ -32,12 +30,51 @@ const handleRNAseqQCReadAlignmentfolder = async()=>{
     tabsTable:[rawFastqQC_RNAseq, trimemd_fastqQC_RNAseq, filterOutrRNAfastqQC_RNAseq, star_alignmentQC_RNAseq]
   }
   await _RNAseq_ReadAlignmentSubject$.next(miRNATabs);
-}
+};
+const handleProject = ()=>{
+  const splitSpaceProject_info = Project_info.split(/\n/);
+  const project_info_Txt = [];
+  const project_txt_Resolve = {};
+  for(let i = 0 ; splitSpaceProject_info.length > i ;i++){
+    const splitR_Project_info = splitSpaceProject_info[i].split(/\r/)[0];
+    if(splitR_Project_info.length > 1){
+      project_info_Txt.push(splitR_Project_info)
+    }
+  }
+  project_info_Txt.forEach((item, index) => {
+    switch (item){
+      case 'Project ID':
+        project_txt_Resolve['Project ID'] = project_info_Txt[index + 1];
+        break
+      case 'Date':
+        project_txt_Resolve.Date = project_info_Txt[index + 1];
+        break
+      case "Institute":
+        project_txt_Resolve.Institute = project_info_Txt[index + 1];
+        break
+      case "Customer":
+        project_txt_Resolve.Customer = project_info_Txt[index + 1];
+        break
+      case "Organism":
+        project_txt_Resolve.Organism = project_info_Txt[index + 1];
+        break
+      case "Genome":
+        project_txt_Resolve.Genome = project_info_Txt[index + 1];
+        break
+      case "Gene annotation":
+        if(index + 1 <= project_info_Txt.length){
+          project_txt_Resolve['Gene annotation'] = project_info_Txt[index + 1];
+        }
+        break
+    }
+  })
+  _RNAseq_Project_info$.next(project_txt_Resolve);
+};
 const rnaSeq_handleRawReads_normalizedCounts = async() => {
   const RNAseq_raw_reads_count = handleSplitTxt(quantify_to_annotation_gene_counts);
   const RNAseq_normalizedCounts = handleSplitTxt(normalized_counts);
   handleRawReads_normalizedCount( RNAseq_raw_reads_count, RNAseq_normalizedCounts);
-}
+};
 const handleRawReads_normalizedCount =async ( RNAseq_raw_reads_count, RNAseq_normalizedCounts )=>{
   const filterRNA_global_title = RNAseq_raw_reads_count.headers.filter((item, i) => { if(i < 9) return item });
   const filterRNA_name_title = RNAseq_raw_reads_count.headers.filter((item, i) => {if(i > 12)return item });
@@ -123,21 +160,6 @@ const export_Visualization = (fileContent, sheetsName) => {
       await writeFileXLSX(export_Visualization_wb, 'Visualization.xlsx');
       await _closeXlsx_info$.next(false);
     },1000)
-     // const workerContent = {
-    //   content:fileContent,
-    //   sheetsName
-    // };
-      // const xlsxWorker = new Worker(new URL('workerExportExcel.js', import.meta.url),{ type:'module' });
-      
-      // xlsxWorker.onmessage = async(ev)=>{
-      //   resolve(ev)
-      //   await writeFileXLSX(ev.data, 'Visualization.xlsx');
-      // };
-      // xlsxWorker.onerror = (err) => {
-      //   reject(err);
-      //   console.log(err)
-      // };
-      // await xlsxWorker.postMessage(workerContent);
   })
 }
 const handleRNAseq_CPM_PCA = () => {
@@ -160,12 +182,11 @@ const handled_RNAseq_DE = async() =>{
   for(let i = 0 ; txtground_DE.length > i ; i++){
     de_txtTableInfo.push( handleSplitTxt(txtground_DE[i]));
     de_txtTableInfo[i].title = compare_RNAseq_name[i];
-    // DE_folder_Data.push(de_txtTableInfo);
-    // _RNAseq_DE_Folder_Info$.next('title_Group': compare_RNAseq_name, 'info': DE_folder_Data)
   }
   _RNAseq_DE_Folder_Info$.next({'title_Group': compare_RNAseq_name, 'info': de_txtTableInfo})
 };
 export const dataFolder_RNAseq = {
+  handleProject,
   handleRNAseqQCReadAlignmentfolder,
   rnaSeq_handleRawReads_normalizedCounts,
   handleRNAseq_CPM_PCA,
@@ -180,4 +201,5 @@ export const dataFolder_RNAseq = {
   RNAseq_visual_boxPlot$:_RNAseq_visual_boxPlot$.asObservable(),
   RNAseq_CPM_PCA_Data$:_RNAseq_CPM_PCA_Data$.asObservable(),
   RNAseq_DE_Folder_Info$:_RNAseq_DE_Folder_Info$.asObservable(),
+  RNAseq_Project_info$:_RNAseq_Project_info$.asObservable(),
 };

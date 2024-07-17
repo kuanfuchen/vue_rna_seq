@@ -1,0 +1,27 @@
+Project ID
+
+xxx
+
+Date
+
+2024/02/21
+
+Institute
+
+長庚大學
+
+Customer
+
+吳啟生
+
+Organism
+
+human
+
+Genome
+
+GRCh38
+
+Gene annotation
+
+miRBase v22.1

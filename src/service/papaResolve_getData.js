@@ -126,11 +126,7 @@ const handleFunctionalAnalysis = async() => {
   })
 }
 export const papaDate = {
-  // handleFunctionalAnalysis,
   searchFunction_enrichment_file,
-  // handle_FE_file,
-  // received_FEgo_info,
-  // received_FEkegg_Info,
   name_Fun_enrichment$:_name_Fun_enrichment$.asObservable(),
   papaFun_enrichment$:_papaFun_enrichment$.asObservable(),
 

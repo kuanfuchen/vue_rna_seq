@@ -32,10 +32,9 @@
       return-object class="elevation-1"
       :custom-filter="filterRNAseq"
       v-model="selected_RNA_seq">
-      <template v-slot:header.P-value="{column, getSortIcon}">
+      <template v-slot:header.P-value="{column}">
         <div style="width:80px;">
           {{ column.title }} 
-          <!-- <v-icon icon="getSortIcon"></v-icon> -->
         </div>
       </template>
       <template v-slot:header.FDRstepup="{ column }">
@@ -85,7 +84,6 @@
       </template>
       <template v-slot:item.Foldchange="{ item }">
         <div>
-          <!-- {{  item.Foldchange.toLocaleString('en-US')  }} -->
           {{ parseFloat(item.Foldchange) }}
         </div>
       </template>
@@ -126,7 +124,6 @@
   const dataTable_height = ref('');
   const search_RNAname_field = ref('');
   const search_RNAname = ref('');
-  // const  search_RNAname= computed((val) => { val.toUpperCase() });
   const dataLengthLoading = ref(false);
   const listenTable = () => {
     const tableInfo = definedprops.table;
@@ -142,7 +139,6 @@
       let setLSMeanKeyNumber = -1;
       bodyInfo[i] = [];
       for(let j = 0 ; tableInfo.headers.length > j ; j++){
-      // header
         let checkLSMean = -1;
         checkLSMean = tableInfo.headers[j].indexOf('LSMean');
         let headerSplitWord;
@@ -166,7 +162,6 @@
               align: 'center',
               sortable: true,
               key: checkLSMean === -1 ? headerSplitWord : 'lsmean' + setLSMeanKeyNumber, 
-              // fixed: headerSplitWord === 'GeneID' ? true : false,
             })
           }
         }

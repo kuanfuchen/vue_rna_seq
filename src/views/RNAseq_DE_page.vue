@@ -21,7 +21,6 @@
           <v-row no-gutters class="pb-2">
             <v-col cols="3">
               <v-sheet class="mx-5">
-                <!-- <p class="text-right font-weight-bold">P-value</p> -->
                 <v-select label="Select" v-model="selectP_or_Qval" :items="['Q-Value','P-Value']" variant="outlined" density="compact"></v-select> 
               </v-sheet>
             </v-col>
@@ -29,7 +28,6 @@
               <v-sheet>
                 <v-text-field density="compact" label="Number(0 ~ 1)" variant="outlined" v-model="p_value_number"
                   type="number" >
-                  <!-- @update:modelValue="changed_RNAseq_DataInfo" -->
                 </v-text-field>
               </v-sheet>
             </v-col>
@@ -40,19 +38,16 @@
                 <p class="font-weight-bold text-right">
                   Log2 Fold Change <br />
                   Lower bound / Upper bound
-                  <!-- log2FC Lower bound (-{{ log2V_model_val }}~0) / Upper bound (0~{{ log2V_model_val }}) -->
                 </p>
               </v-sheet>
             </v-col>
             <v-col cols="2">
               <v-text-field type="number" variant="outlined" v-model="log2_LowerBound" density="compact"
               ></v-text-field >
-              <!-- @update:modelValue="changed_RNAseq_DataInfo" -->
             </v-col>
             <v-col class="ml-5" cols="2">
               <v-text-field  type="number" variant="outlined" v-model="log2_UpperBound" density="compact" 
               ></v-text-field>
-              <!-- @update:modelValue="changed_RNAseq_DataInfo" -->
             </v-col>
           </v-row>
           <v-row no-gutters class="mt-3">
@@ -66,9 +61,7 @@
           <v-row>
             <v-col :cols="12">
               <div class="py-1 mb-2">
-                <!-- <p class="text-h6 ml-3 text-teal" style="font-weight: 700;">Volcano Plot</p> -->
                 <Volcano :change_volcano_plot="compare_de_Obj"></Volcano>
-                <!-- @xaxisMaxValue="listenXxais_Max" -->
               </div>
             </v-col>
             <v-col :cols="12">
@@ -100,19 +93,13 @@
   const p_value_number = ref(1);
   const log2_LowerBound = ref(-1);
   const log2_UpperBound = ref(1);
-  // const handleDataIF = ref(false);
   const compare_de_title_group = ref([]);
   import { dataFolder_RNAseq } from '../service/rna_seq_dataservice';
   let compare_de_tables_info = [];
-  // const log2V_model_val = ref(0);
   const fdrVal = ref(1);
   const display_plotText = [];
   const plot_height = ref(650);
   const selectP_or_Qval = ref('Q-Value');
-  // const tableComponentInfo = ref({
-  //   headers:[],
-  //   body:[],
-  // });
   const tableComponentInfo = reactive({
     headers:[],
     body:[]
@@ -180,7 +167,6 @@
     tableComponentInfo.headers.length = 0;
     tableComponentInfo.body.length = 0;
     return new Promise(async( resolve, reject )=>{
-      // handleDataIF.value = false;
       let checkedUpDownIndex = -1; 
       const display_Table = [];
       let fdrIndex = -1;
@@ -191,7 +177,6 @@
       for(let i = 0 ; compare_de_tables_info.length > i ; i++){
         const headers = [];
         for(let j = 0 ; compare_de_tables_info[i].headers.length > j; j++){
-          // let header = compare_de_tables_info[i].headers[j].split(/\(/)[0];
           // 
           let header = '';
           const headerIndex = compare_de_tables_info[i].headers[j].indexOf('LSMean');

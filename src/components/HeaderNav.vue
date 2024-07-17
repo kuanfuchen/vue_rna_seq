@@ -10,7 +10,6 @@
         <v-icon icon="fa:fas fa-dna" class="mx-2 rotateIcon">
       </v-icon>
       <span class="mr-3">CGMMRC</span><span>RNA-seq</span>
-      <!-- </router-link> -->
     </v-app-bar-title>
     <v-spacer></v-spacer>
   </v-app-bar>
