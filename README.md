@@ -7,14 +7,14 @@ Vue.js ( Vue 3 )
 
 npm install core-js
 npm install file-saver
-npm install html2canvas
+npm install papaparse
 npm install jquery
 npm install plotly.js
 npm install plotly.js-dist
 npm install plotly.js-dist-min
 npm install rxjs
 npm install vuetify
-npm install sheetjs
+npm install SheetJs
 npm install zoomist
 ```
 
